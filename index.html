@@ -122,8 +122,9 @@
         </div>
 
         <div class="card-fun p-8 text-center flex flex-col items-center justify-center min-h-[250px] mb-6">
-            <p class="text-sm font-bold text-rose-400 uppercase tracking-widest mb-4">What does this mean?</p>
-            <h2 id="quiz-prompt" class="text-3xl font-black text-rose-600 tracking-tight leading-tight">...</h2>
+            <!-- Re-ordered to match the official exam paper "X means:" -->
+            <div id="quiz-prompt" class="text-4xl font-black text-rose-600 tracking-tight leading-tight flex items-center justify-center min-h-[60px] italic">...</div>
+            <p class="text-lg font-bold text-rose-400 uppercase tracking-widest mt-4">means:</p>
         </div>
 
         <div id="quiz-options" class="grid grid-cols-1 gap-4">
@@ -153,13 +154,8 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- JAVASCRIPT APP LOGIC                       -->
-    <!-- ========================================== -->
-    
-    <!-- This links to your new data file! -->
+    <!-- DATA & LOGIC -->
     <script src="data.js"></script>
-    
     <script>
         // State
         let currentGrade = null;
@@ -191,7 +187,6 @@
             const container = document.getElementById('dynamic-chapters-list');
             let html = '';
             
-            // syllabusChapters now comes magically from data.js!
             syllabusChapters.forEach(topic => {
                 if (topic.isReady) {
                     html += `
@@ -214,7 +209,6 @@
 
         // Quiz Engine
         function startPractice(topicName) {
-            // gradeOneVocab now comes magically from data.js!
             quizPool = [...gradeOneVocab].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
             currentQuestionIndex = 0;
             score = 0;
@@ -232,7 +226,9 @@
             const currentQ = quizPool[currentQuestionIndex];
             
             document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1} / ${totalQuestions}`;
-            document.getElementById('quiz-prompt').innerText = currentQ.term;
+            
+            // KEY FIX: Using innerHTML so SVG code renders as an image!
+            document.getElementById('quiz-prompt').innerHTML = currentQ.term;
 
             let incorrectAnswers = gradeOneVocab
                 .filter(v => v.answer !== currentQ.answer)
