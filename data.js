@@ -81,7 +81,11 @@ const gradeTwoOnlyVocab = [
     { term: "espressivo (espress.)", answer: "expressive", category: "style" },
     { term: "grazioso", answer: "graceful", category: "style" },
     { term: "alla marcia", answer: "in the style of a march", category: "style" },
-    { term: "dal segno (D.S.) 𝄋", answer: "repeat from the sign 𝄋", category: "style" },
+    { 
+        term: `dal segno (D.S.) <svg viewBox="0 0 40 40" width="30" height="30" fill="currentColor" class="inline-block ml-1 align-middle"><path d="M 21.5 5.5 L 18.5 34.5 M 10 12 C 10 7, 26 7, 26 14 C 26 21, 14 19, 14 26 C 14 33, 30 33, 30 28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="12" cy="20" r="2.5"/><circle cx="28" cy="20" r="2.5"/></svg>`, 
+        answer: `repeat from the sign <svg viewBox="0 0 40 40" width="24" height="24" fill="currentColor" class="inline-block ml-1 align-middle"><path d="M 21.5 5.5 L 18.5 34.5 M 10 12 C 10 7, 26 7, 26 14 C 26 21, 14 19, 14 26 C 14 33, 30 33, 30 28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="12" cy="20" r="2"/><circle cx="28" cy="20" r="2"/></svg>`, 
+        category: "style" 
+    },
 
     // General
     { term: "molto", answer: "very, much", category: "general" },
