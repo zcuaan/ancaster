@@ -144,15 +144,22 @@
             <div class="text-sm font-black text-rose-400 uppercase tracking-widest" id="quiz-progress">1 / 12</div>
         </div>
 
-        <div class="card-fun p-8 text-center flex flex-col items-center justify-center min-h-[250px] mb-6">
-            <!-- Text layout aligned to exam paper style -->
-            <div id="quiz-prompt" class="text-4xl font-black text-rose-600 tracking-tight leading-tight flex items-center justify-center min-h-[60px] italic">...</div>
-            <p class="text-lg font-bold text-rose-400 uppercase tracking-widest mt-4">means:</p>
+        <!-- FIX: Shrunk the card, reduced padding, removed the forced height -->
+        <div class="card-fun p-6 text-center flex flex-col items-center justify-center min-h-[160px] mb-6">
+            <div id="quiz-prompt" class="text-3xl font-black text-rose-600 tracking-tight leading-tight flex items-center justify-center min-h-[50px] italic">...</div>
+            <p class="text-sm font-bold text-rose-400 uppercase tracking-widest mt-3">means:</p>
         </div>
 
         <!-- Multiple Choice Options -->
         <div id="quiz-options" class="grid grid-cols-1 gap-4">
             <!-- Buttons injected here -->
+        </div>
+
+        <!-- FIX: The Continue Button (Hidden until they click an answer) -->
+        <div id="quiz-next-container" class="mt-6 hidden-view animate-slide-in">
+            <button onclick="handleNextClick()" class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black bg-rose-50 border-rose-200">
+                Continue ➔
+            </button>
         </div>
     </div>
 
@@ -195,11 +202,10 @@
         let currentGrade = null;
         let currentTopic = null;
         
-        // Quiz State
         let quizPool = [];
         let currentQuestionIndex = 0;
         let score = 0;
-        let roundHistory = []; // Tracks the answers for the recap screen
+        let roundHistory = []; 
         const totalQuestions = 12;
 
         // --- 2. NAVIGATION ---
@@ -249,7 +255,6 @@
         function startPractice(topicName) {
             currentTopic = topicName;
             
-            // Reset state
             quizPool = [...gradeOneVocab].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
             currentQuestionIndex = 0;
             score = 0;
@@ -265,10 +270,13 @@
                 return;
             }
 
+            // Hide the continue button
+            document.getElementById('quiz-next-container').classList.add('hidden-view');
+
             const currentQ = quizPool[currentQuestionIndex];
             
             document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1} / ${totalQuestions}`;
-            document.getElementById('quiz-prompt').innerHTML = currentQ.term; // using innerHTML to render SVGs
+            document.getElementById('quiz-prompt').innerHTML = currentQ.term; 
 
             let incorrectAnswers = gradeOneVocab
                 .filter(v => v.answer !== currentQ.answer)
@@ -291,7 +299,6 @@
             const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
             const currentQ = quizPool[currentQuestionIndex];
 
-            // Save to history for recap
             roundHistory.push({
                 term: currentQ.term,
                 answer: currentQ.answer,
@@ -313,10 +320,13 @@
                 btnElement.classList.add('btn-wrong');
             }
 
-            setTimeout(() => {
-                currentQuestionIndex++;
-                loadNextQuestion();
-            }, 1200);
+            // FIX: Instead of a timer, we show the "Continue" button!
+            document.getElementById('quiz-next-container').classList.remove('hidden-view');
+        }
+
+        function handleNextClick() {
+            currentQuestionIndex++;
+            loadNextQuestion();
         }
 
         // --- 4. RESULTS & RECAP ---
@@ -325,7 +335,6 @@
             const accuracy = Math.round((score / totalQuestions) * 100);
             document.getElementById('result-percent').innerText = `${accuracy}% Accuracy`;
             
-            // Build the Recap List
             const recapContainer = document.getElementById('results-recap');
             let recapHtml = '';
             
@@ -336,7 +345,6 @@
                 
                 const answerColorClass = item.isCorrect ? 'text-slate-600' : 'text-rose-600';
                 
-                // Using nested CSS to ensure SVG signs fit neatly in the recap list
                 recapHtml += `
                     <div class="flex items-center justify-between bg-rose-50/50 p-3 rounded-xl border border-rose-100">
                         <div class="flex items-center gap-3 w-1/2">
@@ -353,7 +361,6 @@
             });
             
             recapContainer.innerHTML = recapHtml;
-
             showView('view-results');
         }
     </script>
