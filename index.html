@@ -24,34 +24,32 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        .btn-3d:active { 
+        .btn-3d:active:not(:disabled) { 
             transform: translateY(6px); 
             box-shadow: 0 0px 0 0 transparent !important; 
         }
 
-        /* Unified Clean Navigation Button (Used for both Grades and Chapters) */
-        .btn-menu { 
-            background-color: #ffffff; 
-            border: 3px solid #FECDD3; 
-            box-shadow: 0 6px 0 0 #FDA4AF; 
-            color: #BE123C; 
-        }
-        .btn-menu:hover { 
-            background-color: #FFF1F2; 
-        }
+        /* Active Navigation Buttons */
+        .btn-menu { background-color: #ffffff; border: 3px solid #FECDD3; box-shadow: 0 6px 0 0 #FDA4AF; color: #BE123C; }
+        .btn-menu:hover:not(:disabled) { background-color: #FFF1F2; }
         
-        /* Solid Red for Mixed Practice so it stands out */
-        .btn-mixed { 
-            background-color: #E11D48; 
-            border: 3px solid #BE123C; 
-            box-shadow: 0 6px 0 0 #9F1239; 
-            color: #ffffff; 
-        }
-        .btn-mixed:hover { 
-            background-color: #BE123C; 
+        /* Disabled / Coming Soon Buttons */
+        .btn-disabled { 
+            background-color: #F8FAFC; 
+            border: 3px solid #E2E8F0; 
+            box-shadow: 0 6px 0 0 #CBD5E1; 
+            color: #94A3B8; 
+            cursor: not-allowed;
         }
 
-        /* Practice Card Placeholder */
+        /* Quiz Answer Buttons */
+        .btn-answer { background-color: #ffffff; border: 3px solid #FECDD3; box-shadow: 0 6px 0 0 #FDA4AF; color: #9F1239; }
+        .btn-answer:hover:not(:disabled) { background-color: #FFF1F2; }
+        
+        .btn-correct { background-color: #10B981 !important; border-color: #059669 !important; box-shadow: 0 6px 0 0 #047857 !important; color: white !important; }
+        .btn-wrong { background-color: #F43F5E !important; border-color: #BE123C !important; box-shadow: 0 6px 0 0 #9F1239 !important; color: white !important; }
+
+        /* Practice Card Container */
         .card-fun { 
             background-color: #ffffff; 
             border: 4px solid #FECDD3; 
@@ -69,7 +67,6 @@
         .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
     </style>
 </head>
-<!-- Added justify-center to perfectly centralize everything vertically and horizontally -->
 <body class="min-h-screen flex flex-col items-center justify-center p-6 overflow-x-hidden">
 
     <!-- ========================================== -->
@@ -80,34 +77,25 @@
             <h1 class="text-5xl font-black text-rose-600 tracking-tight uppercase flex items-center justify-center gap-3">
                 🍿 TheoryPop
             </h1>
-            <p class="text-sm font-bold text-rose-400 tracking-widest uppercase mt-4">Get practising on ABRSM music theory</p>
+            <p class="text-sm font-bold text-rose-400 tracking-widest uppercase mt-4">Get practising on ABRSM theory</p>
         </div>
 
         <div class="flex flex-col gap-4">
-            <!-- All buttons now use the clean btn-menu class -->
+            <!-- Active Grade -->
             <button onclick="selectGrade(1)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
                 <span class="text-xl font-black uppercase tracking-tight">Grade 1</span>
                 <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
             </button>
             
-            <button onclick="selectGrade(2)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
+            <!-- Disabled Grades -->
+            <button disabled class="btn-3d btn-disabled p-5 flex items-center justify-between">
                 <span class="text-xl font-black uppercase tracking-tight">Grade 2</span>
-                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
+                <span class="text-[10px] font-black uppercase tracking-widest bg-slate-200 text-slate-500 px-3 py-1.5 rounded-full">Coming Soon</span>
             </button>
             
-            <button onclick="selectGrade(3)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
+            <button disabled class="btn-3d btn-disabled p-5 flex items-center justify-between">
                 <span class="text-xl font-black uppercase tracking-tight">Grade 3</span>
-                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
-            </button>
-            
-            <button onclick="selectGrade(4)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
-                <span class="text-xl font-black uppercase tracking-tight">Grade 4</span>
-                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
-            </button>
-            
-            <button onclick="selectGrade(5)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
-                <span class="text-xl font-black uppercase tracking-tight">Grade 5</span>
-                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
+                <span class="text-[10px] font-black uppercase tracking-widest bg-slate-200 text-slate-500 px-3 py-1.5 rounded-full">Coming Soon</span>
             </button>
         </div>
     </div>
@@ -117,42 +105,64 @@
     <!-- VIEW 2: CHAPTER SELECTION                  -->
     <!-- ========================================== -->
     <div id="view-chapters" class="w-full max-w-md hidden-view animate-slide-in">
-        <!-- Back Button -->
         <button onclick="showView('view-home')" class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition">
             <span class="mr-2 text-lg">←</span> Back to Grades
         </button>
 
-        <!-- Dynamic Header -->
         <div class="mb-8">
             <h1 id="chapter-title" class="text-4xl font-black text-rose-600 tracking-tight uppercase">Grade X</h1>
             <p class="text-sm font-bold text-rose-400 mt-1 tracking-widest uppercase">Choose a topic</p>
         </div>
 
-        <!-- Chapters List (Dynamically Injected via JS) -->
         <div id="dynamic-chapters-list" class="flex flex-col gap-4">
-            <!-- Buttons will appear here -->
+            <!-- Buttons injected here -->
         </div>
     </div>
 
 
     <!-- ========================================== -->
-    <!-- VIEW 3: PRACTICE/TESTING (STATIC)          -->
+    <!-- VIEW 3: ACTIVE QUIZ VIEW                   -->
     <!-- ========================================== -->
     <div id="view-practice" class="w-full max-w-md hidden-view animate-slide-in">
         
-        <div class="flex justify-between items-center mb-8">
+        <div class="flex justify-between items-center mb-6">
             <button onclick="showView('view-chapters')" class="text-rose-400 hover:text-rose-600 font-bold text-sm transition">
                 ✕ Quit
             </button>
-            <div class="text-sm font-black text-rose-400 uppercase tracking-widest" id="practice-status">0 / 10</div>
+            <div class="text-sm font-black text-rose-400 uppercase tracking-widest" id="quiz-progress">1 / 12</div>
         </div>
 
-        <div class="card-fun p-8 text-center flex flex-col items-center justify-center min-h-[350px]">
-            <h2 id="practice-title" class="text-2xl font-black text-rose-600 uppercase tracking-tight mb-2">Drill Mode</h2>
-            <p class="text-sm font-bold text-rose-500 mb-8">The interactive questions will go here.</p>
+        <div class="card-fun p-8 text-center flex flex-col items-center justify-center min-h-[250px] mb-6">
+            <p class="text-sm font-bold text-rose-400 uppercase tracking-widest mb-4">What does this mean?</p>
+            <h2 id="quiz-prompt" class="text-4xl font-black text-rose-600 tracking-tight leading-tight">...</h2>
+        </div>
+
+        <!-- Multiple Choice Options -->
+        <div id="quiz-options" class="grid grid-cols-1 gap-4">
+            <!-- Buttons injected here -->
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 4: RESULTS VIEW                       -->
+    <!-- ========================================== -->
+    <div id="view-results" class="w-full max-w-md hidden-view animate-slide-in text-center">
+        <div class="card-fun p-10 mb-8 mt-10">
+            <div class="text-6xl mb-6">🎯</div>
+            <h2 class="text-3xl font-black text-rose-600 uppercase tracking-tight mb-2">Round Complete!</h2>
             
-            <button onclick="alert('Flashcard flips!')" class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black">
-                Simulate Answer
+            <div class="my-8">
+                <p class="text-sm font-bold text-rose-400 uppercase tracking-widest mb-1">Your Score</p>
+                <p id="result-score" class="text-5xl font-black text-rose-600">0 / 12</p>
+                <p id="result-percent" class="text-xl font-bold text-rose-500 mt-2">0% Accuracy</p>
+            </div>
+            
+            <button onclick="startPractice('Terms & signs')" class="btn-3d btn-menu w-full p-4 mb-4 text-center uppercase tracking-widest font-black">
+                Play Again ↺
+            </button>
+            
+            <button onclick="showView('view-chapters')" class="w-full p-4 text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest">
+                Back to Topics
             </button>
         </div>
     </div>
@@ -161,82 +171,178 @@
     <!-- JAVASCRIPT APP LOGIC                       -->
     <!-- ========================================== -->
     <script>
+        // --- 1. DATA & STATE ---
         let currentGrade = null;
-        let currentTopic = null;
+        
+        // Quiz State
+        let quizPool = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const totalQuestions = 12;
 
-        // Official ABRSM Syllabus Mapping
-        const syllabusData = {
-            "junior": [ 
-                { title: "Rhythm" },
-                { title: "Pitch & transposition" },
-                { title: "Keys & scales" },
-                { title: "Intervals" },
-                { title: "Tonic triads" },
-                { title: "Terms & signs" },
-                { title: "Music in context" }
-            ],
-            "senior": [ 
-                { title: "Rhythm" },
-                { title: "Pitch & transposition" },
-                { title: "Keys & scales" },
-                { title: "Intervals" },
-                { title: "Triads & chords" },
-                { title: "Terms, signs & instruments" },
-                { title: "Music in context" }
-            ]
-        };
+        const syllabusChapters = [ 
+            { title: "Rhythm", isReady: false },
+            { title: "Pitch & transposition", isReady: false },
+            { title: "Keys & scales", isReady: false },
+            { title: "Intervals", isReady: false },
+            { title: "Tonic triads", isReady: false },
+            { title: "Terms & signs", isReady: true },
+            { title: "Music in context", isReady: false }
+        ];
 
-        // Navigation Router
+        // ABRSM Grade 1 Vocab List
+        const gradeOneVocab = [
+            { term: "a tempo", answer: "in time" },
+            { term: "accelerando", answer: "getting quicker" },
+            { term: "adagio", answer: "slow" },
+            { term: "allegretto", answer: "fairly quick" },
+            { term: "allegro", answer: "quick" },
+            { term: "andante", answer: "at a walking pace" },
+            { term: "cantabile", answer: "in a singing style" },
+            { term: "crescendo", answer: "getting louder" },
+            { term: "da capo (D.C.)", answer: "repeat from the beginning" },
+            { term: "dal segno (D.S.)", answer: "repeat from the sign" },
+            { term: "decrescendo", answer: "getting quieter" },
+            { term: "diminuendo", answer: "getting quieter" },
+            { term: "forte (f)", answer: "loud" },
+            { term: "fortissimo (ff)", answer: "very loud" },
+            { term: "legato", answer: "smoothly" },
+            { term: "lento", answer: "slow" },
+            { term: "mezzo forte (mf)", answer: "moderately loud" },
+            { term: "mezzo piano (mp)", answer: "moderately quiet" },
+            { term: "moderato", answer: "moderately" },
+            { term: "piano (p)", answer: "quiet" },
+            { term: "pianissimo (pp)", answer: "very quiet" },
+            { term: "poco", answer: "a little" },
+            { term: "rallentando", answer: "getting slower" },
+            { term: "ritardando", answer: "getting slower" },
+            { term: "ritenuto", answer: "held back" },
+            { term: "staccato", answer: "detached" },
+            { term: "tempo", answer: "speed, time" }
+        ];
+
+        // --- 2. NAVIGATION ---
         function showView(viewId) {
             document.getElementById('view-home').classList.add('hidden-view');
             document.getElementById('view-chapters').classList.add('hidden-view');
             document.getElementById('view-practice').classList.add('hidden-view');
+            document.getElementById('view-results').classList.add('hidden-view');
             
             const activeView = document.getElementById(viewId);
             activeView.classList.remove('hidden-view');
             
+            // Re-trigger animation
             activeView.style.animation = 'none';
             activeView.offsetHeight; 
             activeView.style.animation = null; 
-            
             window.scrollTo(0, 0);
         }
 
-        // Handles Grade Selection
         function selectGrade(gradeNumber) {
             currentGrade = gradeNumber;
             document.getElementById('chapter-title').innerText = `Grade ${gradeNumber}`;
             
-            const category = (gradeNumber <= 3) ? "junior" : "senior";
-            const topics = syllabusData[category];
-            
             const container = document.getElementById('dynamic-chapters-list');
             let html = '';
             
-            topics.forEach(topic => {
-                // Changed to btn-menu to match the home screen styling perfectly
-                html += `
-                <button onclick="startPractice('${topic.title}')" class="btn-3d btn-menu p-5 flex items-center justify-between group">
-                    <span class="text-lg font-black uppercase tracking-tight">${topic.title}</span>
-                    <span class="text-rose-300 font-black group-hover:translate-x-1 transition-transform text-xl">→</span>
-                </button>`;
+            syllabusChapters.forEach(topic => {
+                if (topic.isReady) {
+                    html += `
+                    <button onclick="startPractice('${topic.title}')" class="btn-3d btn-menu p-5 flex items-center justify-between group">
+                        <span class="text-lg font-black uppercase tracking-tight">${topic.title}</span>
+                        <span class="text-rose-300 font-black group-hover:translate-x-1 transition-transform text-xl">→</span>
+                    </button>`;
+                } else {
+                    html += `
+                    <button disabled class="btn-3d btn-disabled p-5 flex items-center justify-between">
+                        <span class="text-lg font-black uppercase tracking-tight">${topic.title}</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest bg-slate-200 text-slate-500 px-3 py-1.5 rounded-full">Coming Soon</span>
+                    </button>`;
+                }
             });
-
-            html += `
-            <div class="w-full h-px bg-rose-200 my-2"></div>
-            <button onclick="startPractice('Mixed Practice')" class="btn-3d btn-mixed p-5 flex items-center justify-center">
-                <span class="text-xl font-black uppercase tracking-widest">Mixed Practice</span>
-            </button>`;
 
             container.innerHTML = html;
             showView('view-chapters');
         }
 
-        // Handles Practice Selection
+        // --- 3. QUIZ ENGINE ---
         function startPractice(topicName) {
-            currentTopic = topicName;
-            document.getElementById('practice-title').innerText = `${topicName}`;
+            // Shuffle array and pick 12 questions
+            quizPool = [...gradeOneVocab].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
+            currentQuestionIndex = 0;
+            score = 0;
+            
             showView('view-practice');
+            loadNextQuestion();
+        }
+
+        function loadNextQuestion() {
+            if (currentQuestionIndex >= totalQuestions) {
+                showResults();
+                return;
+            }
+
+            const currentQ = quizPool[currentQuestionIndex];
+            
+            // Update UI
+            document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1} / ${totalQuestions}`;
+            document.getElementById('quiz-prompt').innerText = currentQ.term;
+
+            // Generate Options (1 correct, 3 random incorrect)
+            let incorrectAnswers = gradeOneVocab
+                .filter(v => v.answer !== currentQ.answer)
+                .map(v => v.answer)
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3);
+                
+            let options = [...incorrectAnswers, currentQ.answer].sort(() => 0.5 - Math.random());
+
+            // Render Option Buttons
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = options.map(opt => `
+                <button onclick="checkAnswer(this, '${opt === currentQ.answer}')" class="btn-3d btn-answer w-full p-5 text-left text-lg font-bold">
+                    ${opt}
+                </button>
+            `).join('');
+        }
+
+        function checkAnswer(btnElement, isCorrectString) {
+            const isCorrect = isCorrectString === 'true';
+            
+            // Disable all buttons so they can't double click
+            const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
+            allBtns.forEach(b => {
+                b.disabled = true;
+                // If it was the correct answer but they didn't click it, highlight it anyway
+                if(b.innerText === quizPool[currentQuestionIndex].answer && !isCorrect) {
+                    b.classList.add('btn-correct');
+                    b.style.opacity = '0.5';
+                }
+            });
+
+            // Style the button they clicked
+            if (isCorrect) {
+                btnElement.classList.add('btn-correct');
+                score++;
+            } else {
+                btnElement.classList.add('btn-wrong');
+            }
+
+            // Wait 1.2 seconds, then move to next
+            setTimeout(() => {
+                currentQuestionIndex++;
+                loadNextQuestion();
+            }, 1200);
+        }
+
+        // --- 4. RESULTS ---
+        function showResults() {
+            document.getElementById('result-score').innerText = `${score} / ${totalQuestions}`;
+            
+            const accuracy = Math.round((score / totalQuestions) * 100);
+            document.getElementById('result-percent').innerText = `${accuracy}% Accuracy`;
+            
+            showView('view-results');
         }
     </script>
 </body>
