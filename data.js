@@ -105,5 +105,44 @@ const gradeTwoOnlyVocab = [
     { term: `<svg viewBox="0 0 80 40" width="80" height="40" fill="currentColor"><text x="15" y="25" font-family="Inter" font-weight="900" font-size="16">2.</text><path d="M 10 35 L 10 10 L 70 10" fill="none" stroke="currentColor" stroke-width="3"/></svg>`, answer: "second-time bar (in a repeated section, play this bar the second time through)", category: "signs" }
 ];
 
+// ==========================================
+// GRADE 3 SPECIFIC QUESTION BANK
+// ==========================================
+const gradeThreeOnlyVocab = [
+    // Dynamics
+    { term: "sforzando, sforzato, sf, sfz", answer: "forced, accented", category: "dynamics" },
+    
+    // Tempo
+    { term: "andantino", answer: "slightly faster than andante (but may also mean slightly slower)", category: "tempo" },
+    { term: "prestissimo", answer: "very fast", category: "tempo" },
+    
+    // Expression
+    { term: "agitato", answer: "agitated", category: "style" },
+    { term: "animato", answer: "animated, lively", category: "style" },
+    { term: "con forza", answer: "with force", category: "style" },
+    { term: "energico", answer: "energetic", category: "style" },
+    { term: "giocoso", answer: "playful, merry", category: "style" },
+    { term: "leggiero", answer: "light", category: "style" },
+    { term: "maestoso", answer: "majestic", category: "style" },
+    { term: "marcato (marc.)", answer: "emphatic, accented", category: "style" },
+    { term: "pesante", answer: "heavy", category: "style" },
+    { term: "risoluto", answer: "bold, strong", category: "style" },
+    { term: "scherzando", answer: "playful, joking", category: "style" },
+    { term: "semplice", answer: "simple, plain", category: "style" },
+    { term: "sostenuto (sost.)", answer: "sustained", category: "style" },
+    { term: "tranquillo", answer: "calm", category: "style" },
+    { term: "triste, tristamente", answer: "sad, sorrowful", category: "style" },
+
+    // General
+    { term: "ben", answer: "well", category: "general" },
+    { term: "prima, primo", answer: "first", category: "general" },
+    { term: "sempre", answer: "always", category: "general" },
+    { term: "simile", answer: "in the same way", category: "general" },
+    { term: "subito (sub.)", answer: "suddenly", category: "general" }
+];
+
+// Combine Grade 1, 2, and 3 for students taking the Grade 3 exam
+const gradeThreeVocab = [...gradeTwoVocab, ...gradeThreeOnlyVocab];
+
 // Combine Grade 1 and Grade 2 for students taking the Grade 2 exam
 const gradeTwoVocab = [...gradeOneVocab, ...gradeTwoOnlyVocab];
