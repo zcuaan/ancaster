@@ -97,10 +97,10 @@
                 <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
             </button>
             
-            <button disabled class="btn-3d btn-disabled p-5 flex items-center justify-between">
-                <span class="text-xl font-black uppercase tracking-tight">Grade 3</span>
-                <span class="text-[10px] font-black uppercase tracking-widest bg-slate-200 text-slate-500 px-3 py-1.5 rounded-full">Coming Soon</span>
-            </button>
+            <button onclick="selectGrade(3)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
+    <span class="text-xl font-black uppercase tracking-tight">Grade 3</span>
+    <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
+</button>
         </div>
 
         <!-- Syllabus Link -->
@@ -253,19 +253,25 @@
 
         // --- 3. QUIZ ENGINE ---
         function startPractice(topicName) {
-            currentTopic = topicName;
-            
-            // MAGIC FIX: Load the correct vocabulary based on the grade selected!
-            currentVocabList = currentGrade === 1 ? gradeOneVocab : gradeTwoVocab;
-            
-            quizPool = [...currentVocabList].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
-            currentQuestionIndex = 0;
-            score = 0;
-            roundHistory = [];
-            
-            showView('view-practice');
-            loadNextQuestion();
-        }
+    currentTopic = topicName;
+    
+    // Select question pool dynamically based on Grade selection
+    if (currentGrade === 1) {
+        currentVocabList = gradeOneVocab;
+    } else if (currentGrade === 2) {
+        currentVocabList = gradeTwoVocab;
+    } else if (currentGrade === 3) {
+        currentVocabList = gradeThreeVocab;
+    }
+    
+    quizPool = [...currentVocabList].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
+    currentQuestionIndex = 0;
+    score = 0;
+    roundHistory = [];
+    
+    showView('view-practice');
+    loadNextQuestion();
+}
 
         function loadNextQuestion() {
             if (currentQuestionIndex >= totalQuestions) {
