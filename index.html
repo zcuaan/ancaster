@@ -12,7 +12,7 @@
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: #FFF5F1; 
-            color: #4C0519; /* Deep burgundy for general text */
+            color: #4C0519; 
         }
         
         /* The signature 3D button physics */
@@ -29,27 +29,27 @@
             box-shadow: 0 0px 0 0 transparent !important; 
         }
 
-        /* 
-           Monochromatic Red/Rose Scale 
-           Intensity increases as the grades get harder 
-        */
-        .btn-g1 { background-color: #ffffff; border: 3px solid #FDA4AF; box-shadow: 0 6px 0 0 #FB7185; color: #E11D48; }
-        .btn-g2 { background-color: #ffffff; border: 3px solid #FB7185; box-shadow: 0 6px 0 0 #F43F5E; color: #BE123C; }
-        .btn-g3 { background-color: #ffffff; border: 3px solid #F43F5E; box-shadow: 0 6px 0 0 #E11D48; color: #9F1239; }
-        .btn-g4 { background-color: #ffffff; border: 3px solid #E11D48; box-shadow: 0 6px 0 0 #BE123C; color: #881337; }
-        .btn-g5 { background-color: #ffffff; border: 3px solid #BE123C; box-shadow: 0 6px 0 0 #9F1239; color: #4C0519; }
-        
-        .btn-g1:hover, .btn-g2:hover, .btn-g3:hover, .btn-g4:hover, .btn-g5:hover { 
+        /* Unified Clean Navigation Button (Used for both Grades and Chapters) */
+        .btn-menu { 
+            background-color: #ffffff; 
+            border: 3px solid #FECDD3; 
+            box-shadow: 0 6px 0 0 #FDA4AF; 
+            color: #BE123C; 
+        }
+        .btn-menu:hover { 
             background-color: #FFF1F2; 
         }
-
-        /* Chapter Button Colors */
-        .btn-chapter { background-color: #ffffff; border: 3px solid #FECDD3; box-shadow: 0 6px 0 0 #FDA4AF; color: #BE123C; }
-        .btn-chapter:hover { background-color: #FFF1F2; }
         
-        /* Solid Red for Mixed Practice */
-        .btn-mixed { background-color: #E11D48; border: 3px solid #BE123C; box-shadow: 0 6px 0 0 #9F1239; color: #ffffff; }
-        .btn-mixed:hover { background-color: #BE123C; }
+        /* Solid Red for Mixed Practice so it stands out */
+        .btn-mixed { 
+            background-color: #E11D48; 
+            border: 3px solid #BE123C; 
+            box-shadow: 0 6px 0 0 #9F1239; 
+            color: #ffffff; 
+        }
+        .btn-mixed:hover { 
+            background-color: #BE123C; 
+        }
 
         /* Practice Card Placeholder */
         .card-fun { 
@@ -69,7 +69,8 @@
         .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center pt-10 px-6 pb-20 overflow-x-hidden">
+<!-- Added justify-center to perfectly centralize everything vertically and horizontally -->
+<body class="min-h-screen flex flex-col items-center justify-center p-6 overflow-x-hidden">
 
     <!-- ========================================== -->
     <!-- VIEW 1: HOME (GRADE SELECTION)             -->
@@ -83,27 +84,28 @@
         </div>
 
         <div class="flex flex-col gap-4">
-            <button onclick="selectGrade(1)" class="btn-3d btn-g1 p-5 flex items-center justify-between group">
+            <!-- All buttons now use the clean btn-menu class -->
+            <button onclick="selectGrade(1)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
                 <span class="text-xl font-black uppercase tracking-tight">Grade 1</span>
                 <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
             </button>
             
-            <button onclick="selectGrade(2)" class="btn-3d btn-g2 p-5 flex items-center justify-between group">
+            <button onclick="selectGrade(2)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
                 <span class="text-xl font-black uppercase tracking-tight">Grade 2</span>
                 <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
             </button>
             
-            <button onclick="selectGrade(3)" class="btn-3d btn-g3 p-5 flex items-center justify-between group">
+            <button onclick="selectGrade(3)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
                 <span class="text-xl font-black uppercase tracking-tight">Grade 3</span>
                 <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
             </button>
             
-            <button onclick="selectGrade(4)" class="btn-3d btn-g4 p-5 flex items-center justify-between group">
+            <button onclick="selectGrade(4)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
                 <span class="text-xl font-black uppercase tracking-tight">Grade 4</span>
                 <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
             </button>
             
-            <button onclick="selectGrade(5)" class="btn-3d btn-g5 p-5 flex items-center justify-between group">
+            <button onclick="selectGrade(5)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
                 <span class="text-xl font-black uppercase tracking-tight">Grade 5</span>
                 <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
             </button>
@@ -149,7 +151,7 @@
             <h2 id="practice-title" class="text-2xl font-black text-rose-600 uppercase tracking-tight mb-2">Drill Mode</h2>
             <p class="text-sm font-bold text-rose-500 mb-8">The interactive questions will go here.</p>
             
-            <button onclick="alert('Flashcard flips!')" class="btn-3d btn-g1 w-full p-4 text-center uppercase tracking-widest font-black">
+            <button onclick="alert('Flashcard flips!')" class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black">
                 Simulate Answer
             </button>
         </div>
@@ -162,7 +164,7 @@
         let currentGrade = null;
         let currentTopic = null;
 
-        // Official ABRSM Syllabus Mapping (Emojis removed)
+        // Official ABRSM Syllabus Mapping
         const syllabusData = {
             "junior": [ 
                 { title: "Rhythm" },
@@ -212,8 +214,9 @@
             let html = '';
             
             topics.forEach(topic => {
+                // Changed to btn-menu to match the home screen styling perfectly
                 html += `
-                <button onclick="startPractice('${topic.title}')" class="btn-3d btn-chapter p-5 flex items-center justify-between group">
+                <button onclick="startPractice('${topic.title}')" class="btn-3d btn-menu p-5 flex items-center justify-between group">
                     <span class="text-lg font-black uppercase tracking-tight">${topic.title}</span>
                     <span class="text-rose-300 font-black group-hover:translate-x-1 transition-transform text-xl">→</span>
                 </button>`;
