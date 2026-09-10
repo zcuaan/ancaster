@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TheoryPop 🍿</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #FFF5F1; 
+            color: #4C0519; /* Deep burgundy for general text */
+        }
+        
+        /* The signature 3D button physics */
+        .btn-3d { 
+            transition: transform 0.1s, box-shadow 0.1s; 
+            border-radius: 20px; 
+            cursor: pointer;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn-3d:active { 
+            transform: translateY(6px); 
+            box-shadow: 0 0px 0 0 transparent !important; 
+        }
+
+        /* 
+           Monochromatic Red/Rose Scale 
+           Intensity increases as the grades get harder 
+        */
+        .btn-g1 { background-color: #ffffff; border: 3px solid #FDA4AF; box-shadow: 0 6px 0 0 #FB7185; color: #E11D48; }
+        .btn-g2 { background-color: #ffffff; border: 3px solid #FB7185; box-shadow: 0 6px 0 0 #F43F5E; color: #BE123C; }
+        .btn-g3 { background-color: #ffffff; border: 3px solid #F43F5E; box-shadow: 0 6px 0 0 #E11D48; color: #9F1239; }
+        .btn-g4 { background-color: #ffffff; border: 3px solid #E11D48; box-shadow: 0 6px 0 0 #BE123C; color: #881337; }
+        .btn-g5 { background-color: #ffffff; border: 3px solid #BE123C; box-shadow: 0 6px 0 0 #9F1239; color: #4C0519; }
+        
+        .btn-g1:hover, .btn-g2:hover, .btn-g3:hover, .btn-g4:hover, .btn-g5:hover { 
+            background-color: #FFF1F2; 
+        }
+
+        /* Chapter Button Colors */
+        .btn-chapter { background-color: #ffffff; border: 3px solid #FECDD3; box-shadow: 0 6px 0 0 #FDA4AF; color: #BE123C; }
+        .btn-chapter:hover { background-color: #FFF1F2; }
+        
+        /* Solid Red for Mixed Practice */
+        .btn-mixed { background-color: #E11D48; border: 3px solid #BE123C; box-shadow: 0 6px 0 0 #9F1239; color: #ffffff; }
+        .btn-mixed:hover { background-color: #BE123C; }
+
+        /* Practice Card Placeholder */
+        .card-fun { 
+            background-color: #ffffff; 
+            border: 4px solid #FECDD3; 
+            border-radius: 24px; 
+            box-shadow: 0 8px 0 0 #FDA4AF; 
+        }
+
+        /* Utilities */
+        .hidden-view { display: none !important; }
+        
+        @keyframes slideIn { 
+            from { opacity: 0; transform: translateX(20px); } 
+            to { opacity: 1; transform: translateX(0); } 
+        }
+        .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center pt-10 px-6 pb-20 overflow-x-hidden">
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: HOME (GRADE SELECTION)             -->
+    <!-- ========================================== -->
+    <div id="view-home" class="w-full max-w-md animate-slide-in">
+        <div class="text-center mb-10">
+            <h1 class="text-5xl font-black text-rose-600 tracking-tight uppercase flex items-center justify-center gap-3">
+                🍿 TheoryPop
+            </h1>
+            <p class="text-sm font-bold text-rose-400 tracking-widest uppercase mt-4">Get practising on ABRSM music theory</p>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <button onclick="selectGrade(1)" class="btn-3d btn-g1 p-5 flex items-center justify-between group">
+                <span class="text-xl font-black uppercase tracking-tight">Grade 1</span>
+                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
+            </button>
+            
+            <button onclick="selectGrade(2)" class="btn-3d btn-g2 p-5 flex items-center justify-between group">
+                <span class="text-xl font-black uppercase tracking-tight">Grade 2</span>
+                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
+            </button>
+            
+            <button onclick="selectGrade(3)" class="btn-3d btn-g3 p-5 flex items-center justify-between group">
+                <span class="text-xl font-black uppercase tracking-tight">Grade 3</span>
+                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
+            </button>
+            
+            <button onclick="selectGrade(4)" class="btn-3d btn-g4 p-5 flex items-center justify-between group">
+                <span class="text-xl font-black uppercase tracking-tight">Grade 4</span>
+                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
+            </button>
+            
+            <button onclick="selectGrade(5)" class="btn-3d btn-g5 p-5 flex items-center justify-between group">
+                <span class="text-xl font-black uppercase tracking-tight">Grade 5</span>
+                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: CHAPTER SELECTION                  -->
+    <!-- ========================================== -->
+    <div id="view-chapters" class="w-full max-w-md hidden-view animate-slide-in">
+        <!-- Back Button -->
+        <button onclick="showView('view-home')" class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition">
+            <span class="mr-2 text-lg">←</span> Back to Grades
+        </button>
+
+        <!-- Dynamic Header -->
+        <div class="mb-8">
+            <h1 id="chapter-title" class="text-4xl font-black text-rose-600 tracking-tight uppercase">Grade X</h1>
+            <p class="text-sm font-bold text-rose-400 mt-1 tracking-widest uppercase">Choose a topic</p>
+        </div>
+
+        <!-- Chapters List (Dynamically Injected via JS) -->
+        <div id="dynamic-chapters-list" class="flex flex-col gap-4">
+            <!-- Buttons will appear here -->
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: PRACTICE/TESTING (STATIC)          -->
+    <!-- ========================================== -->
+    <div id="view-practice" class="w-full max-w-md hidden-view animate-slide-in">
+        
+        <div class="flex justify-between items-center mb-8">
+            <button onclick="showView('view-chapters')" class="text-rose-400 hover:text-rose-600 font-bold text-sm transition">
+                ✕ Quit
+            </button>
+            <div class="text-sm font-black text-rose-400 uppercase tracking-widest" id="practice-status">0 / 10</div>
+        </div>
+
+        <div class="card-fun p-8 text-center flex flex-col items-center justify-center min-h-[350px]">
+            <h2 id="practice-title" class="text-2xl font-black text-rose-600 uppercase tracking-tight mb-2">Drill Mode</h2>
+            <p class="text-sm font-bold text-rose-500 mb-8">The interactive questions will go here.</p>
+            
+            <button onclick="alert('Flashcard flips!')" class="btn-3d btn-g1 w-full p-4 text-center uppercase tracking-widest font-black">
+                Simulate Answer
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT APP LOGIC                       -->
+    <!-- ========================================== -->
+    <script>
+        let currentGrade = null;
+        let currentTopic = null;
+
+        // Official ABRSM Syllabus Mapping (Emojis removed)
+        const syllabusData = {
+            "junior": [ 
+                { title: "Rhythm" },
+                { title: "Pitch & transposition" },
+                { title: "Keys & scales" },
+                { title: "Intervals" },
+                { title: "Tonic triads" },
+                { title: "Terms & signs" },
+                { title: "Music in context" }
+            ],
+            "senior": [ 
+                { title: "Rhythm" },
+                { title: "Pitch & transposition" },
+                { title: "Keys & scales" },
+                { title: "Intervals" },
+                { title: "Triads & chords" },
+                { title: "Terms, signs & instruments" },
+                { title: "Music in context" }
+            ]
+        };
+
+        // Navigation Router
+        function showView(viewId) {
+            document.getElementById('view-home').classList.add('hidden-view');
+            document.getElementById('view-chapters').classList.add('hidden-view');
+            document.getElementById('view-practice').classList.add('hidden-view');
+            
+            const activeView = document.getElementById(viewId);
+            activeView.classList.remove('hidden-view');
+            
+            activeView.style.animation = 'none';
+            activeView.offsetHeight; 
+            activeView.style.animation = null; 
+            
+            window.scrollTo(0, 0);
+        }
+
+        // Handles Grade Selection
+        function selectGrade(gradeNumber) {
+            currentGrade = gradeNumber;
+            document.getElementById('chapter-title').innerText = `Grade ${gradeNumber}`;
+            
+            const category = (gradeNumber <= 3) ? "junior" : "senior";
+            const topics = syllabusData[category];
+            
+            const container = document.getElementById('dynamic-chapters-list');
+            let html = '';
+            
+            topics.forEach(topic => {
+                html += `
+                <button onclick="startPractice('${topic.title}')" class="btn-3d btn-chapter p-5 flex items-center justify-between group">
+                    <span class="text-lg font-black uppercase tracking-tight">${topic.title}</span>
+                    <span class="text-rose-300 font-black group-hover:translate-x-1 transition-transform text-xl">→</span>
+                </button>`;
+            });
+
+            html += `
+            <div class="w-full h-px bg-rose-200 my-2"></div>
+            <button onclick="startPractice('Mixed Practice')" class="btn-3d btn-mixed p-5 flex items-center justify-center">
+                <span class="text-xl font-black uppercase tracking-widest">Mixed Practice</span>
+            </button>`;
+
+            container.innerHTML = html;
+            showView('view-chapters');
+        }
+
+        // Handles Practice Selection
+        function startPractice(topicName) {
+            currentTopic = topicName;
+            document.getElementById('practice-title').innerText = `${topicName}`;
+            showView('view-practice');
+        }
+    </script>
+</body>
+</html>
