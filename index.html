@@ -141,7 +141,7 @@
 
         <div class="card-fun p-8 text-center flex flex-col items-center justify-center min-h-[250px] mb-6">
             <p class="text-sm font-bold text-rose-400 uppercase tracking-widest mb-4">What does this mean?</p>
-            <h2 id="quiz-prompt" class="text-4xl font-black text-rose-600 tracking-tight leading-tight">...</h2>
+            <h2 id="quiz-prompt" class="text-3xl font-black text-rose-600 tracking-tight leading-tight">...</h2>
         </div>
 
         <!-- Multiple Choice Options -->
@@ -197,35 +197,48 @@
             { title: "Music in context", isReady: false }
         ];
 
-        // ABRSM Grade 1 Vocab List
+        // Complete ABRSM Grade 1 Vocab & Signs List
         const gradeOneVocab = [
-            { term: "a tempo", answer: "in time" },
-            { term: "accelerando", answer: "getting quicker" },
-            { term: "adagio", answer: "slow" },
-            { term: "allegretto", answer: "fairly quick" },
-            { term: "allegro", answer: "quick" },
-            { term: "andante", answer: "at a walking pace" },
-            { term: "cantabile", answer: "in a singing style" },
-            { term: "crescendo", answer: "getting louder" },
-            { term: "da capo (D.C.)", answer: "repeat from the beginning" },
-            { term: "dal segno (D.S.)", answer: "repeat from the sign" },
-            { term: "decrescendo", answer: "getting quieter" },
-            { term: "diminuendo", answer: "getting quieter" },
-            { term: "forte (f)", answer: "loud" },
+            // Dynamics
             { term: "fortissimo (ff)", answer: "very loud" },
-            { term: "legato", answer: "smoothly" },
-            { term: "lento", answer: "slow" },
+            { term: "forte (f)", answer: "loud" },
             { term: "mezzo forte (mf)", answer: "moderately loud" },
-            { term: "mezzo piano (mp)", answer: "moderately quiet" },
-            { term: "moderato", answer: "moderately" },
-            { term: "piano (p)", answer: "quiet" },
             { term: "pianissimo (pp)", answer: "very quiet" },
-            { term: "poco", answer: "a little" },
-            { term: "rallentando", answer: "getting slower" },
-            { term: "ritardando", answer: "getting slower" },
-            { term: "ritenuto", answer: "held back" },
-            { term: "staccato", answer: "detached" },
-            { term: "tempo", answer: "speed, time" }
+            { term: "piano (p)", answer: "quiet" },
+            { term: "mezzo piano (mp)", answer: "moderately quiet" },
+            { term: "crescendo (cresc.)", answer: "gradually getting louder" },
+            { term: "decrescendo (decresc.)", answer: "gradually getting quieter" },
+            { term: "diminuendo (dim.)", answer: "gradually getting quieter" },
+            
+            // Speed / Tempo
+            { term: "allegro", answer: "quick" },
+            { term: "allegretto", answer: "fairly quick" },
+            { term: "moderato", answer: "at a moderate speed" },
+            { term: "andante", answer: "at a medium speed" },
+            { term: "adagio", answer: "slow" },
+            { term: "accelerando (accel.)", answer: "gradually getting quicker" },
+            { term: "rallentando (rall.)", answer: "gradually getting slower" },
+            { term: "ritardando (ritard. or rit.)", answer: "gradually getting slower" },
+            { term: "a tempo", answer: "in time (resume the original speed)" },
+            
+            // Style & Repeats
+            { term: "cantabile", answer: "in a singing style" },
+            { term: "da capo (D.C.)", answer: "repeat from the beginning" },
+            { term: "dolce", answer: "sweet" },
+            { term: "fine", answer: "the end" },
+            { term: "legato", answer: "smoothly" },
+            { term: "staccato (stacc.)", answer: "detached" },
+
+            // Signs & Symbols
+            { term: "Hairpin opening (<)", answer: "gradually getting louder (crescendo)" },
+            { term: "Hairpin closing (>)", answer: "gradually getting quieter (diminuendo)" },
+            { term: "Accent sign (> above note)", answer: "accent the note (play with emphasis)" },
+            { term: "Slur (curved line over different notes)", answer: "perform smoothly" },
+            { term: "Tie (curved line over same notes)", answer: "hold for the value of both notes" },
+            { term: "Dot above/below note", answer: "staccato; detached" },
+            { term: "Pause sign (𝄐)", answer: "pause on the note or rest" },
+            { term: "Metronome mark (e.g. ♩ = 60)", answer: "play at a tempo of 60 crotchet beats in a minute" },
+            { term: "Repeat marks (𝄆  𝄇)", answer: "repeat the section between the two signs" }
         ];
 
         // --- 2. NAVIGATION ---
@@ -238,6 +251,7 @@
             const activeView = document.getElementById(viewId);
             activeView.classList.remove('hidden-view');
             
+            // Re-trigger animation
             activeView.style.animation = 'none';
             activeView.offsetHeight; 
             activeView.style.animation = null; 
@@ -273,6 +287,7 @@
 
         // --- 3. QUIZ ENGINE ---
         function startPractice(topicName) {
+            // Shuffle array and pick 12 questions
             quizPool = [...gradeOneVocab].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
             currentQuestionIndex = 0;
             score = 0;
@@ -289,9 +304,11 @@
 
             const currentQ = quizPool[currentQuestionIndex];
             
+            // Update UI
             document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1} / ${totalQuestions}`;
             document.getElementById('quiz-prompt').innerText = currentQ.term;
 
+            // Generate Options (1 correct, 3 random incorrect)
             let incorrectAnswers = gradeOneVocab
                 .filter(v => v.answer !== currentQ.answer)
                 .map(v => v.answer)
@@ -300,9 +317,10 @@
                 
             let options = [...incorrectAnswers, currentQ.answer].sort(() => 0.5 - Math.random());
 
+            // Render Option Buttons
             const optionsContainer = document.getElementById('quiz-options');
             optionsContainer.innerHTML = options.map(opt => `
-                <button onclick="checkAnswer(this, '${opt === currentQ.answer}')" class="btn-3d btn-answer w-full p-5 text-left text-lg font-bold">
+                <button onclick="checkAnswer(this, '${escape(opt) === escape(currentQ.answer)}')" class="btn-3d btn-answer w-full p-4 text-left text-base font-bold">
                     ${opt}
                 </button>
             `).join('');
@@ -310,16 +328,19 @@
 
         function checkAnswer(btnElement, isCorrectString) {
             const isCorrect = isCorrectString === 'true';
-            const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
             
+            // Disable all buttons so they can't double click
+            const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
             allBtns.forEach(b => {
                 b.disabled = true;
-                if(b.innerText === quizPool[currentQuestionIndex].answer && !isCorrect) {
+                // Highlight the correct one if they missed it
+                if(b.innerText.trim() === quizPool[currentQuestionIndex].answer.trim() && !isCorrect) {
                     b.classList.add('btn-correct');
                     b.style.opacity = '0.5';
                 }
             });
 
+            // Style the button they clicked
             if (isCorrect) {
                 btnElement.classList.add('btn-correct');
                 score++;
@@ -327,6 +348,7 @@
                 btnElement.classList.add('btn-wrong');
             }
 
+            // Wait 1.2 seconds, then move to next
             setTimeout(() => {
                 currentQuestionIndex++;
                 loadNextQuestion();
@@ -336,8 +358,10 @@
         // --- 4. RESULTS ---
         function showResults() {
             document.getElementById('result-score').innerText = `${score} / ${totalQuestions}`;
+            
             const accuracy = Math.round((score / totalQuestions) * 100);
             document.getElementById('result-percent').innerText = `${accuracy}% Accuracy`;
+            
             showView('view-results');
         }
     </script>
