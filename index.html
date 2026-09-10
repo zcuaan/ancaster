@@ -92,10 +92,9 @@
                 <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
             </button>
             
-            <!-- Disabled Grades -->
-            <button disabled class="btn-3d btn-disabled p-5 flex items-center justify-between">
+            <button onclick="selectGrade(2)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
                 <span class="text-xl font-black uppercase tracking-tight">Grade 2</span>
-                <span class="text-[10px] font-black uppercase tracking-widest bg-slate-200 text-slate-500 px-3 py-1.5 rounded-full">Coming Soon</span>
+                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
             </button>
             
             <button disabled class="btn-3d btn-disabled p-5 flex items-center justify-between">
@@ -202,6 +201,7 @@
         let currentGrade = null;
         let currentTopic = null;
         
+        let currentVocabList = []; // This will dynamically hold G1 or G2
         let quizPool = [];
         let currentQuestionIndex = 0;
         let score = 0;
@@ -255,7 +255,10 @@
         function startPractice(topicName) {
             currentTopic = topicName;
             
-            quizPool = [...gradeOneVocab].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
+            // MAGIC FIX: Load the correct vocabulary based on the grade selected!
+            currentVocabList = currentGrade === 1 ? gradeOneVocab : gradeTwoVocab;
+            
+            quizPool = [...currentVocabList].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
             currentQuestionIndex = 0;
             score = 0;
             roundHistory = [];
@@ -270,7 +273,6 @@
                 return;
             }
 
-            // Hide the continue button
             document.getElementById('quiz-next-container').classList.add('hidden-view');
 
             const currentQ = quizPool[currentQuestionIndex];
@@ -278,25 +280,22 @@
             document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1} / ${totalQuestions}`;
             document.getElementById('quiz-prompt').innerHTML = currentQ.term; 
 
-            // 1. Get wrong answers from the SAME CATEGORY
-            let incorrectAnswers = gradeOneVocab
+            // Pull wrong answers from the ACTIVE vocabulary list, matched by category
+            let incorrectAnswers = currentVocabList
                 .filter(v => v.answer !== currentQ.answer && v.category === currentQ.category)
                 .map(v => v.answer)
                 .sort(() => 0.5 - Math.random());
                 
-            // 2. Smart Fallback: If we don't have enough options in this category, grab random ones
+            // Smart Fallback
             if (incorrectAnswers.length < 3) {
-                let extraAnswers = gradeOneVocab
+                let extraAnswers = currentVocabList
                     .filter(v => v.answer !== currentQ.answer && v.category !== currentQ.category)
                     .map(v => v.answer)
                     .sort(() => 0.5 - Math.random());
                 incorrectAnswers = [...incorrectAnswers, ...extraAnswers];
             }
             
-            // 3. Slice exactly 3 wrong answers
             incorrectAnswers = incorrectAnswers.slice(0, 3);
-                
-            // 4. Mix in the correct answer
             let options = [...incorrectAnswers, currentQ.answer].sort(() => 0.5 - Math.random());
 
             const optionsContainer = document.getElementById('quiz-options');
