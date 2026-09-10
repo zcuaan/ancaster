@@ -98,6 +98,13 @@
                 <span class="text-[10px] font-black uppercase tracking-widest bg-slate-200 text-slate-500 px-3 py-1.5 rounded-full">Coming Soon</span>
             </button>
         </div>
+
+        <!-- Syllabus Link -->
+        <div class="text-center mt-10">
+            <a href="syllabus.html" class="inline-block text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition">
+                View Full Syllabus →
+            </a>
+        </div>
     </div>
 
 
@@ -231,7 +238,6 @@
             const activeView = document.getElementById(viewId);
             activeView.classList.remove('hidden-view');
             
-            // Re-trigger animation
             activeView.style.animation = 'none';
             activeView.offsetHeight; 
             activeView.style.animation = null; 
@@ -267,7 +273,6 @@
 
         // --- 3. QUIZ ENGINE ---
         function startPractice(topicName) {
-            // Shuffle array and pick 12 questions
             quizPool = [...gradeOneVocab].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
             currentQuestionIndex = 0;
             score = 0;
@@ -284,11 +289,9 @@
 
             const currentQ = quizPool[currentQuestionIndex];
             
-            // Update UI
             document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1} / ${totalQuestions}`;
             document.getElementById('quiz-prompt').innerText = currentQ.term;
 
-            // Generate Options (1 correct, 3 random incorrect)
             let incorrectAnswers = gradeOneVocab
                 .filter(v => v.answer !== currentQ.answer)
                 .map(v => v.answer)
@@ -297,7 +300,6 @@
                 
             let options = [...incorrectAnswers, currentQ.answer].sort(() => 0.5 - Math.random());
 
-            // Render Option Buttons
             const optionsContainer = document.getElementById('quiz-options');
             optionsContainer.innerHTML = options.map(opt => `
                 <button onclick="checkAnswer(this, '${opt === currentQ.answer}')" class="btn-3d btn-answer w-full p-5 text-left text-lg font-bold">
@@ -308,19 +310,16 @@
 
         function checkAnswer(btnElement, isCorrectString) {
             const isCorrect = isCorrectString === 'true';
-            
-            // Disable all buttons so they can't double click
             const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
+            
             allBtns.forEach(b => {
                 b.disabled = true;
-                // If it was the correct answer but they didn't click it, highlight it anyway
                 if(b.innerText === quizPool[currentQuestionIndex].answer && !isCorrect) {
                     b.classList.add('btn-correct');
                     b.style.opacity = '0.5';
                 }
             });
 
-            // Style the button they clicked
             if (isCorrect) {
                 btnElement.classList.add('btn-correct');
                 score++;
@@ -328,7 +327,6 @@
                 btnElement.classList.add('btn-wrong');
             }
 
-            // Wait 1.2 seconds, then move to next
             setTimeout(() => {
                 currentQuestionIndex++;
                 loadNextQuestion();
@@ -338,10 +336,8 @@
         // --- 4. RESULTS ---
         function showResults() {
             document.getElementById('result-score').innerText = `${score} / ${totalQuestions}`;
-            
             const accuracy = Math.round((score / totalQuestions) * 100);
             document.getElementById('result-percent').innerText = `${accuracy}% Accuracy`;
-            
             showView('view-results');
         }
     </script>
