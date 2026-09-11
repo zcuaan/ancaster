@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TheoryPop 🍿</title>
+    <title>TheoryQs 🎯</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -15,7 +15,6 @@
             color: #4C0519; 
         }
         
-        /* The signature 3D button physics */
         .btn-3d { 
             transition: transform 0.1s, box-shadow 0.1s; 
             border-radius: 20px; 
@@ -29,11 +28,9 @@
             box-shadow: 0 0px 0 0 transparent !important; 
         }
 
-        /* Active Navigation Buttons */
         .btn-menu { background-color: #ffffff; border: 3px solid #FECDD3; box-shadow: 0 6px 0 0 #FDA4AF; color: #BE123C; }
         .btn-menu:hover:not(:disabled) { background-color: #FFF1F2; }
         
-        /* Disabled / Coming Soon Buttons */
         .btn-disabled { 
             background-color: #F8FAFC; 
             border: 3px solid #E2E8F0; 
@@ -42,14 +39,12 @@
             cursor: not-allowed;
         }
 
-        /* Quiz Answer Buttons */
         .btn-answer { background-color: #ffffff; border: 3px solid #FECDD3; box-shadow: 0 6px 0 0 #FDA4AF; color: #9F1239; }
         .btn-answer:hover:not(:disabled) { background-color: #FFF1F2; }
         
         .btn-correct { background-color: #10B981 !important; border-color: #059669 !important; box-shadow: 0 6px 0 0 #047857 !important; color: white !important; }
         .btn-wrong { background-color: #F43F5E !important; border-color: #BE123C !important; box-shadow: 0 6px 0 0 #9F1239 !important; color: white !important; }
 
-        /* Practice Card Container */
         .card-fun { 
             background-color: #ffffff; 
             border: 4px solid #FECDD3; 
@@ -57,12 +52,21 @@
             box-shadow: 0 8px 0 0 #FDA4AF; 
         }
 
-        /* Custom scrollbar for the recap list */
         .scrollbar-custom::-webkit-scrollbar { width: 8px; }
         .scrollbar-custom::-webkit-scrollbar-track { background: #FFF1F2; border-radius: 10px; }
         .scrollbar-custom::-webkit-scrollbar-thumb { background: #FDA4AF; border-radius: 10px; }
 
-        /* Utilities */
+        .input-fun {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid #FECDD3;
+            outline: none;
+            font-weight: 600;
+            color: #881337;
+        }
+        .input-fun:focus { border-color: #FDA4AF; background-color: #FFF1F2; }
+
         .hidden-view { display: none !important; }
         
         @keyframes slideIn { 
@@ -74,19 +78,26 @@
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-6 overflow-x-hidden">
 
-    <!-- ========================================== -->
-    <!-- VIEW 1: HOME (GRADE SELECTION)             -->
-    <!-- ========================================== -->
+    <!-- Top Nav / Account Bar -->
+    <div class="fixed top-0 left-0 w-full p-4 flex justify-end z-50">
+        <button id="nav-login-btn" onclick="showView('view-auth')" class="text-sm font-bold text-rose-500 hover:text-rose-700 bg-rose-100 px-4 py-2 rounded-full transition">
+            Sign In
+        </button>
+        <button id="nav-dash-btn" onclick="routeDashboard()" class="hidden-view text-sm font-bold text-white bg-rose-500 hover:bg-rose-600 px-4 py-2 rounded-full transition shadow-md">
+            My Dashboard
+        </button>
+    </div>
+
+    <!-- VIEW 1: HOME -->
     <div id="view-home" class="w-full max-w-md animate-slide-in">
-        <div class="text-center mb-10">
+        <div class="text-center mb-10 mt-8">
             <h1 class="text-5xl font-black text-rose-600 tracking-tight uppercase flex items-center justify-center gap-3">
-                🍿 TheoryPop
+                🎯 TheoryQs
             </h1>
-            <p class="text-sm font-bold text-rose-400 tracking-widest uppercase mt-4">Get practising on ABRSM theory</p>
+            <p class="text-sm font-bold text-rose-400 tracking-widest uppercase mt-4">Master ABRSM Music Theory</p>
         </div>
 
         <div class="flex flex-col gap-4">
-            <!-- Active Grade -->
             <button onclick="selectGrade(1)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
                 <span class="text-xl font-black uppercase tracking-tight">Grade 1</span>
                 <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
@@ -98,12 +109,11 @@
             </button>
             
             <button onclick="selectGrade(3)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
-    <span class="text-xl font-black uppercase tracking-tight">Grade 3</span>
-    <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
-</button>
+                <span class="text-xl font-black uppercase tracking-tight">Grade 3</span>
+                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
+            </button>
         </div>
 
-        <!-- Syllabus Link -->
         <div class="text-center mt-10">
             <a href="syllabus.html" class="inline-block text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition">
                 View Full Syllabus →
@@ -112,9 +122,113 @@
     </div>
 
 
-    <!-- ========================================== -->
-    <!-- VIEW 2: CHAPTER SELECTION                  -->
-    <!-- ========================================== -->
+    <!-- VIEW: AUTH / LOGIN / SIGNUP -->
+    <div id="view-auth" class="w-full max-w-md hidden-view animate-slide-in">
+        <button onclick="showView('view-home')" class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition">
+            <span class="mr-2 text-lg">←</span> Back to Home
+        </button>
+
+        <div class="card-fun p-8">
+            <h2 id="auth-title" class="text-3xl font-black text-rose-600 tracking-tight uppercase mb-6">Log In</h2>
+            
+            <!-- Auth Form (Mocked for now) -->
+            <div class="flex flex-col gap-4">
+                <input type="text" placeholder="Username or Email" class="input-fun">
+                <input type="password" placeholder="Password" class="input-fun">
+                
+                <!-- Role Selector (Only shows on Sign Up) -->
+                <div id="auth-role-selector" class="hidden-view mt-2">
+                    <p class="text-xs font-bold text-rose-400 uppercase tracking-widest mb-2">I am a:</p>
+                    <div class="flex gap-2">
+                        <button onclick="setTempRole('student')" id="role-btn-student" class="flex-1 p-2 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-700 font-bold text-sm">Student</button>
+                        <button onclick="setTempRole('teacher')" id="role-btn-teacher" class="flex-1 p-2 rounded-xl border-2 border-rose-200 bg-white text-rose-400 font-bold text-sm">Teacher</button>
+                    </div>
+                </div>
+
+                <button onclick="mockLogin()" class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black mt-4">
+                    <span id="auth-submit-text">Log In ➔</span>
+                </button>
+            </div>
+
+            <div class="text-center mt-6">
+                <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-sm font-bold text-rose-400 hover:text-rose-600 transition">
+                    Don't have an account? Sign up
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- VIEW: STUDENT STATS DASHBOARD -->
+    <div id="view-stats" class="w-full max-w-md hidden-view animate-slide-in">
+        <button onclick="showView('view-home')" class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition">
+            <span class="mr-2 text-lg">←</span> Back to Home
+        </button>
+
+        <div class="mb-6">
+            <h1 class="text-4xl font-black text-rose-600 tracking-tight uppercase">My Stats 📈</h1>
+            <p class="text-sm font-bold text-rose-400 mt-1 tracking-widest uppercase">Keep up the good work!</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="card-fun p-6 text-center">
+                <p class="text-xs font-bold text-rose-400 uppercase tracking-widest mb-1">Rounds</p>
+                <p class="text-4xl font-black text-rose-600">14</p>
+            </div>
+            <div class="card-fun p-6 text-center">
+                <p class="text-xs font-bold text-rose-400 uppercase tracking-widest mb-1">Accuracy</p>
+                <p class="text-4xl font-black text-emerald-500">82%</p>
+            </div>
+        </div>
+
+        <button onclick="mockLogout()" class="text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition w-full text-center mt-4">
+            Log Out
+        </button>
+    </div>
+
+
+    <!-- VIEW: TEACHER DASHBOARD -->
+    <div id="view-teacher" class="w-full max-w-md hidden-view animate-slide-in">
+        <button onclick="showView('view-home')" class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition">
+            <span class="mr-2 text-lg">←</span> Back to Home
+        </button>
+
+        <div class="mb-6">
+            <h1 class="text-3xl font-black text-rose-600 tracking-tight uppercase">Teacher Portal 🍎</h1>
+            <p class="text-sm font-bold text-rose-400 mt-1 tracking-widest uppercase">Manage your students</p>
+        </div>
+
+        <!-- Add Student Widget -->
+        <div class="card-fun p-6 mb-6">
+            <p class="text-sm font-bold text-rose-600 uppercase tracking-widest mb-3">Add Student</p>
+            <div class="flex gap-2">
+                <input type="text" placeholder="Student Username" class="input-fun flex-1 text-sm">
+                <button class="bg-rose-500 text-white font-bold px-4 rounded-xl shadow-[0_4px_0_0_#BE123C] hover:bg-rose-600 active:translate-y-1 active:shadow-none transition-all">
+                    Add
+                </button>
+            </div>
+        </div>
+
+        <!-- Student List -->
+        <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">My Class</h3>
+        <div class="flex flex-col gap-3 mb-8">
+            <div class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center">
+                <span class="font-bold text-rose-800">Timmy M.</span>
+                <span class="text-emerald-500 font-black text-sm">82% Avg</span>
+            </div>
+            <div class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center">
+                <span class="font-bold text-rose-800">Sarah J.</span>
+                <span class="text-emerald-500 font-black text-sm">95% Avg</span>
+            </div>
+        </div>
+
+        <button onclick="mockLogout()" class="text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition w-full text-center">
+            Log Out
+        </button>
+    </div>
+
+
+    <!-- VIEW 2: CHAPTERS -->
     <div id="view-chapters" class="w-full max-w-md hidden-view animate-slide-in">
         <button onclick="showView('view-home')" class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition">
             <span class="mr-2 text-lg">←</span> Back to Grades
@@ -130,12 +244,8 @@
         </div>
     </div>
 
-
-    <!-- ========================================== -->
-    <!-- VIEW 3: ACTIVE QUIZ VIEW                   -->
-    <!-- ========================================== -->
+    <!-- VIEW 3: PRACTICE -->
     <div id="view-practice" class="w-full max-w-md hidden-view animate-slide-in">
-        
         <div class="flex justify-between items-center mb-6">
             <button onclick="showView('view-chapters')" class="text-rose-400 hover:text-rose-600 font-bold text-sm transition">
                 ✕ Quit
@@ -143,18 +253,15 @@
             <div class="text-sm font-black text-rose-400 uppercase tracking-widest" id="quiz-progress">1 / 12</div>
         </div>
 
-        <!-- FIX: Shrunk the card, reduced padding, removed the forced height -->
         <div class="card-fun p-6 text-center flex flex-col items-center justify-center min-h-[160px] mb-6">
             <div id="quiz-prompt" class="text-3xl font-black text-rose-600 tracking-tight leading-tight flex items-center justify-center min-h-[50px] italic">...</div>
             <p class="text-sm font-bold text-rose-400 uppercase tracking-widest mt-3">means:</p>
         </div>
 
-        <!-- Multiple Choice Options -->
         <div id="quiz-options" class="grid grid-cols-1 gap-4">
             <!-- Buttons injected here -->
         </div>
 
-        <!-- FIX: The Continue Button (Hidden until they click an answer) -->
         <div id="quiz-next-container" class="mt-6 hidden-view animate-slide-in">
             <button onclick="handleNextClick()" class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black bg-rose-50 border-rose-200">
                 Continue ➔
@@ -162,19 +269,15 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- VIEW 4: RESULTS VIEW                       -->
-    <!-- ========================================== -->
+    <!-- VIEW 4: RESULTS -->
     <div id="view-results" class="w-full max-w-md hidden-view animate-slide-in text-center">
         <div class="card-fun p-8 mb-8 mt-10">
-            
             <div class="mb-8 mt-2">
                 <p class="text-sm font-bold text-rose-400 uppercase tracking-widest mb-1">Your Score</p>
                 <p id="result-score" class="text-5xl font-black text-rose-600">0 / 12</p>
                 <p id="result-percent" class="text-xl font-bold text-rose-500 mt-2">0% Accuracy</p>
             </div>
 
-            <!-- Recap Section -->
             <div class="text-left mb-8">
                 <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">Round Recap</h3>
                 <div id="results-recap" class="max-h-[30vh] overflow-y-auto pr-2 scrollbar-custom space-y-2">
@@ -192,32 +295,92 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- JAVASCRIPT APP LOGIC                       -->
-    <!-- ========================================== -->
+    <!-- APP LOGIC -->
     <script src="data.js"></script>
     <script>
-        // --- 1. DATA & STATE ---
+        // --- AUTH MOCK STATE ---
+        let isSignUpMode = false;
+        let tempSelectedRole = 'student'; // 'student' or 'teacher'
+        
+        // This simulates our logged in user!
+        let currentUser = null; 
+        
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('auth-title').innerText = isSignUpMode ? "Create Account" : "Log In";
+            document.getElementById('auth-submit-text').innerText = isSignUpMode ? "Sign Up ➔" : "Log In ➔";
+            document.getElementById('auth-toggle-btn').innerText = isSignUpMode ? "Already have an account? Log in" : "Don't have an account? Sign up";
+            
+            if(isSignUpMode) {
+                document.getElementById('auth-role-selector').classList.remove('hidden-view');
+            } else {
+                document.getElementById('auth-role-selector').classList.add('hidden-view');
+            }
+        }
+
+        function setTempRole(role) {
+            tempSelectedRole = role;
+            if (role === 'student') {
+                document.getElementById('role-btn-student').className = "flex-1 p-2 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-700 font-bold text-sm";
+                document.getElementById('role-btn-teacher').className = "flex-1 p-2 rounded-xl border-2 border-rose-200 bg-white text-rose-400 font-bold text-sm";
+            } else {
+                document.getElementById('role-btn-teacher').className = "flex-1 p-2 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-700 font-bold text-sm";
+                document.getElementById('role-btn-student').className = "flex-1 p-2 rounded-xl border-2 border-rose-200 bg-white text-rose-400 font-bold text-sm";
+            }
+        }
+
+        function mockLogin() {
+            // Fake a successful login
+            currentUser = {
+                role: isSignUpMode ? tempSelectedRole : 'student' // default to student for mock
+            };
+            
+            // Update Nav UI
+            document.getElementById('nav-login-btn').classList.add('hidden-view');
+            document.getElementById('nav-dash-btn').classList.remove('hidden-view');
+            
+            // Route them to their dashboard!
+            routeDashboard();
+        }
+
+        function mockLogout() {
+            currentUser = null;
+            document.getElementById('nav-dash-btn').classList.add('hidden-view');
+            document.getElementById('nav-login-btn').classList.remove('hidden-view');
+            showView('view-home');
+        }
+
+        function routeDashboard() {
+            if (!currentUser) {
+                showView('view-auth');
+            } else if (currentUser.role === 'teacher') {
+                showView('view-teacher');
+            } else {
+                showView('view-stats');
+            }
+        }
+
+
+        // --- ENGINE STATE ---
         let currentGrade = null;
         let currentTopic = null;
-        
-        let currentVocabList = []; // This will dynamically hold G1 or G2
+        let currentVocabList = [];
         let quizPool = [];
         let currentQuestionIndex = 0;
         let score = 0;
         let roundHistory = []; 
         const totalQuestions = 12;
 
-        // --- 2. NAVIGATION ---
         function showView(viewId) {
-            document.getElementById('view-home').classList.add('hidden-view');
-            document.getElementById('view-chapters').classList.add('hidden-view');
-            document.getElementById('view-practice').classList.add('hidden-view');
-            document.getElementById('view-results').classList.add('hidden-view');
+            // Hide all views
+            ['view-home', 'view-chapters', 'view-practice', 'view-results', 'view-auth', 'view-stats', 'view-teacher'].forEach(id => {
+                document.getElementById(id).classList.add('hidden-view');
+            });
             
             const activeView = document.getElementById(viewId);
             activeView.classList.remove('hidden-view');
             
+            // Re-trigger animation
             activeView.style.animation = 'none';
             activeView.offsetHeight; 
             activeView.style.animation = null; 
@@ -233,8 +396,9 @@
             
             syllabusChapters.forEach(topic => {
                 if (topic.isReady) {
+                    const safeTitle = topic.title.replace(/'/g, "\\'");
                     html += `
-                    <button onclick="startPractice('${topic.title}')" class="btn-3d btn-menu p-5 flex items-center justify-between group">
+                    <button onclick="startPractice('${safeTitle}')" class="btn-3d btn-menu p-5 flex items-center justify-between group">
                         <span class="text-lg font-black uppercase tracking-tight">${topic.title}</span>
                         <span class="text-rose-300 font-black group-hover:translate-x-1 transition-transform text-xl">→</span>
                     </button>`;
@@ -251,27 +415,30 @@
             showView('view-chapters');
         }
 
-        // --- 3. QUIZ ENGINE ---
         function startPractice(topicName) {
-    currentTopic = topicName;
-    
-    // Select question pool dynamically based on Grade selection
-    if (currentGrade === 1) {
-        currentVocabList = gradeOneVocab;
-    } else if (currentGrade === 2) {
-        currentVocabList = gradeTwoVocab;
-    } else if (currentGrade === 3) {
-        currentVocabList = gradeThreeVocab;
-    }
-    
-    quizPool = [...currentVocabList].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
-    currentQuestionIndex = 0;
-    score = 0;
-    roundHistory = [];
-    
-    showView('view-practice');
-    loadNextQuestion();
-}
+            currentTopic = topicName;
+            
+            if (currentGrade === 1) {
+                currentVocabList = gradeOneVocab;
+            } else if (currentGrade === 2) {
+                currentVocabList = gradeTwoVocab;
+            } else if (currentGrade === 3) {
+                currentVocabList = gradeThreeVocab;
+            }
+            
+            if (!currentVocabList || currentVocabList.length === 0) {
+                alert("Question bank loading error. Please check data.js!");
+                return;
+            }
+
+            quizPool = [...currentVocabList].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
+            currentQuestionIndex = 0;
+            score = 0;
+            roundHistory = [];
+            
+            showView('view-practice');
+            loadNextQuestion();
+        }
 
         function loadNextQuestion() {
             if (currentQuestionIndex >= totalQuestions) {
@@ -280,19 +447,16 @@
             }
 
             document.getElementById('quiz-next-container').classList.add('hidden-view');
-
             const currentQ = quizPool[currentQuestionIndex];
             
             document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1} / ${totalQuestions}`;
             document.getElementById('quiz-prompt').innerHTML = currentQ.term; 
 
-            // Pull wrong answers from the ACTIVE vocabulary list, matched by category
             let incorrectAnswers = currentVocabList
                 .filter(v => v.answer !== currentQ.answer && v.category === currentQ.category)
                 .map(v => v.answer)
                 .sort(() => 0.5 - Math.random());
                 
-            // Smart Fallback
             if (incorrectAnswers.length < 3) {
                 let extraAnswers = currentVocabList
                     .filter(v => v.answer !== currentQ.answer && v.category !== currentQ.category)
@@ -306,14 +470,13 @@
 
             const optionsContainer = document.getElementById('quiz-options');
             optionsContainer.innerHTML = options.map(opt => `
-                <button onclick="checkAnswer(this, '${escape(opt) === escape(currentQ.answer)}')" class="btn-3d btn-answer w-full p-4 text-left text-base font-bold">
+                <button onclick="checkAnswer(this, '${encodeURIComponent(opt) === encodeURIComponent(currentQ.answer)}')" class="btn-3d btn-answer w-full p-4 text-left text-base font-bold">
                     ${opt}
                 </button>
             `).join('');
         }
 
-        function checkAnswer(btnElement, isCorrectString) {
-            const isCorrect = isCorrectString === 'true';
+        function checkAnswer(btnElement, isCorrect) {
             const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
             const currentQ = quizPool[currentQuestionIndex];
 
@@ -338,7 +501,6 @@
                 btnElement.classList.add('btn-wrong');
             }
 
-            // FIX: Instead of a timer, we show the "Continue" button!
             document.getElementById('quiz-next-container').classList.remove('hidden-view');
         }
 
@@ -347,7 +509,6 @@
             loadNextQuestion();
         }
 
-        // --- 4. RESULTS & RECAP ---
         function showResults() {
             document.getElementById('result-score').innerText = `${score} / ${totalQuestions}`;
             const accuracy = Math.round((score / totalQuestions) * 100);
