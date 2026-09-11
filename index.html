@@ -628,6 +628,28 @@
         }
 
         function showResults() {
+
+            if (currentUser && currentUser.role === 'student') {
+                try {
+                    // 1. Save the overall round
+                    const { data: sessionData, error: sessionErr } = await _supabase
+                        .from('quiz_sessions')
+                        .insert([{ student_id: currentUser.id, grade_tested: currentGrade, score: score, total_questions: totalQuestions }])
+                        .select()
+                        .single();
+
+                    if (sessionData && !sessionErr) {
+                        // 2. Save the analytics per question
+                        const analyticsPayload = roundHistory.map(item => ({
+                            session_id: sessionData.id,
+                            student_id: currentUser.id,
+                            question_id: item.id,
+                            is_correct: item.isCorrect
+                        }));
+                        await _supabase.from('answer_analytics').insert(analyticsPayload);
+                    }
+                } catch (err) { console.error("Analytics save error:", err); }
+            }
             document.getElementById('result-score').innerText = `${score} / ${totalQuestions}`;
             const accuracy = Math.round((score / totalQuestions) * 100);
             document.getElementById('result-percent').innerText = `${accuracy}% Accuracy`;
