@@ -123,7 +123,7 @@
     </div>
 
 
-    <!-- VIEW: AUTH / LOGIN / SIGNUP -->
+   <!-- VIEW: AUTH / LOGIN / SIGNUP -->
     <div id="view-auth" class="w-full max-w-md hidden-view animate-slide-in">
         <button onclick="showView('view-home')" class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition">
             <span class="mr-2 text-lg">←</span> Back to Home
@@ -132,8 +132,13 @@
         <div class="card-fun p-8">
             <h2 id="auth-title" class="text-3xl font-black text-rose-600 tracking-tight uppercase mb-6">Log In</h2>
             <div class="flex flex-col gap-4">
-                <input type="text" placeholder="Username or Email" class="input-fun">
-                <input type="password" placeholder="Password" class="input-fun">
+                
+                <!-- NEW: Email Field (Only visible during Sign Up) -->
+                <input type="email" id="auth-email" placeholder="Parent's Email" class="input-fun hidden-view">
+                
+                <!-- Username & Password -->
+                <input type="text" id="auth-username" placeholder="Username" class="input-fun">
+                <input type="password" id="auth-password" placeholder="Password" class="input-fun">
                 
                 <div id="auth-role-selector" class="hidden-view mt-2">
                     <p class="text-xs font-bold text-rose-400 uppercase tracking-widest mb-2">I am a:</p>
@@ -162,8 +167,8 @@
             <span class="mr-2 text-lg">←</span> Back to Home
         </button>
 
-        <div class="mb-6">
-            <h1 class="text-4xl font-black text-rose-600 tracking-tight uppercase">My Stats 📈</h1>
+       <div class="mb-6">
+            <h1 id="student-dash-title" class="text-4xl font-black text-rose-600 tracking-tight uppercase">My Stats 📈</h1>
             <p class="text-sm font-bold text-rose-400 mt-1 tracking-widest uppercase">Keep up the good work!</p>
         </div>
 
@@ -191,7 +196,7 @@
         </button>
 
         <div class="mb-6">
-            <h1 class="text-3xl font-black text-rose-600 tracking-tight uppercase">Teacher Portal 🍎</h1>
+            <h1 id="teacher-dash-title" class="text-3xl font-black text-rose-600 tracking-tight uppercase">Teacher Portal 🍎</h1>
             <p class="text-sm font-bold text-rose-400 mt-1 tracking-widest uppercase">Manage your students</p>
         </div>
 
@@ -322,10 +327,13 @@
             document.getElementById('auth-submit-text').innerText = isSignUpMode ? "Sign Up ➔" : "Log In ➔";
             document.getElementById('auth-toggle-btn').innerText = isSignUpMode ? "Already have an account? Log in" : "Don't have an account? Sign up";
             
+            // Toggle visibility of the Email field and Role selector
             if(isSignUpMode) {
                 document.getElementById('auth-role-selector').classList.remove('hidden-view');
+                document.getElementById('auth-email').classList.remove('hidden-view');
             } else {
                 document.getElementById('auth-role-selector').classList.add('hidden-view');
+                document.getElementById('auth-email').classList.add('hidden-view');
             }
         }
 
@@ -341,7 +349,18 @@
         }
 
         function mockLogin() {
-            currentUser = { role: isSignUpMode ? tempSelectedRole : 'student' };
+            const usernameInput = document.getElementById('auth-username').value.trim();
+            
+            if (!usernameInput) {
+                alert("Please enter a username!");
+                return;
+            }
+
+            currentUser = { 
+                username: usernameInput,
+                role: isSignUpMode ? tempSelectedRole : 'student' 
+            };
+            
             document.getElementById('nav-login-btn').classList.add('hidden-view');
             document.getElementById('nav-dash-btn').classList.remove('hidden-view');
             routeDashboard();
@@ -355,11 +374,16 @@
         }
 
         function routeDashboard() {
-            if (!currentUser) showView('view-auth');
-            else if (currentUser.role === 'teacher') showView('view-teacher');
-            else showView('view-stats');
+            if (!currentUser) {
+                showView('view-auth');
+            } else if (currentUser.role === 'teacher') {
+                document.getElementById('teacher-dash-title').innerText = `${currentUser.username}'s Portal 🍎`;
+                showView('view-teacher');
+            } else {
+                document.getElementById('student-dash-title').innerText = `${currentUser.username}'s Stats 📈`;
+                showView('view-stats');
+            }
         }
-
         // --- ENGINE STATE ---
         let currentGrade = null;
         let currentTopic = null;
