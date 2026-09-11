@@ -597,6 +597,8 @@
             const currentQ = quizPool[currentQuestionIndex];
 
             roundHistory.push({
+                id: currentQ.id,                 // NEW: Save the DB ID
+                category: currentQ.category,     // NEW: Save the category
                 term: currentQ.term,
                 answer: currentQ.answer,
                 isCorrect: isCorrect
