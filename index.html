@@ -698,8 +698,8 @@
             loadNextQuestion();
         }
 
-        function showResults() {
-
+        async function showResults() {
+            // NEW: Upload stats to Supabase if logged in
             if (currentUser && currentUser.role === 'student') {
                 try {
                     // 1. Save the overall round
@@ -721,6 +721,7 @@
                     }
                 } catch (err) { console.error("Analytics save error:", err); }
             }
+
             document.getElementById('result-score').innerText = `${score} / ${totalQuestions}`;
             const accuracy = Math.round((score / totalQuestions) * 100);
             document.getElementById('result-percent').innerText = `${accuracy}% Accuracy`;
