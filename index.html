@@ -455,10 +455,10 @@
                 .select('*')
                 .eq('student_id', currentUser.id);
 
-            // 2. Fetch Detailed Analytics (Using a JOIN to grab the category!)
+            // 2. Fetch Detailed Analytics (Using a JOIN to grab the new TOPIC column!)
             const { data: analytics } = await _supabase
                 .from('answer_analytics')
-                .select('is_correct, questions(category)')
+                .select('is_correct, questions(topic)')
                 .eq('student_id', currentUser.id);
 
             if (!sessions || sessions.length === 0) {
@@ -490,11 +490,11 @@
             }
             document.getElementById('stats-grades').innerHTML = gradesHtml;
 
-            // Calculate Category Breakdown
+            // Calculate Category Breakdown (Now grouping by 'topic' instead of 'category')
             if (analytics) {
                 let catStats = {};
                 analytics.forEach(a => {
-                    let cat = a.questions.category;
+                    let cat = a.questions.topic; // <-- THIS IS THE MAGIC CHANGE
                     if (!catStats[cat]) catStats[cat] = { correct: 0, total: 0 };
                     catStats[cat].total++;
                     if (a.is_correct) catStats[cat].correct++;
