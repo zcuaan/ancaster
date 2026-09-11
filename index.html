@@ -8,6 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
+    <!-- 1. The Supabase Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
         body { 
             font-family: 'Inter', sans-serif; 
@@ -102,12 +105,10 @@
                 <span class="text-xl font-black uppercase tracking-tight">Grade 1</span>
                 <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
             </button>
-            
             <button onclick="selectGrade(2)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
                 <span class="text-xl font-black uppercase tracking-tight">Grade 2</span>
                 <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
             </button>
-            
             <button onclick="selectGrade(3)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
                 <span class="text-xl font-black uppercase tracking-tight">Grade 3</span>
                 <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
@@ -130,13 +131,10 @@
 
         <div class="card-fun p-8">
             <h2 id="auth-title" class="text-3xl font-black text-rose-600 tracking-tight uppercase mb-6">Log In</h2>
-            
-            <!-- Auth Form (Mocked for now) -->
             <div class="flex flex-col gap-4">
                 <input type="text" placeholder="Username or Email" class="input-fun">
                 <input type="password" placeholder="Password" class="input-fun">
                 
-                <!-- Role Selector (Only shows on Sign Up) -->
                 <div id="auth-role-selector" class="hidden-view mt-2">
                     <p class="text-xs font-bold text-rose-400 uppercase tracking-widest mb-2">I am a:</p>
                     <div class="flex gap-2">
@@ -149,7 +147,6 @@
                     <span id="auth-submit-text">Log In ➔</span>
                 </button>
             </div>
-
             <div class="text-center mt-6">
                 <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-sm font-bold text-rose-400 hover:text-rose-600 transition">
                     Don't have an account? Sign up
@@ -198,7 +195,6 @@
             <p class="text-sm font-bold text-rose-400 mt-1 tracking-widest uppercase">Manage your students</p>
         </div>
 
-        <!-- Add Student Widget -->
         <div class="card-fun p-6 mb-6">
             <p class="text-sm font-bold text-rose-600 uppercase tracking-widest mb-3">Add Student</p>
             <div class="flex gap-2">
@@ -209,7 +205,6 @@
             </div>
         </div>
 
-        <!-- Student List -->
         <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">My Class</h3>
         <div class="flex flex-col gap-3 mb-8">
             <div class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center">
@@ -255,7 +250,7 @@
 
         <div class="card-fun p-6 text-center flex flex-col items-center justify-center min-h-[160px] mb-6">
             <div id="quiz-prompt" class="text-3xl font-black text-rose-600 tracking-tight leading-tight flex items-center justify-center min-h-[50px] italic">...</div>
-            <p class="text-sm font-bold text-rose-400 uppercase tracking-widest mt-3">means:</p>
+            <p class="text-sm font-bold text-rose-400 uppercase tracking-widest mt-3" id="quiz-means-text">means:</p>
         </div>
 
         <div id="quiz-options" class="grid grid-cols-1 gap-4">
@@ -295,14 +290,30 @@
         </div>
     </div>
 
-    <!-- APP LOGIC -->
-    <script src="data.js"></script>
     <script>
-        // --- AUTH MOCK STATE ---
+        // ==========================================
+        // 2. CONNECT TO SUPABASE
+        // ==========================================
+        const supabaseUrl = 'https://fykvfvmkhghhsnrrihug.supabase.co';
+        const supabaseKey = 'sb_publishable_TIkWQ74XFKH3tfNFrm77EQ_pz5Dca-p';
+        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // ==========================================
+        // 3. SYLLABUS MENU DATA 
+        // ==========================================
+        const syllabusChapters = [ 
+            { title: "Rhythm", isReady: false },
+            { title: "Pitch & transposition", isReady: false },
+            { title: "Keys & scales", isReady: false },
+            { title: "Intervals", isReady: false },
+            { title: "Tonic triads", isReady: false },
+            { title: "Terms & signs", isReady: true },
+            { title: "Music in context", isReady: false }
+        ];
+
+        // --- AUTH MOCK STATE (We will wire this to Supabase later) ---
         let isSignUpMode = false;
-        let tempSelectedRole = 'student'; // 'student' or 'teacher'
-        
-        // This simulates our logged in user!
+        let tempSelectedRole = 'student'; 
         let currentUser = null; 
         
         function toggleAuthMode() {
@@ -330,16 +341,9 @@
         }
 
         function mockLogin() {
-            // Fake a successful login
-            currentUser = {
-                role: isSignUpMode ? tempSelectedRole : 'student' // default to student for mock
-            };
-            
-            // Update Nav UI
+            currentUser = { role: isSignUpMode ? tempSelectedRole : 'student' };
             document.getElementById('nav-login-btn').classList.add('hidden-view');
             document.getElementById('nav-dash-btn').classList.remove('hidden-view');
-            
-            // Route them to their dashboard!
             routeDashboard();
         }
 
@@ -351,15 +355,10 @@
         }
 
         function routeDashboard() {
-            if (!currentUser) {
-                showView('view-auth');
-            } else if (currentUser.role === 'teacher') {
-                showView('view-teacher');
-            } else {
-                showView('view-stats');
-            }
+            if (!currentUser) showView('view-auth');
+            else if (currentUser.role === 'teacher') showView('view-teacher');
+            else showView('view-stats');
         }
-
 
         // --- ENGINE STATE ---
         let currentGrade = null;
@@ -372,15 +371,11 @@
         const totalQuestions = 12;
 
         function showView(viewId) {
-            // Hide all views
             ['view-home', 'view-chapters', 'view-practice', 'view-results', 'view-auth', 'view-stats', 'view-teacher'].forEach(id => {
                 document.getElementById(id).classList.add('hidden-view');
             });
-            
             const activeView = document.getElementById(viewId);
             activeView.classList.remove('hidden-view');
-            
-            // Re-trigger animation
             activeView.style.animation = 'none';
             activeView.offsetHeight; 
             activeView.style.animation = null; 
@@ -415,29 +410,51 @@
             showView('view-chapters');
         }
 
-        function startPractice(topicName) {
+        // ==========================================
+        // 4. THE ASYNC DATABASE FETCH
+        // ==========================================
+        async function startPractice(topicName) {
             currentTopic = topicName;
             
-            if (currentGrade === 1) {
-                currentVocabList = gradeOneVocab;
-            } else if (currentGrade === 2) {
-                currentVocabList = gradeTwoVocab;
-            } else if (currentGrade === 3) {
-                currentVocabList = gradeThreeVocab;
-            }
-            
-            if (!currentVocabList || currentVocabList.length === 0) {
-                alert("Question bank loading error. Please check data.js!");
-                return;
-            }
-
-            quizPool = [...currentVocabList].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
-            currentQuestionIndex = 0;
-            score = 0;
-            roundHistory = [];
-            
+            // Show loading UI
+            document.getElementById('quiz-progress').innerText = "Loading...";
+            document.getElementById('quiz-prompt').innerHTML = `<span class="animate-pulse text-xl">Fetching questions...</span>`;
+            document.getElementById('quiz-options').innerHTML = '';
+            document.getElementById('quiz-next-container').classList.add('hidden-view');
+            document.getElementById('quiz-means-text').classList.add('hidden-view');
             showView('view-practice');
-            loadNextQuestion();
+
+            try {
+                // Fetch all questions for the current grade AND BELOW (Cumulative logic)
+                const { data, error } = await _supabase
+                    .from('questions')
+                    .select('*')
+                    .lte('grade', currentGrade); // "Less than or equal to" currentGrade!
+
+                if (error) throw error;
+                
+                currentVocabList = data;
+
+                if (!currentVocabList || currentVocabList.length === 0) {
+                    alert("No questions found! Did you run the SQL insert in Supabase?");
+                    showView('view-chapters');
+                    return;
+                }
+
+                // Shuffle the returned data
+                quizPool = [...currentVocabList].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
+                currentQuestionIndex = 0;
+                score = 0;
+                roundHistory = [];
+                
+                document.getElementById('quiz-means-text').classList.remove('hidden-view');
+                loadNextQuestion();
+
+            } catch (err) {
+                console.error("Supabase Error:", err);
+                alert("Could not connect to the database.");
+                showView('view-chapters');
+            }
         }
 
         function loadNextQuestion() {
@@ -447,11 +464,13 @@
             }
 
             document.getElementById('quiz-next-container').classList.add('hidden-view');
+
             const currentQ = quizPool[currentQuestionIndex];
             
             document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1} / ${totalQuestions}`;
             document.getElementById('quiz-prompt').innerHTML = currentQ.term; 
 
+            // Find distractors dynamically from the Supabase data
             let incorrectAnswers = currentVocabList
                 .filter(v => v.answer !== currentQ.answer && v.category === currentQ.category)
                 .map(v => v.answer)
