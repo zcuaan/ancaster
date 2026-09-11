@@ -316,18 +316,44 @@
             { title: "Music in context", isReady: false }
         ];
 
-        // --- AUTH MOCK STATE (We will wire this to Supabase later) ---
+       // --- REAL SUPABASE AUTH STATE ---
         let isSignUpMode = false;
         let tempSelectedRole = 'student'; 
         let currentUser = null; 
         
+        // 1. Check if they are already logged in when they open the app
+        async function checkUserStatus() {
+            const { data: { session } } = await _supabase.auth.getSession();
+            if (session) {
+                await loadUserProfile(session.user.id);
+            }
+        }
+        checkUserStatus(); // Run immediately on load
+
+        // 2. Fetch their custom profile data (Username & Role)
+        async function loadUserProfile(userId) {
+            const { data, error } = await _supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', userId)
+                .single();
+                
+            if (data) {
+                currentUser = data;
+                document.getElementById('nav-login-btn').classList.add('hidden-view');
+                document.getElementById('nav-dash-btn').classList.remove('hidden-view');
+                if (!document.getElementById('view-auth').classList.contains('hidden-view')) {
+                    routeDashboard(); // Redirect if they were on the login screen
+                }
+            }
+        }
+
         function toggleAuthMode() {
             isSignUpMode = !isSignUpMode;
             document.getElementById('auth-title').innerText = isSignUpMode ? "Create Account" : "Log In";
             document.getElementById('auth-submit-text').innerText = isSignUpMode ? "Sign Up ➔" : "Log In ➔";
             document.getElementById('auth-toggle-btn').innerText = isSignUpMode ? "Already have an account? Log in" : "Don't have an account? Sign up";
             
-            // Toggle visibility of the Email field and Role selector
             if(isSignUpMode) {
                 document.getElementById('auth-role-selector').classList.remove('hidden-view');
                 document.getElementById('auth-email').classList.remove('hidden-view');
@@ -348,28 +374,71 @@
             }
         }
 
-        function mockLogin() {
-            const usernameInput = document.getElementById('auth-username').value.trim();
+        // 3. The Real Auth Submission
+        async function mockLogin() { // Kept the function name so the HTML button still works!
+            const emailInput = document.getElementById('auth-email').value.trim();
+            const usernameInput = document.getElementById('auth-username').value.trim().toLowerCase(); // lowercase to prevent login errors
+            const passwordInput = document.getElementById('auth-password').value;
             
-            if (!usernameInput) {
-                alert("Please enter a username!");
+            if (!usernameInput || !passwordInput) {
+                alert("Please enter a username and password!");
                 return;
             }
 
-            currentUser = { 
-                username: usernameInput,
-                role: isSignUpMode ? tempSelectedRole : 'student' 
-            };
+            // The secret trick: Make a fake email out of their username for Supabase Auth
+            const internalAuthEmail = `${usernameInput}@theoryqs.app`;
             
-            document.getElementById('nav-login-btn').classList.add('hidden-view');
-            document.getElementById('nav-dash-btn').classList.remove('hidden-view');
-            routeDashboard();
+            document.getElementById('auth-submit-text').innerText = "Loading...";
+
+            if (isSignUpMode) {
+                if (!emailInput) { alert("Parents email is required for sign up!"); document.getElementById('auth-submit-text').innerText = "Sign Up ➔"; return; }
+                
+                // A. Create the Auth User
+                const { data: authData, error: authError } = await _supabase.auth.signUp({
+                    email: internalAuthEmail,
+                    password: passwordInput,
+                });
+
+                if (authError) { alert(authError.message); document.getElementById('auth-submit-text').innerText = "Sign Up ➔"; return; }
+
+                // B. Save the real details to our Profiles table
+                const { error: profileError } = await _supabase.from('profiles').insert([
+                    { id: authData.user.id, username: usernameInput, role: tempSelectedRole }
+                ]);
+
+                if (profileError) { alert("Error saving profile: " + profileError.message); }
+                else { alert("Account created successfully!"); }
+
+            } else {
+                // LOG IN MODE
+                const { error } = await _supabase.auth.signInWithPassword({
+                    email: internalAuthEmail,
+                    password: passwordInput,
+                });
+
+                if (error) { alert("Incorrect username or password."); document.getElementById('auth-submit-text').innerText = "Log In ➔"; return; }
+            }
+
+            // If successful (either login or signup), fetch profile and redirect
+            const { data: { session } } = await _supabase.auth.getSession();
+            if (session) {
+                await loadUserProfile(session.user.id);
+            }
+            
+            // Reset button text
+            document.getElementById('auth-submit-text').innerText = isSignUpMode ? "Sign Up ➔" : "Log In ➔";
         }
 
-        function mockLogout() {
+        async function mockLogout() {
+            await _supabase.auth.signOut();
             currentUser = null;
             document.getElementById('nav-dash-btn').classList.add('hidden-view');
             document.getElementById('nav-login-btn').classList.remove('hidden-view');
+            
+            // Clear inputs
+            document.getElementById('auth-username').value = '';
+            document.getElementById('auth-password').value = '';
+            
             showView('view-home');
         }
 
