@@ -590,8 +590,9 @@
                 // Fetch all questions for the current grade AND BELOW (Cumulative logic)
                 const { data, error } = await _supabase
                     .from('questions')
-                    .select('*')
-                    .lte('grade', currentGrade); // "Less than or equal to" currentGrade!
+.select('*')
+.eq('topic', topicName)
+.lte('grade', currentGrade);
 
                 if (error) throw error;
                 
