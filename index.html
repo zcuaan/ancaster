@@ -167,27 +167,31 @@
             <span class="mr-2 text-lg">←</span> Back to Home
         </button>
 
-       <div class="mb-6">
-            <h1 id="student-dash-title" class="text-4xl font-black text-rose-600 tracking-tight uppercase">My Stats 📈</h1>
-            <p class="text-sm font-bold text-rose-400 mt-1 tracking-widest uppercase">Keep up the good work!</p>
+        <div class="mb-6 card-fun p-6 text-center">
+            <h1 id="student-dash-title" class="text-3xl font-black text-rose-600 tracking-tight uppercase">My Stats 📈</h1>
+            <p class="text-sm font-bold text-rose-400 mt-2 tracking-widest uppercase">Overall Accuracy: <span id="stat-overall" class="text-emerald-500 font-black text-xl ml-1">--</span></p>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="card-fun p-6 text-center">
-                <p class="text-xs font-bold text-rose-400 uppercase tracking-widest mb-1">Rounds</p>
-                <p class="text-4xl font-black text-rose-600">14</p>
-            </div>
-            <div class="card-fun p-6 text-center">
-                <p class="text-xs font-bold text-rose-400 uppercase tracking-widest mb-1">Accuracy</p>
-                <p class="text-4xl font-black text-emerald-500">82%</p>
+        <div class="text-left mb-6">
+            <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">Strength by Grade</h3>
+            <div id="stats-grades" class="space-y-2">
+                <!-- Dynamically injected -->
+                <p class="text-sm font-bold text-rose-300">Loading...</p>
             </div>
         </div>
 
-        <button onclick="mockLogout()" class="text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition w-full text-center mt-4">
+        <div class="text-left mb-8">
+            <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">Strength by Category</h3>
+            <div id="stats-categories" class="space-y-2">
+                <!-- Dynamically injected -->
+                <p class="text-sm font-bold text-rose-300">Loading...</p>
+            </div>
+        </div>
+
+        <button onclick="mockLogout()" class="text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition w-full text-center">
             Log Out
         </button>
     </div>
-
 
     <!-- VIEW: TEACHER DASHBOARD -->
     <div id="view-teacher" class="w-full max-w-md hidden-view animate-slide-in">
