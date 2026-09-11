@@ -446,7 +446,71 @@
             showView('view-home');
         }
 
-        function routeDashboard() {
+        async function loadStudentStats() {
+            if (!currentUser) return;
+            
+            // 1. Fetch Sessions
+            const { data: sessions } = await _supabase
+                .from('quiz_sessions')
+                .select('*')
+                .eq('student_id', currentUser.id);
+
+            // 2. Fetch Detailed Analytics (Using a JOIN to grab the category!)
+            const { data: analytics } = await _supabase
+                .from('answer_analytics')
+                .select('is_correct, questions(category)')
+                .eq('student_id', currentUser.id);
+
+            if (!sessions || sessions.length === 0) {
+                document.getElementById('stat-overall').innerText = "0%";
+                document.getElementById('stats-grades').innerHTML = "<p class='text-sm font-bold text-rose-300'>No rounds played yet.</p>";
+                document.getElementById('stats-categories').innerHTML = "<p class='text-sm font-bold text-rose-300'>Play a round to see your strengths!</p>";
+                return;
+            }
+
+            // Calculate Overall Accuracy & Grade Breakdown
+            let totalScore = 0; let totalQs = 0;
+            let gradeStats = {};
+            
+            sessions.forEach(s => {
+                totalScore += s.score;
+                totalQs += s.total_questions;
+                if (!gradeStats[s.grade_tested]) gradeStats[s.grade_tested] = { correct: 0, total: 0 };
+                gradeStats[s.grade_tested].correct += s.score;
+                gradeStats[s.grade_tested].total += s.total_questions;
+            });
+
+            document.getElementById('stat-overall').innerText = Math.round((totalScore / totalQs) * 100) + "%";
+
+            let gradesHtml = '';
+            for (const [grade, stats] of Object.entries(gradeStats)) {
+                let pct = Math.round((stats.correct / stats.total) * 100);
+                let color = pct >= 80 ? 'emerald-500' : (pct >= 60 ? 'amber-500' : 'rose-500');
+                gradesHtml += `<div class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center"><span class="font-bold text-rose-800">Grade ${grade}</span><span class="font-black text-${color}">${pct}%</span></div>`;
+            }
+            document.getElementById('stats-grades').innerHTML = gradesHtml;
+
+            // Calculate Category Breakdown
+            if (analytics) {
+                let catStats = {};
+                analytics.forEach(a => {
+                    let cat = a.questions.category;
+                    if (!catStats[cat]) catStats[cat] = { correct: 0, total: 0 };
+                    catStats[cat].total++;
+                    if (a.is_correct) catStats[cat].correct++;
+                });
+                
+                let catsHtml = '';
+                for (const [cat, stats] of Object.entries(catStats)) {
+                    let pct = Math.round((stats.correct / stats.total) * 100);
+                    let color = pct >= 80 ? 'emerald-500' : (pct >= 60 ? 'amber-500' : 'rose-500');
+                    catsHtml += `<div class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center"><span class="font-bold text-rose-800 capitalize">${cat}</span><span class="font-black text-${color}">${pct}%</span></div>`;
+                }
+                document.getElementById('stats-categories').innerHTML = catsHtml;
+            }
+        }
+
+        async function routeDashboard() {
             if (!currentUser) {
                 showView('view-auth');
             } else if (currentUser.role === 'teacher') {
@@ -454,6 +518,7 @@
                 showView('view-teacher');
             } else {
                 document.getElementById('student-dash-title').innerText = `${currentUser.username}'s Stats 📈`;
+                await loadStudentStats(); // <--- Add this line!
                 showView('view-stats');
             }
         }
