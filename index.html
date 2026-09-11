@@ -649,12 +649,16 @@
             incorrectAnswers = incorrectAnswers.slice(0, 3);
             let options = [...incorrectAnswers, currentQ.answer].sort(() => 0.5 - Math.random());
 
+            // FIX 1: We removed the quotes around the boolean and added a data-correct attribute!
             const optionsContainer = document.getElementById('quiz-options');
-            optionsContainer.innerHTML = options.map(opt => `
-                <button onclick="checkAnswer(this, '${encodeURIComponent(opt) === encodeURIComponent(currentQ.answer)}')" class="btn-3d btn-answer w-full p-4 text-left text-base font-bold">
-                    ${opt}
-                </button>
-            `).join('');
+            optionsContainer.innerHTML = options.map(opt => {
+                const isCorrect = opt === currentQ.answer;
+                return `
+                    <button onclick="checkAnswer(this, ${isCorrect})" data-correct="${isCorrect}" class="btn-3d btn-answer w-full p-4 text-left text-base font-bold">
+                        ${opt}
+                    </button>
+                `;
+            }).join('');
         }
 
         function checkAnswer(btnElement, isCorrect) {
@@ -662,8 +666,8 @@
             const currentQ = quizPool[currentQuestionIndex];
 
             roundHistory.push({
-                id: currentQ.id,                 // NEW: Save the DB ID
-                category: currentQ.category,     // NEW: Save the category
+                id: currentQ.id,                 
+                category: currentQ.category,     
                 term: currentQ.term,
                 answer: currentQ.answer,
                 isCorrect: isCorrect
@@ -671,7 +675,9 @@
             
             allBtns.forEach(b => {
                 b.disabled = true;
-                if(b.innerText.trim() === currentQ.answer.trim() && !isCorrect) {
+                
+                // FIX 2: We now check the data-correct attribute instead of innerText! Works perfectly on SVGs.
+                if (b.getAttribute('data-correct') === 'true' && !isCorrect) {
                     b.classList.add('btn-correct');
                     b.style.opacity = '0.5';
                 }
