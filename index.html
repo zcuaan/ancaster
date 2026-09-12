@@ -258,7 +258,7 @@
         </div>
 
         <div class="card-fun p-6 text-center flex flex-col items-center justify-center min-h-[160px] mb-6">
-            class="text-3xl font-black text-rose-600 tracking-tight leading-tight flex items-center justify-center min-h-[50px]">
+            <div id="quiz-prompt" class="text-3xl font-black text-rose-600 tracking-tight leading-tight flex items-center justify-center min-h-[50px]">...</div>
             <p class="text-sm font-bold text-rose-400 uppercase tracking-widest mt-3" id="quiz-means-text">means:</p>
         </div>
 
@@ -529,7 +529,8 @@
         let quizPool = [];
         let currentQuestionIndex = 0;
         let score = 0;
-        let roundHistory = []; 
+        let roundHistory = [];
+        let selectedIntervalNumber = null;
         const totalQuestions = 12;
 
         function showView(viewId) {
@@ -626,19 +627,29 @@
                 return;
             }
 
+            selectedIntervalNumber = null;
             document.getElementById('quiz-next-container').classList.add('hidden-view');
 
             const currentQ = quizPool[currentQuestionIndex];
-            
-            document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1} / ${totalQuestions}`;
-            document.getElementById('quiz-prompt').innerHTML = currentQ.term; 
 
-            // Find distractors dynamically from the Supabase data
+            document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1} / ${totalQuestions}`;
+            document.getElementById('quiz-prompt').innerHTML = currentQ.term;
+
+            // Intervals use a purpose-built answer UI instead of random multiple choice.
+            if (currentTopic === 'Intervals') {
+                document.getElementById('quiz-means-text').innerText = 'WHAT INTERVAL IS SHOWN?';
+                renderIntervalNumberButtons();
+                return;
+            }
+
+            // Default UI for Terms & signs and future standard multiple-choice topics.
+            document.getElementById('quiz-means-text').innerText = 'MEANS:';
+
             let incorrectAnswers = currentVocabList
                 .filter(v => v.answer !== currentQ.answer && v.category === currentQ.category)
                 .map(v => v.answer)
                 .sort(() => 0.5 - Math.random());
-                
+
             if (incorrectAnswers.length < 3) {
                 let extraAnswers = currentVocabList
                     .filter(v => v.answer !== currentQ.answer && v.category !== currentQ.category)
@@ -646,11 +657,11 @@
                     .sort(() => 0.5 - Math.random());
                 incorrectAnswers = [...incorrectAnswers, ...extraAnswers];
             }
-            
-            incorrectAnswers = incorrectAnswers.slice(0, 3);
+
+            // Deduplicate before taking the first 3 distractors.
+            incorrectAnswers = [...new Set(incorrectAnswers)].slice(0, 3);
             let options = [...incorrectAnswers, currentQ.answer].sort(() => 0.5 - Math.random());
 
-            // FIX 1: We removed the quotes around the boolean and added a data-correct attribute!
             const optionsContainer = document.getElementById('quiz-options');
             optionsContainer.innerHTML = options.map(opt => {
                 const isCorrect = opt === currentQ.answer;
@@ -660,6 +671,121 @@
                     </button>
                 `;
             }).join('');
+        }
+
+        function renderIntervalNumberButtons() {
+            const optionsContainer = document.getElementById('quiz-options');
+
+            const firstRow = [
+                ['2nd', '2nd'],
+                ['3rd', '3rd'],
+                ['4th', '4th'],
+                ['5th', '5th']
+            ];
+
+            const secondRow = [
+                ['6th', '6th'],
+                ['7th', '7th'],
+                ['octave', 'Octave']
+            ];
+
+            const buttonHtml = ([value, label]) => `
+                <button
+                    onclick="selectIntervalNumber(this, '${value}')"
+                    data-answer="${value}"
+                    class="btn-3d btn-answer p-3 text-center text-base font-black">
+                    ${label}
+                </button>
+            `;
+
+            optionsContainer.innerHTML = `
+                <div class="w-full">
+                    <div class="grid grid-cols-4 gap-2">
+                        ${firstRow.map(buttonHtml).join('')}
+                    </div>
+
+                    <div class="w-3/4 mx-auto grid grid-cols-3 gap-2 mt-3">
+                        ${secondRow.map(buttonHtml).join('')}
+                    </div>
+
+                    <p id="interval-feedback" class="hidden mt-5 text-center text-sm font-black"></p>
+                </div>
+            `;
+        }
+
+        function selectIntervalNumber(btnElement, number) {
+            const currentQ = quizPool[currentQuestionIndex];
+
+            // Grade 1 and Grade 2 questions only require the interval number.
+            // This checks the QUESTION grade rather than the selected grade because
+            // Grade 3 practice is cumulative and can still serve Grade 1/2 rows.
+            if (currentQ.grade < 3) {
+                submitIntervalAnswer(number, btnElement);
+                return;
+            }
+
+            // Grade 3: keep the chosen number, then ask for major/minor/perfect.
+            selectedIntervalNumber = number;
+
+            document.getElementById('quiz-means-text').innerText = 'WHAT TYPE IS IT?';
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = `
+                <div class="w-full">
+                    <div class="text-center mb-4">
+                        <span id="interval-number-pill" class="inline-flex items-center gap-2 bg-rose-100 text-rose-700 px-4 py-2 rounded-full font-black text-sm">
+                            <span>${number === 'octave' ? 'Octave' : number}</span> selected
+                            <button onclick="renderIntervalNumberButtons(); document.getElementById('quiz-means-text').innerText='WHAT INTERVAL IS SHOWN?'; selectedIntervalNumber=null;" class="text-rose-400 hover:text-rose-600" aria-label="Change interval number">×</button>
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="selectIntervalType(this, 'major')" data-type="major" class="btn-3d btn-answer p-3 text-center font-black">Major</button>
+                        <button onclick="selectIntervalType(this, 'minor')" data-type="minor" class="btn-3d btn-answer p-3 text-center font-black">Minor</button>
+                        <button onclick="selectIntervalType(this, 'perfect')" data-type="perfect" class="btn-3d btn-answer p-3 text-center font-black">Perfect</button>
+                    </div>
+
+                    <p id="interval-feedback" class="hidden mt-5 text-center text-sm font-black"></p>
+                </div>
+            `;
+        }
+
+        function selectIntervalType(btnElement, type) {
+            if (!selectedIntervalNumber) return;
+            submitIntervalAnswer(`${type} ${selectedIntervalNumber}`, btnElement);
+        }
+
+        function submitIntervalAnswer(answer, btnElement) {
+            const currentQ = quizPool[currentQuestionIndex];
+            const normalisedAnswer = answer.trim().toLowerCase();
+            const normalisedCorrect = currentQ.answer.trim().toLowerCase();
+            const isCorrect = normalisedAnswer === normalisedCorrect;
+
+            roundHistory.push({
+                id: currentQ.id,
+                category: currentQ.category,
+                term: currentQ.term,
+                answer: currentQ.answer,
+                isCorrect: isCorrect
+            });
+
+            const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                btnElement.classList.add('btn-correct');
+                score++;
+            } else {
+                btnElement.classList.add('btn-wrong');
+
+                const feedback = document.getElementById('interval-feedback');
+                if (feedback) {
+                    feedback.innerText = `Correct answer: ${currentQ.answer}`;
+                    feedback.className = 'mt-5 text-center text-sm font-black text-emerald-600';
+                }
+            }
+
+            document.getElementById('quiz-next-container').classList.remove('hidden-view');
         }
 
         function checkAnswer(btnElement, isCorrect) {
