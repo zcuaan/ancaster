@@ -251,7 +251,7 @@
     <!-- VIEW 3: PRACTICE -->
     <div id="view-practice" class="w-full max-w-md hidden-view animate-slide-in">
         <div class="flex justify-between items-center mb-6">
-            <button onclick="showView('view-chapters')" class="text-rose-400 hover:text-rose-600 font-bold text-sm transition">
+            <button onclick="quitPractice()" class="text-rose-400 hover:text-rose-600 font-bold text-sm transition">
                 ✕ Quit
             </button>
             <div class="text-sm font-black text-rose-400 uppercase tracking-widest" id="quiz-progress">1 / 12</div>
@@ -531,6 +531,10 @@
         let score = 0;
         let roundHistory = [];
         let selectedIntervalNumber = null;
+
+        let currentSessionId = null;
+        let pendingSave = Promise.resolve();
+
         const totalQuestions = 12;
 
         function showView(viewId) {
@@ -618,6 +622,61 @@
                 console.error("Supabase Error:", err);
                 alert("Could not connect to the database.");
                 showView('view-chapters');
+            }
+        }
+
+
+        async function quitPractice() {
+            try {
+                await pendingSave;
+            } catch (err) {
+                console.error("Pending save error:", err);
+            }
+            showView('view-chapters');
+        }
+
+        async function saveAnswerProgress(currentQ, isCorrect) {
+            if (!currentUser || currentUser.role !== 'student') return;
+
+            try {
+                if (!currentSessionId) {
+                    const { data: sessionData, error: sessionError } = await _supabase
+                        .from('quiz_sessions')
+                        .insert([{
+                            student_id: currentUser.id,
+                            grade_tested: currentGrade,
+                            score: 0,
+                            total_questions: 0
+                        }])
+                        .select()
+                        .single();
+
+                    if (sessionError) throw sessionError;
+                    currentSessionId = sessionData.id;
+                }
+
+                const { error: analyticsError } = await _supabase
+                    .from('answer_analytics')
+                    .insert([{
+                        session_id: currentSessionId,
+                        student_id: currentUser.id,
+                        question_id: currentQ.id,
+                        is_correct: isCorrect
+                    }]);
+
+                if (analyticsError) throw analyticsError;
+
+                const { error: sessionUpdateError } = await _supabase
+                    .from('quiz_sessions')
+                    .update({
+                        score: score,
+                        total_questions: roundHistory.length
+                    })
+                    .eq('id', currentSessionId);
+
+                if (sessionUpdateError) throw sessionUpdateError;
+            } catch (err) {
+                console.error("Progress save error:", err);
             }
         }
 
@@ -755,7 +814,7 @@
             submitIntervalAnswer(`${type} ${selectedIntervalNumber}`, btnElement);
         }
 
-        function submitIntervalAnswer(answer, btnElement) {
+        async function submitIntervalAnswer(answer, btnElement) {
             const currentQ = quizPool[currentQuestionIndex];
             const normalisedAnswer = answer.trim().toLowerCase();
             const normalisedCorrect = currentQ.answer.trim().toLowerCase();
@@ -785,10 +844,13 @@
                 }
             }
 
+            pendingSave = saveAnswerProgress(currentQ, isCorrect);
+            await pendingSave;
+
             document.getElementById('quiz-next-container').classList.remove('hidden-view');
         }
 
-        function checkAnswer(btnElement, isCorrect) {
+        async function checkAnswer(btnElement, isCorrect) {
             const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
             const currentQ = quizPool[currentQuestionIndex];
 
@@ -817,6 +879,9 @@
                 btnElement.classList.add('btn-wrong');
             }
 
+            pendingSave = saveAnswerProgress(currentQ, isCorrect);
+            await pendingSave;
+
             document.getElementById('quiz-next-container').classList.remove('hidden-view');
         }
 
@@ -826,28 +891,7 @@
         }
 
         async function showResults() {
-            // NEW: Upload stats to Supabase if logged in
-            if (currentUser && currentUser.role === 'student') {
-                try {
-                    // 1. Save the overall round
-                    const { data: sessionData, error: sessionErr } = await _supabase
-                        .from('quiz_sessions')
-                        .insert([{ student_id: currentUser.id, grade_tested: currentGrade, score: score, total_questions: totalQuestions }])
-                        .select()
-                        .single();
-
-                    if (sessionData && !sessionErr) {
-                        // 2. Save the analytics per question
-                        const analyticsPayload = roundHistory.map(item => ({
-                            session_id: sessionData.id,
-                            student_id: currentUser.id,
-                            question_id: item.id,
-                            is_correct: item.isCorrect
-                        }));
-                        await _supabase.from('answer_analytics').insert(analyticsPayload);
-                    }
-                } catch (err) { console.error("Analytics save error:", err); }
-            }
+            // Progress was already saved answer-by-answer.
 
             document.getElementById('result-score').innerText = `${score} / ${totalQuestions}`;
             const accuracy = Math.round((score / totalQuestions) * 100);
