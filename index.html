@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TheoryQs 🎯</title>
+    <title>TheoryQs</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -168,7 +168,7 @@
         </button>
 
         <div class="mb-6 card-fun p-6 text-center">
-            <h1 id="student-dash-title" class="text-3xl font-black text-rose-600 tracking-tight uppercase">My Stats 📈</h1>
+            <h1 id="student-dash-title" class="text-3xl font-black text-rose-600 tracking-tight uppercase">My Stats</h1>
             <p class="text-sm font-bold text-rose-400 mt-2 tracking-widest uppercase">Overall Accuracy: <span id="stat-overall" class="text-emerald-500 font-black text-xl ml-1">--</span></p>
         </div>
 
@@ -517,7 +517,7 @@
                 document.getElementById('teacher-dash-title').innerText = `${currentUser.username}'s Portal 🍎`;
                 showView('view-teacher');
             } else {
-                document.getElementById('student-dash-title').innerText = `${currentUser.username}'s Stats 📈`;
+                document.getElementById('student-dash-title').innerText = `${currentUser.username}'s Stats`;
                 await loadStudentStats(); // <--- Add this line!
                 showView('view-stats');
             }
