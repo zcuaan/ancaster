@@ -610,13 +610,22 @@
                 }
 
                 // Shuffle the returned data
-                quizPool = [...currentVocabList].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
-                currentQuestionIndex = 0;
-                score = 0;
-                roundHistory = [];
-                
-                document.getElementById('quiz-means-text').classList.remove('hidden-view');
-                loadNextQuestion();
+quizPool = [...currentVocabList]
+    .sort(() => 0.5 - Math.random())
+    .slice(0, totalQuestions);
+
+// Reset the new round
+currentQuestionIndex = 0;
+score = 0;
+roundHistory = [];
+selectedIntervalNumber = null;
+
+// IMPORTANT: make sure each new quiz gets its own session
+currentSessionId = null;
+pendingSave = Promise.resolve();
+
+document.getElementById('quiz-means-text').classList.remove('hidden-view');
+loadNextQuestion();
 
             } catch (err) {
                 console.error("Supabase Error:", err);
