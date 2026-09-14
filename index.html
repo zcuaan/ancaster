@@ -2483,26 +2483,54 @@
     }
 
 
-    function renderQuestionPrompt(
-        currentQ
-    ) {
+    function renderQuestionPrompt(currentQ) {
 
-        if (
-            currentTopic ===
-            'Pitch & transposition'
-        ) {
-
-            return renderPitchPrompt(
-                currentQ
-            );
-
-        }
-
-
-        return currentQ.term;
-
+    if (currentTopic === 'Pitch & transposition') {
+        return renderPitchPrompt(currentQ);
     }
 
+    if (currentTopic === 'Keys & scales') {
+        return renderKeysScalesPrompt(currentQ);
+    }
+
+    return currentQ.term;
+}
+function renderKeysScalesPrompt(currentQ) {
+
+    if (currentQ.category === 'missing_tone_semitone') {
+        const parts = currentQ.term.split(':');
+        const title = parts[0] || 'Complete the major-scale pattern';
+        const pattern = parts[1] || '';
+
+        return `
+            <div class="w-full text-center">
+                <div class="text-3xl font-black text-rose-600 leading-tight">
+                    ${title}
+                </div>
+
+                <div class="mt-5 text-4xl font-black text-rose-600 tracking-tight">
+                    ${pattern.trim()}
+                </div>
+            </div>
+        `;
+    }
+
+    if (currentQ.category === 'tone_pattern') {
+        return `
+            <div class="w-full text-center">
+                <div class="text-3xl font-black text-rose-600 leading-tight">
+                    Build the major-scale pattern
+                </div>
+
+                <div class="mt-4 text-sm font-black text-rose-400 uppercase tracking-widest">
+                    Fill in all 7 steps below
+                </div>
+            </div>
+        `;
+    }
+
+    return currentQ.term;
+}
 
     // =========================================================
     // DEFAULT MULTIPLE CHOICE
