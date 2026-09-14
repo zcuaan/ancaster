@@ -4,60 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TheoryQs</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- 1. The Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+
     <style>
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #FFF5F1; 
-            color: #4C0519; 
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FFF5F1;
+            color: #4C0519;
         }
-        
-        .btn-3d { 
-            transition: transform 0.1s, box-shadow 0.1s; 
-            border-radius: 20px; 
+
+        .btn-3d {
+            transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s, border-color 0.15s;
+            border-radius: 20px;
             cursor: pointer;
             outline: none;
             -webkit-tap-highlight-color: transparent;
         }
-        
-        .btn-3d:active:not(:disabled) { 
-            transform: translateY(6px); 
-            box-shadow: 0 0px 0 0 transparent !important; 
+
+        .btn-3d:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 0 transparent !important;
         }
 
-        .btn-menu { background-color: #ffffff; border: 3px solid #FECDD3; box-shadow: 0 6px 0 0 #FDA4AF; color: #BE123C; }
-        .btn-menu:hover:not(:disabled) { background-color: #FFF1F2; }
-        
-        .btn-disabled { 
-            background-color: #F8FAFC; 
-            border: 3px solid #E2E8F0; 
-            box-shadow: 0 6px 0 0 #CBD5E1; 
-            color: #94A3B8; 
+        .btn-menu {
+            background-color: #ffffff;
+            border: 3px solid #FECDD3;
+            box-shadow: 0 6px 0 0 #FDA4AF;
+            color: #BE123C;
+        }
+
+        .btn-menu:hover:not(:disabled) {
+            background-color: #FFF1F2;
+        }
+
+        .btn-disabled {
+            background-color: #F8FAFC;
+            border: 3px solid #E2E8F0;
+            box-shadow: 0 6px 0 0 #CBD5E1;
+            color: #94A3B8;
             cursor: not-allowed;
         }
 
-        .btn-answer { background-color: #ffffff; border: 3px solid #FECDD3; box-shadow: 0 6px 0 0 #FDA4AF; color: #9F1239; }
-        .btn-answer:hover:not(:disabled) { background-color: #FFF1F2; }
-        
-        .btn-correct { background-color: #10B981 !important; border-color: #059669 !important; box-shadow: 0 6px 0 0 #047857 !important; color: white !important; }
-        .btn-wrong { background-color: #F43F5E !important; border-color: #BE123C !important; box-shadow: 0 6px 0 0 #9F1239 !important; color: white !important; }
-
-        .card-fun { 
-            background-color: #ffffff; 
-            border: 4px solid #FECDD3; 
-            border-radius: 24px; 
-            box-shadow: 0 8px 0 0 #FDA4AF; 
+        .btn-answer {
+            background-color: #ffffff;
+            border: 3px solid #FECDD3;
+            box-shadow: 0 6px 0 0 #FDA4AF;
+            color: #9F1239;
         }
 
-        .scrollbar-custom::-webkit-scrollbar { width: 8px; }
-        .scrollbar-custom::-webkit-scrollbar-track { background: #FFF1F2; border-radius: 10px; }
-        .scrollbar-custom::-webkit-scrollbar-thumb { background: #FDA4AF; border-radius: 10px; }
+        .btn-answer:hover:not(:disabled) {
+            background-color: #FFF1F2;
+        }
+
+        .btn-selected {
+            background-color: #FFE4E6 !important;
+            border-color: #FB7185 !important;
+            color: #9F1239 !important;
+        }
+
+        .btn-correct {
+            background-color: #10B981 !important;
+            border-color: #059669 !important;
+            box-shadow: 0 6px 0 0 #047857 !important;
+            color: white !important;
+        }
+
+        .btn-wrong {
+            background-color: #F43F5E !important;
+            border-color: #BE123C !important;
+            box-shadow: 0 6px 0 0 #9F1239 !important;
+            color: white !important;
+        }
+
+        .card-fun {
+            background-color: #ffffff;
+            border: 4px solid #FECDD3;
+            border-radius: 24px;
+            box-shadow: 0 8px 0 0 #FDA4AF;
+        }
 
         .input-fun {
             width: 100%;
@@ -68,872 +95,5830 @@
             font-weight: 600;
             color: #881337;
         }
-        .input-fun:focus { border-color: #FDA4AF; background-color: #FFF1F2; }
 
-        .hidden-view { display: none !important; }
-        
-        @keyframes slideIn { 
-            from { opacity: 0; transform: translateX(20px); } 
-            to { opacity: 1; transform: translateX(0); } 
+        .input-fun:focus {
+            border-color: #FDA4AF;
+            background-color: #FFF1F2;
         }
-        .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
+
+        .hidden-view {
+            display: none !important;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        .staff-wrap svg {
+            width: 100%;
+            max-width: 320px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col items-center justify-center p-6 overflow-x-hidden">
 
-    <!-- Top Nav / Account Bar -->
+    <!-- TOP NAV -->
     <div class="fixed top-0 left-0 w-full p-4 flex justify-end z-50">
-        <button id="nav-login-btn" onclick="showView('view-auth')" class="text-sm font-bold text-rose-500 hover:text-rose-700 bg-rose-100 px-4 py-2 rounded-full transition">
+
+        <button
+            id="nav-login-btn"
+            onclick="showView('view-auth')"
+            class="text-sm font-bold text-rose-500 hover:text-rose-700 bg-rose-100 px-4 py-2 rounded-full transition"
+        >
             Sign In
         </button>
-        <button id="nav-dash-btn" onclick="routeDashboard()" class="hidden-view text-sm font-bold text-white bg-rose-500 hover:bg-rose-600 px-4 py-2 rounded-full transition shadow-md">
+
+        <button
+            id="nav-dash-btn"
+            onclick="routeDashboard()"
+            class="hidden-view text-sm font-bold text-white bg-rose-500 hover:bg-rose-600 px-4 py-2 rounded-full transition shadow-md"
+        >
             My Dashboard
         </button>
+
     </div>
 
-    <!-- VIEW 1: HOME -->
+
+    <!-- HOME -->
     <div id="view-home" class="w-full max-w-md animate-slide-in">
+
         <div class="text-center mb-10 mt-8">
+
             <h1 class="text-5xl font-black text-rose-600 tracking-tight uppercase flex items-center justify-center gap-3">
                 🎯 TheoryQs
             </h1>
-            <p class="text-sm font-bold text-rose-400 tracking-widest uppercase mt-4">Master ABRSM Music Theory</p>
+
+            <p class="text-sm font-bold text-rose-400 tracking-widest uppercase mt-4">
+                Master ABRSM Music Theory
+            </p>
+
         </div>
+
 
         <div class="flex flex-col gap-4">
-            <button onclick="selectGrade(1)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
-                <span class="text-xl font-black uppercase tracking-tight">Grade 1</span>
-                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
+
+            <button
+                onclick="selectGrade(1)"
+                class="btn-3d btn-menu p-5 flex items-center justify-between group"
+            >
+                <span class="text-xl font-black uppercase tracking-tight">
+                    Grade 1
+                </span>
+
+                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">
+                    →
+                </span>
             </button>
-            <button onclick="selectGrade(2)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
-                <span class="text-xl font-black uppercase tracking-tight">Grade 2</span>
-                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
+
+
+            <button
+                onclick="selectGrade(2)"
+                class="btn-3d btn-menu p-5 flex items-center justify-between group"
+            >
+                <span class="text-xl font-black uppercase tracking-tight">
+                    Grade 2
+                </span>
+
+                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">
+                    →
+                </span>
             </button>
-            <button onclick="selectGrade(3)" class="btn-3d btn-menu p-5 flex items-center justify-between group">
-                <span class="text-xl font-black uppercase tracking-tight">Grade 3</span>
-                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">→</span>
+
+
+            <button
+                onclick="selectGrade(3)"
+                class="btn-3d btn-menu p-5 flex items-center justify-between group"
+            >
+                <span class="text-xl font-black uppercase tracking-tight">
+                    Grade 3
+                </span>
+
+                <span class="text-xl font-black opacity-40 group-hover:translate-x-1 transition-transform">
+                    →
+                </span>
             </button>
+
         </div>
+
 
         <div class="text-center mt-10">
-            <a href="syllabus.html" class="inline-block text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition">
+
+            <a
+                href="syllabus.html"
+                class="inline-block text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition"
+            >
                 View Full Syllabus →
             </a>
+
         </div>
+
     </div>
 
 
-   <!-- VIEW: AUTH / LOGIN / SIGNUP -->
-    <div id="view-auth" class="w-full max-w-md hidden-view animate-slide-in">
-        <button onclick="showView('view-home')" class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition">
-            <span class="mr-2 text-lg">←</span> Back to Home
+    <!-- AUTH -->
+    <div
+        id="view-auth"
+        class="w-full max-w-md hidden-view animate-slide-in"
+    >
+
+        <button
+            onclick="showView('view-home')"
+            class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition"
+        >
+            <span class="mr-2 text-lg">←</span>
+            Back to Home
         </button>
+
 
         <div class="card-fun p-8">
-            <h2 id="auth-title" class="text-3xl font-black text-rose-600 tracking-tight uppercase mb-6">Log In</h2>
+
+            <h2
+                id="auth-title"
+                class="text-3xl font-black text-rose-600 tracking-tight uppercase mb-6"
+            >
+                Log In
+            </h2>
+
+
             <div class="flex flex-col gap-4">
-                
-                <!-- NEW: Email Field (Only visible during Sign Up) -->
-                <input type="email" id="auth-email" placeholder="Parent's Email" class="input-fun hidden-view">
-                
-                <!-- Username & Password -->
-                <input type="text" id="auth-username" placeholder="Username" class="input-fun">
-                <input type="password" id="auth-password" placeholder="Password" class="input-fun">
-                
-                <div id="auth-role-selector" class="hidden-view mt-2">
-                    <p class="text-xs font-bold text-rose-400 uppercase tracking-widest mb-2">I am a:</p>
+
+                <input
+                    type="email"
+                    id="auth-email"
+                    placeholder="Parent's Email"
+                    class="input-fun hidden-view"
+                >
+
+                <input
+                    type="text"
+                    id="auth-username"
+                    placeholder="Username"
+                    class="input-fun"
+                >
+
+                <input
+                    type="password"
+                    id="auth-password"
+                    placeholder="Password"
+                    class="input-fun"
+                >
+
+
+                <div
+                    id="auth-role-selector"
+                    class="hidden-view mt-2"
+                >
+
+                    <p class="text-xs font-bold text-rose-400 uppercase tracking-widest mb-2">
+                        I am a:
+                    </p>
+
+
                     <div class="flex gap-2">
-                        <button onclick="setTempRole('student')" id="role-btn-student" class="flex-1 p-2 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-700 font-bold text-sm">Student</button>
-                        <button onclick="setTempRole('teacher')" id="role-btn-teacher" class="flex-1 p-2 rounded-xl border-2 border-rose-200 bg-white text-rose-400 font-bold text-sm">Teacher</button>
+
+                        <button
+                            onclick="setTempRole('student')"
+                            id="role-btn-student"
+                            class="flex-1 p-2 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-700 font-bold text-sm"
+                        >
+                            Student
+                        </button>
+
+                        <button
+                            onclick="setTempRole('teacher')"
+                            id="role-btn-teacher"
+                            class="flex-1 p-2 rounded-xl border-2 border-rose-200 bg-white text-rose-400 font-bold text-sm"
+                        >
+                            Teacher
+                        </button>
+
                     </div>
+
                 </div>
 
-                <button onclick="mockLogin()" class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black mt-4">
-                    <span id="auth-submit-text">Log In ➔</span>
+
+                <button
+                    onclick="mockLogin()"
+                    class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black mt-4"
+                >
+                    <span id="auth-submit-text">
+                        Log In ➔
+                    </span>
                 </button>
+
             </div>
+
+
             <div class="text-center mt-6">
-                <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-sm font-bold text-rose-400 hover:text-rose-600 transition">
+
+                <button
+                    onclick="toggleAuthMode()"
+                    id="auth-toggle-btn"
+                    class="text-sm font-bold text-rose-400 hover:text-rose-600 transition"
+                >
                     Don't have an account? Sign up
                 </button>
+
             </div>
+
         </div>
+
     </div>
 
 
-    <!-- VIEW: STUDENT STATS DASHBOARD -->
-    <div id="view-stats" class="w-full max-w-md hidden-view animate-slide-in">
-        <button onclick="showView('view-home')" class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition">
-            <span class="mr-2 text-lg">←</span> Back to Home
+    <!-- STUDENT STATS -->
+    <div
+        id="view-stats"
+        class="w-full max-w-md hidden-view animate-slide-in"
+    >
+
+        <button
+            onclick="showView('view-home')"
+            class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition"
+        >
+            <span class="mr-2 text-lg">←</span>
+            Back to Home
         </button>
+
 
         <div class="mb-6 card-fun p-6 text-center">
-            <h1 id="student-dash-title" class="text-3xl font-black text-rose-600 tracking-tight uppercase">My Stats</h1>
-            <p class="text-sm font-bold text-rose-400 mt-2 tracking-widest uppercase">Overall Accuracy: <span id="stat-overall" class="text-emerald-500 font-black text-xl ml-1">--</span></p>
+
+            <h1
+                id="student-dash-title"
+                class="text-3xl font-black text-rose-600 tracking-tight uppercase"
+            >
+                My Stats
+            </h1>
+
+            <p class="text-sm font-bold text-rose-400 mt-2 tracking-widest uppercase">
+
+                Overall Accuracy:
+
+                <span
+                    id="stat-overall"
+                    class="text-emerald-500 font-black text-xl ml-1"
+                >
+                    --
+                </span>
+
+            </p>
+
         </div>
+
 
         <div class="text-left mb-6">
-            <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">Strength by Grade</h3>
-            <div id="stats-grades" class="space-y-2">
-                <!-- Dynamically injected -->
-                <p class="text-sm font-bold text-rose-300">Loading...</p>
+
+            <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">
+                Strength by Grade
+            </h3>
+
+            <div
+                id="stats-grades"
+                class="space-y-2"
+            >
+                <p class="text-sm font-bold text-rose-300">
+                    Loading...
+                </p>
             </div>
+
         </div>
+
 
         <div class="text-left mb-8">
-            <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">Strength by Category</h3>
-            <div id="stats-categories" class="space-y-2">
-                <!-- Dynamically injected -->
-                <p class="text-sm font-bold text-rose-300">Loading...</p>
+
+            <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">
+                Strength by Category
+            </h3>
+
+            <div
+                id="stats-categories"
+                class="space-y-2"
+            >
+                <p class="text-sm font-bold text-rose-300">
+                    Loading...
+                </p>
             </div>
+
         </div>
 
-        <button onclick="mockLogout()" class="text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition w-full text-center">
+
+        <button
+            onclick="mockLogout()"
+            class="text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition w-full text-center"
+        >
             Log Out
         </button>
+
     </div>
 
-    <!-- VIEW: TEACHER DASHBOARD -->
-    <div id="view-teacher" class="w-full max-w-md hidden-view animate-slide-in">
-        <button onclick="showView('view-home')" class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition">
-            <span class="mr-2 text-lg">←</span> Back to Home
+
+    <!-- TEACHER DASHBOARD -->
+    <div
+        id="view-teacher"
+        class="w-full max-w-md hidden-view animate-slide-in"
+    >
+
+        <button
+            onclick="showView('view-home')"
+            class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition"
+        >
+            <span class="mr-2 text-lg">←</span>
+            Back to Home
         </button>
 
+
         <div class="mb-6">
-            <h1 id="teacher-dash-title" class="text-3xl font-black text-rose-600 tracking-tight uppercase">Teacher Portal 🍎</h1>
-            <p class="text-sm font-bold text-rose-400 mt-1 tracking-widest uppercase">Manage your students</p>
+
+            <h1
+                id="teacher-dash-title"
+                class="text-3xl font-black text-rose-600 tracking-tight uppercase"
+            >
+                Teacher Portal 🍎
+            </h1>
+
+            <p class="text-sm font-bold text-rose-400 mt-1 tracking-widest uppercase">
+                Manage your students
+            </p>
+
         </div>
 
+
         <div class="card-fun p-6 mb-6">
-            <p class="text-sm font-bold text-rose-600 uppercase tracking-widest mb-3">Add Student</p>
+
+            <p class="text-sm font-bold text-rose-600 uppercase tracking-widest mb-3">
+                Add Student
+            </p>
+
             <div class="flex gap-2">
-                <input type="text" placeholder="Student Username" class="input-fun flex-1 text-sm">
+
+                <input
+                    type="text"
+                    placeholder="Student Username"
+                    class="input-fun flex-1 text-sm"
+                >
+
                 <button class="bg-rose-500 text-white font-bold px-4 rounded-xl shadow-[0_4px_0_0_#BE123C] hover:bg-rose-600 active:translate-y-1 active:shadow-none transition-all">
                     Add
                 </button>
+
             </div>
+
         </div>
 
-        <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">My Class</h3>
+
+        <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">
+            My Class
+        </h3>
+
+
         <div class="flex flex-col gap-3 mb-8">
+
             <div class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center">
-                <span class="font-bold text-rose-800">Timmy M.</span>
-                <span class="text-emerald-500 font-black text-sm">82% Avg</span>
+
+                <span class="font-bold text-rose-800">
+                    Timmy M.
+                </span>
+
+                <span class="text-emerald-500 font-black text-sm">
+                    82% Avg
+                </span>
+
             </div>
+
+
             <div class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center">
-                <span class="font-bold text-rose-800">Sarah J.</span>
-                <span class="text-emerald-500 font-black text-sm">95% Avg</span>
+
+                <span class="font-bold text-rose-800">
+                    Sarah J.
+                </span>
+
+                <span class="text-emerald-500 font-black text-sm">
+                    95% Avg
+                </span>
+
             </div>
+
         </div>
 
-        <button onclick="mockLogout()" class="text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition w-full text-center">
+
+        <button
+            onclick="mockLogout()"
+            class="text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition w-full text-center"
+        >
             Log Out
         </button>
+
     </div>
 
 
-    <!-- VIEW 2: CHAPTERS -->
-    <div id="view-chapters" class="w-full max-w-md hidden-view animate-slide-in">
-        <button onclick="showView('view-home')" class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition">
-            <span class="mr-2 text-lg">←</span> Back to Grades
+    <!-- CHAPTERS -->
+    <div
+        id="view-chapters"
+        class="w-full max-w-md hidden-view animate-slide-in"
+    >
+
+        <button
+            onclick="showView('view-home')"
+            class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition"
+        >
+            <span class="mr-2 text-lg">←</span>
+            Back to Grades
         </button>
 
+
         <div class="mb-8">
-            <h1 id="chapter-title" class="text-4xl font-black text-rose-600 tracking-tight uppercase">Grade X</h1>
-            <p class="text-sm font-bold text-rose-400 mt-1 tracking-widest uppercase">Choose a topic</p>
+
+            <h1
+                id="chapter-title"
+                class="text-4xl font-black text-rose-600 tracking-tight uppercase"
+            >
+                Grade X
+            </h1>
+
+            <p class="text-sm font-bold text-rose-400 mt-1 tracking-widest uppercase">
+                Choose a topic
+            </p>
+
         </div>
 
-        <div id="dynamic-chapters-list" class="flex flex-col gap-4">
-            <!-- Buttons injected here -->
-        </div>
+
+        <div
+            id="dynamic-chapters-list"
+            class="flex flex-col gap-4"
+        ></div>
+
     </div>
 
-    <!-- VIEW 3: PRACTICE -->
-    <div id="view-practice" class="w-full max-w-md hidden-view animate-slide-in">
+
+    <!-- PRACTICE -->
+    <div
+        id="view-practice"
+        class="w-full max-w-md hidden-view animate-slide-in"
+    >
+
         <div class="flex justify-between items-center mb-6">
-            <button onclick="quitPractice()" class="text-rose-400 hover:text-rose-600 font-bold text-sm transition">
+
+            <button
+                onclick="quitPractice()"
+                class="text-rose-400 hover:text-rose-600 font-bold text-sm transition"
+            >
                 ✕ Quit
             </button>
-            <div class="text-sm font-black text-rose-400 uppercase tracking-widest" id="quiz-progress">1 / 12</div>
+
+            <div
+                class="text-sm font-black text-rose-400 uppercase tracking-widest"
+                id="quiz-progress"
+            >
+                1 / 12
+            </div>
+
         </div>
+
 
         <div class="card-fun p-6 text-center flex flex-col items-center justify-center min-h-[160px] mb-6">
-            <div id="quiz-prompt" class="text-3xl font-black text-rose-600 tracking-tight leading-tight flex items-center justify-center min-h-[50px]">...</div>
-            <p class="text-sm font-bold text-rose-400 uppercase tracking-widest mt-3" id="quiz-means-text">means:</p>
+
+            <div
+                id="quiz-prompt"
+                class="w-full text-3xl font-black text-rose-600 tracking-tight leading-tight flex items-center justify-center min-h-[50px]"
+            >
+                ...
+            </div>
+
+            <p
+                class="text-sm font-bold text-rose-400 uppercase tracking-widest mt-3"
+                id="quiz-means-text"
+            >
+                means:
+            </p>
+
         </div>
 
-        <div id="quiz-options" class="grid grid-cols-1 gap-4">
-            <!-- Buttons injected here -->
-        </div>
 
-        <div id="quiz-next-container" class="mt-6 hidden-view animate-slide-in">
-            <button onclick="handleNextClick()" class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black bg-rose-50 border-rose-200">
+        <div
+            id="quiz-options"
+            class="grid grid-cols-1 gap-4"
+        ></div>
+
+
+        <div
+            id="quiz-next-container"
+            class="mt-6 hidden-view animate-slide-in"
+        >
+
+            <button
+                onclick="handleNextClick()"
+                class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black bg-rose-50 border-rose-200"
+            >
                 Continue ➔
             </button>
+
         </div>
+
     </div>
 
-    <!-- VIEW 4: RESULTS -->
-    <div id="view-results" class="w-full max-w-md hidden-view animate-slide-in text-center">
+
+    <!-- RESULTS -->
+    <div
+        id="view-results"
+        class="w-full max-w-md hidden-view animate-slide-in text-center"
+    >
+
         <div class="card-fun p-8 mb-8 mt-10">
+
             <div class="mb-8 mt-2">
-                <p class="text-sm font-bold text-rose-400 uppercase tracking-widest mb-1">Your Score</p>
-                <p id="result-score" class="text-5xl font-black text-rose-600">0 / 12</p>
-                <p id="result-percent" class="text-xl font-bold text-rose-500 mt-2">0% Accuracy</p>
+
+                <div
+                    id="result-score"
+                    class="text-6xl font-black text-rose-600"
+                >
+                    0 / 12
+                </div>
+
+                <div
+                    id="result-percent"
+                    class="text-sm font-black text-rose-400 uppercase tracking-widest mt-3"
+                >
+                    0% Accuracy
+                </div>
+
             </div>
 
-            <div class="text-left mb-8">
-                <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">Round Recap</h3>
-                <div id="results-recap" class="max-h-[30vh] overflow-y-auto pr-2 scrollbar-custom space-y-2">
-                    <!-- Recap items injected here -->
-                </div>
-            </div>
-            
-            <button onclick="startPractice(currentTopic)" class="btn-3d btn-menu w-full p-4 mb-4 text-center uppercase tracking-widest font-black">
-                Play Again ↺
-            </button>
-            
-            <button onclick="showView('view-chapters')" class="w-full p-4 text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest">
-                Back to Topics
-            </button>
+
+            <div
+                id="results-recap"
+                class="flex flex-col gap-2 text-left max-h-[340px] overflow-y-auto pr-1"
+            ></div>
+
         </div>
+
+
+        <div class="flex flex-col gap-3">
+
+            <button
+                onclick="startPractice(currentTopic)"
+                class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black"
+            >
+                Try another round ↻
+            </button>
+
+            <button
+                onclick="selectGrade(currentGrade)"
+                class="text-sm font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition py-3"
+            >
+                Back to topics
+            </button>
+
+        </div>
+
     </div>
 
-    <script>
-        // ==========================================
-        // 2. CONNECT TO SUPABASE
-        // ==========================================
-        const supabaseUrl = 'https://fykvfvmkhghhsnrrihug.supabase.co';
-        const supabaseKey = 'sb_publishable_TIkWQ74XFKH3tfNFrm77EQ_pz5Dca-p';
-        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // ==========================================
-        // 3. SYLLABUS MENU DATA 
-        // ==========================================
-        const syllabusChapters = [ 
-    { title: "Rhythm", isReady: false },
-    { title: "Pitch & transposition", isReady: false },
-    { title: "Keys & scales", isReady: false },
-    { title: "Intervals", isReady: true },
-    { title: "Tonic triads", isReady: false },
-    { title: "Terms & signs", isReady: true },
-    { title: "Music in context", isReady: false }
-];
+<script>
 
-       // --- REAL SUPABASE AUTH STATE ---
-        let isSignUpMode = false;
-        let tempSelectedRole = 'student'; 
-        let currentUser = null; 
-        
-        // 1. Check if they are already logged in when they open the app
-        async function checkUserStatus() {
-            const { data: { session } } = await _supabase.auth.getSession();
-            if (session) {
-                await loadUserProfile(session.user.id);
-            }
+    // =========================================================
+    // SUPABASE
+    // =========================================================
+
+    const supabaseUrl =
+        'https://fykvfvmkhghhsnrrihug.supabase.co';
+
+    const supabaseKey =
+        'sb_publishable_TIkWQ74XFKH3tfNFrm77EQ_pz5Dca-p';
+
+    const _supabase =
+        supabase.createClient(
+            supabaseUrl,
+            supabaseKey
+        );
+
+
+    // =========================================================
+    // SYLLABUS MENU
+    // =========================================================
+
+    const syllabusChapters = [
+
+        {
+            title: 'Rhythm',
+            readyGrades: []
+        },
+
+        {
+            title: 'Pitch & transposition',
+            readyGrades: [1]
+        },
+
+        {
+            title: 'Keys & scales',
+            readyGrades: [1]
+        },
+
+        {
+            title: 'Intervals',
+            readyGrades: [1, 2, 3]
+        },
+
+        {
+            title: 'Tonic triads',
+            readyGrades: [1]
+        },
+
+        {
+            title: 'Terms & signs',
+            readyGrades: [1, 2, 3]
+        },
+
+        {
+            title: 'Music in context',
+            readyGrades: []
         }
-        checkUserStatus(); // Run immediately on load
 
-        // 2. Fetch their custom profile data (Username & Role)
-        async function loadUserProfile(userId) {
-            const { data, error } = await _supabase
+    ];
+
+
+    // =========================================================
+    // AUTH
+    // =========================================================
+
+    let isSignUpMode = false;
+
+    let tempSelectedRole =
+        'student';
+
+    let currentUser =
+        null;
+
+
+    async function checkUserStatus() {
+
+        const {
+            data: {
+                session
+            }
+        } =
+            await _supabase.auth.getSession();
+
+        if (session) {
+
+            await loadUserProfile(
+                session.user.id
+            );
+
+        }
+
+    }
+
+
+    checkUserStatus();
+
+
+    async function loadUserProfile(
+        userId
+    ) {
+
+        const {
+            data,
+            error
+        } =
+            await _supabase
                 .from('profiles')
                 .select('*')
-                .eq('id', userId)
+                .eq(
+                    'id',
+                    userId
+                )
                 .single();
-                
-            if (data) {
-                currentUser = data;
-                document.getElementById('nav-login-btn').classList.add('hidden-view');
-                document.getElementById('nav-dash-btn').classList.remove('hidden-view');
-                if (!document.getElementById('view-auth').classList.contains('hidden-view')) {
-                    routeDashboard(); // Redirect if they were on the login screen
-                }
-            }
+
+
+        if (error) {
+
+            console.error(
+                'Profile load error:',
+                error
+            );
+
+            return;
+
         }
 
-        function toggleAuthMode() {
-            isSignUpMode = !isSignUpMode;
-            document.getElementById('auth-title').innerText = isSignUpMode ? "Create Account" : "Log In";
-            document.getElementById('auth-submit-text').innerText = isSignUpMode ? "Sign Up ➔" : "Log In ➔";
-            document.getElementById('auth-toggle-btn').innerText = isSignUpMode ? "Already have an account? Log in" : "Don't have an account? Sign up";
-            
-            if(isSignUpMode) {
-                document.getElementById('auth-role-selector').classList.remove('hidden-view');
-                document.getElementById('auth-email').classList.remove('hidden-view');
-            } else {
-                document.getElementById('auth-role-selector').classList.add('hidden-view');
-                document.getElementById('auth-email').classList.add('hidden-view');
+
+        if (data) {
+
+            currentUser =
+                data;
+
+
+            document
+                .getElementById(
+                    'nav-login-btn'
+                )
+                .classList
+                .add(
+                    'hidden-view'
+                );
+
+
+            document
+                .getElementById(
+                    'nav-dash-btn'
+                )
+                .classList
+                .remove(
+                    'hidden-view'
+                );
+
+
+            if (
+                !document
+                    .getElementById(
+                        'view-auth'
+                    )
+                    .classList
+                    .contains(
+                        'hidden-view'
+                    )
+            ) {
+
+                routeDashboard();
+
             }
+
         }
 
-        function setTempRole(role) {
-            tempSelectedRole = role;
-            if (role === 'student') {
-                document.getElementById('role-btn-student').className = "flex-1 p-2 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-700 font-bold text-sm";
-                document.getElementById('role-btn-teacher').className = "flex-1 p-2 rounded-xl border-2 border-rose-200 bg-white text-rose-400 font-bold text-sm";
-            } else {
-                document.getElementById('role-btn-teacher').className = "flex-1 p-2 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-700 font-bold text-sm";
-                document.getElementById('role-btn-student').className = "flex-1 p-2 rounded-xl border-2 border-rose-200 bg-white text-rose-400 font-bold text-sm";
-            }
+    }
+
+
+    function toggleAuthMode() {
+
+        isSignUpMode =
+            !isSignUpMode;
+
+
+        document
+            .getElementById(
+                'auth-title'
+            )
+            .innerText =
+                isSignUpMode
+                    ? 'Create Account'
+                    : 'Log In';
+
+
+        document
+            .getElementById(
+                'auth-submit-text'
+            )
+            .innerText =
+                isSignUpMode
+                    ? 'Sign Up ➔'
+                    : 'Log In ➔';
+
+
+        document
+            .getElementById(
+                'auth-toggle-btn'
+            )
+            .innerText =
+                isSignUpMode
+                    ? 'Already have an account? Log in'
+                    : "Don't have an account? Sign up";
+
+
+        document
+            .getElementById(
+                'auth-role-selector'
+            )
+            .classList
+            .toggle(
+                'hidden-view',
+                !isSignUpMode
+            );
+
+
+        document
+            .getElementById(
+                'auth-email'
+            )
+            .classList
+            .toggle(
+                'hidden-view',
+                !isSignUpMode
+            );
+
+    }
+
+
+    function setTempRole(
+        role
+    ) {
+
+        tempSelectedRole =
+            role;
+
+
+        const student =
+            document.getElementById(
+                'role-btn-student'
+            );
+
+
+        const teacher =
+            document.getElementById(
+                'role-btn-teacher'
+            );
+
+
+        if (
+            role === 'student'
+        ) {
+
+            student.className =
+                'flex-1 p-2 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-700 font-bold text-sm';
+
+
+            teacher.className =
+                'flex-1 p-2 rounded-xl border-2 border-rose-200 bg-white text-rose-400 font-bold text-sm';
+
         }
 
-        // 3. The Real Auth Submission
-        async function mockLogin() { // Kept the function name so the HTML button still works!
-            const emailInput = document.getElementById('auth-email').value.trim();
-            const usernameInput = document.getElementById('auth-username').value.trim().toLowerCase(); // lowercase to prevent login errors
-            const passwordInput = document.getElementById('auth-password').value;
-            
-            if (!usernameInput || !passwordInput) {
-                alert("Please enter a username and password!");
+        else {
+
+            teacher.className =
+                'flex-1 p-2 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-700 font-bold text-sm';
+
+
+            student.className =
+                'flex-1 p-2 rounded-xl border-2 border-rose-200 bg-white text-rose-400 font-bold text-sm';
+
+        }
+
+    }
+
+
+    async function mockLogin() {
+
+        const emailInput =
+            document
+                .getElementById(
+                    'auth-email'
+                )
+                .value
+                .trim();
+
+
+        const usernameInput =
+            document
+                .getElementById(
+                    'auth-username'
+                )
+                .value
+                .trim()
+                .toLowerCase();
+
+
+        const passwordInput =
+            document
+                .getElementById(
+                    'auth-password'
+                )
+                .value;
+
+
+        if (
+            !usernameInput ||
+            !passwordInput
+        ) {
+
+            alert(
+                'Please enter a username and password!'
+            );
+
+            return;
+
+        }
+
+
+        const internalAuthEmail =
+            `${usernameInput}@theoryqs.app`;
+
+
+        document
+            .getElementById(
+                'auth-submit-text'
+            )
+            .innerText =
+                'Loading...';
+
+
+        if (
+            isSignUpMode
+        ) {
+
+            if (
+                !emailInput
+            ) {
+
+                alert(
+                    "Parents email is required for sign up!"
+                );
+
+
+                document
+                    .getElementById(
+                        'auth-submit-text'
+                    )
+                    .innerText =
+                        'Sign Up ➔';
+
+
                 return;
+
             }
 
-            // The secret trick: Make a fake email out of their username for Supabase Auth
-            const internalAuthEmail = `${usernameInput}@theoryqs.app`;
-            
-            document.getElementById('auth-submit-text').innerText = "Loading...";
 
-            if (isSignUpMode) {
-                if (!emailInput) { alert("Parents email is required for sign up!"); document.getElementById('auth-submit-text').innerText = "Sign Up ➔"; return; }
-                
-                // A. Create the Auth User
-                const { data: authData, error: authError } = await _supabase.auth.signUp({
-                    email: internalAuthEmail,
-                    password: passwordInput,
-                });
+            const {
+                data: authData,
+                error: authError
+            } =
+                await _supabase
+                    .auth
+                    .signUp({
 
-                if (authError) { alert(authError.message); document.getElementById('auth-submit-text').innerText = "Sign Up ➔"; return; }
+                        email:
+                            internalAuthEmail,
 
-                // B. Save the real details to our Profiles table
-                const { error: profileError } = await _supabase.from('profiles').insert([
-                    { id: authData.user.id, username: usernameInput, role: tempSelectedRole }
-                ]);
+                        password:
+                            passwordInput
 
-                if (profileError) { alert("Error saving profile: " + profileError.message); }
-                else { alert("Account created successfully!"); }
+                    });
 
-            } else {
-                // LOG IN MODE
-                const { error } = await _supabase.auth.signInWithPassword({
-                    email: internalAuthEmail,
-                    password: passwordInput,
-                });
 
-                if (error) { alert("Incorrect username or password."); document.getElementById('auth-submit-text').innerText = "Log In ➔"; return; }
+            if (
+                authError
+            ) {
+
+                alert(
+                    authError.message
+                );
+
+
+                document
+                    .getElementById(
+                        'auth-submit-text'
+                    )
+                    .innerText =
+                        'Sign Up ➔';
+
+
+                return;
+
             }
 
-            // If successful (either login or signup), fetch profile and redirect
-            const { data: { session } } = await _supabase.auth.getSession();
-            if (session) {
-                await loadUserProfile(session.user.id);
+
+            const {
+                error: profileError
+            } =
+                await _supabase
+                    .from(
+                        'profiles'
+                    )
+                    .insert([
+
+                        {
+                            id:
+                                authData.user.id,
+
+                            username:
+                                usernameInput,
+
+                            role:
+                                tempSelectedRole
+                        }
+
+                    ]);
+
+
+            if (
+                profileError
+            ) {
+
+                alert(
+                    'Error saving profile: ' +
+                    profileError.message
+                );
+
             }
-            
-            // Reset button text
-            document.getElementById('auth-submit-text').innerText = isSignUpMode ? "Sign Up ➔" : "Log In ➔";
+
+            else {
+
+                alert(
+                    'Account created successfully!'
+                );
+
+            }
+
         }
 
-        async function mockLogout() {
-            await _supabase.auth.signOut();
-            currentUser = null;
-            document.getElementById('nav-dash-btn').classList.add('hidden-view');
-            document.getElementById('nav-login-btn').classList.remove('hidden-view');
-            
-            // Clear inputs
-            document.getElementById('auth-username').value = '';
-            document.getElementById('auth-password').value = '';
-            
-            showView('view-home');
+        else {
+
+            const {
+                error
+            } =
+                await _supabase
+                    .auth
+                    .signInWithPassword({
+
+                        email:
+                            internalAuthEmail,
+
+                        password:
+                            passwordInput
+
+                    });
+
+
+            if (
+                error
+            ) {
+
+                alert(
+                    'Incorrect username or password.'
+                );
+
+
+                document
+                    .getElementById(
+                        'auth-submit-text'
+                    )
+                    .innerText =
+                        'Log In ➔';
+
+
+                return;
+
+            }
+
         }
 
-        async function loadStudentStats() {
-            if (!currentUser) return;
-            
-            // 1. Fetch Sessions
-            const { data: sessions } = await _supabase
-                .from('quiz_sessions')
+
+        const {
+            data: {
+                session
+            }
+        } =
+            await _supabase
+                .auth
+                .getSession();
+
+
+        if (
+            session
+        ) {
+
+            await loadUserProfile(
+                session.user.id
+            );
+
+        }
+
+
+        document
+            .getElementById(
+                'auth-submit-text'
+            )
+            .innerText =
+                isSignUpMode
+                    ? 'Sign Up ➔'
+                    : 'Log In ➔';
+
+    }
+
+
+    async function mockLogout() {
+
+        await _supabase
+            .auth
+            .signOut();
+
+
+        currentUser =
+            null;
+
+
+        document
+            .getElementById(
+                'nav-dash-btn'
+            )
+            .classList
+            .add(
+                'hidden-view'
+            );
+
+
+        document
+            .getElementById(
+                'nav-login-btn'
+            )
+            .classList
+            .remove(
+                'hidden-view'
+            );
+
+
+        document
+            .getElementById(
+                'auth-username'
+            )
+            .value =
+                '';
+
+
+        document
+            .getElementById(
+                'auth-password'
+            )
+            .value =
+                '';
+
+
+        showView(
+            'view-home'
+        );
+
+    }
+
+
+    // =========================================================
+    // STUDENT STATS
+    // =========================================================
+
+    async function loadStudentStats() {
+
+        if (
+            !currentUser
+        ) {
+
+            return;
+
+        }
+
+
+        const {
+            data: sessions,
+            error: sessionsError
+        } =
+            await _supabase
+                .from(
+                    'quiz_sessions'
+                )
                 .select('*')
-                .eq('student_id', currentUser.id);
+                .eq(
+                    'student_id',
+                    currentUser.id
+                );
 
-            // 2. Fetch Detailed Analytics (Using a JOIN to grab the new TOPIC column!)
-            const { data: analytics } = await _supabase
-                .from('answer_analytics')
-                .select('is_correct, questions(topic)')
-                .eq('student_id', currentUser.id);
 
-            if (!sessions || sessions.length === 0) {
-                document.getElementById('stat-overall').innerText = "0%";
-                document.getElementById('stats-grades').innerHTML = "<p class='text-sm font-bold text-rose-300'>No rounds played yet.</p>";
-                document.getElementById('stats-categories').innerHTML = "<p class='text-sm font-bold text-rose-300'>Play a round to see your strengths!</p>";
+        const {
+            data: analytics,
+            error: analyticsError
+        } =
+            await _supabase
+                .from(
+                    'answer_analytics'
+                )
+                .select(
+                    'is_correct, questions(topic)'
+                )
+                .eq(
+                    'student_id',
+                    currentUser.id
+                );
+
+
+        if (
+            sessionsError ||
+            analyticsError
+        ) {
+
+            console.error(
+                'Stats load error:',
+                sessionsError ||
+                analyticsError
+            );
+
+
+            document
+                .getElementById(
+                    'stat-overall'
+                )
+                .innerText =
+                    '--';
+
+
+            document
+                .getElementById(
+                    'stats-grades'
+                )
+                .innerHTML =
+                    "<p class='text-sm font-bold text-rose-400'>Could not load stats.</p>";
+
+
+            document
+                .getElementById(
+                    'stats-categories'
+                )
+                .innerHTML =
+                    "<p class='text-sm font-bold text-rose-400'>Could not load stats.</p>";
+
+
+            return;
+
+        }
+
+
+        if (
+            !sessions ||
+            sessions.length === 0
+        ) {
+
+            document
+                .getElementById(
+                    'stat-overall'
+                )
+                .innerText =
+                    '0%';
+
+
+            document
+                .getElementById(
+                    'stats-grades'
+                )
+                .innerHTML =
+                    "<p class='text-sm font-bold text-rose-300'>No rounds played yet.</p>";
+
+
+            document
+                .getElementById(
+                    'stats-categories'
+                )
+                .innerHTML =
+                    "<p class='text-sm font-bold text-rose-300'>Play a round to see your strengths!</p>";
+
+
+            return;
+
+        }
+
+
+        let totalScore =
+            0;
+
+
+        let totalQs =
+            0;
+
+
+        const gradeStats =
+            {};
+
+
+        sessions.forEach(
+            s => {
+
+                totalScore +=
+                    Number(
+                        s.score || 0
+                    );
+
+
+                totalQs +=
+                    Number(
+                        s.total_questions || 0
+                    );
+
+
+                if (
+                    !gradeStats[
+                        s.grade_tested
+                    ]
+                ) {
+
+                    gradeStats[
+                        s.grade_tested
+                    ] =
+                        {
+                            correct: 0,
+                            total: 0
+                        };
+
+                }
+
+
+                gradeStats[
+                    s.grade_tested
+                ].correct +=
+                    Number(
+                        s.score || 0
+                    );
+
+
+                gradeStats[
+                    s.grade_tested
+                ].total +=
+                    Number(
+                        s.total_questions || 0
+                    );
+
+            }
+        );
+
+
+        const overallPct =
+            totalQs > 0
+                ? Math.round(
+                    (
+                        totalScore /
+                        totalQs
+                    ) *
+                    100
+                )
+                : 0;
+
+
+        document
+            .getElementById(
+                'stat-overall'
+            )
+            .innerText =
+                `${overallPct}%`;
+
+
+        let gradesHtml =
+            '';
+
+
+        for (
+            const [
+                grade,
+                stats
+            ]
+            of
+            Object.entries(
+                gradeStats
+            )
+        ) {
+
+            const pct =
+                stats.total > 0
+                    ? Math.round(
+                        (
+                            stats.correct /
+                            stats.total
+                        ) *
+                        100
+                    )
+                    : 0;
+
+
+            const color =
+                pct >= 80
+                    ? 'emerald-500'
+                    : (
+                        pct >= 60
+                            ? 'amber-500'
+                            : 'rose-500'
+                    );
+
+
+            gradesHtml += `
+                <div
+                    class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center"
+                >
+                    <span class="font-bold text-rose-800">
+                        Grade ${grade}
+                    </span>
+
+                    <span class="font-black text-${color}">
+                        ${pct}%
+                    </span>
+                </div>
+            `;
+
+        }
+
+
+        document
+            .getElementById(
+                'stats-grades'
+            )
+            .innerHTML =
+                gradesHtml;
+
+
+        const catStats =
+            {};
+
+
+        (
+            analytics || []
+        )
+        .forEach(
+            a => {
+
+                const cat =
+                    a.questions?.topic ||
+                    'Unknown';
+
+
+                if (
+                    !catStats[
+                        cat
+                    ]
+                ) {
+
+                    catStats[
+                        cat
+                    ] =
+                        {
+                            correct: 0,
+                            total: 0
+                        };
+
+                }
+
+
+                catStats[
+                    cat
+                ].total++;
+
+
+                if (
+                    a.is_correct
+                ) {
+
+                    catStats[
+                        cat
+                    ].correct++;
+
+                }
+
+            }
+        );
+
+
+        let catsHtml =
+            '';
+
+
+        for (
+            const [
+                cat,
+                stats
+            ]
+            of
+            Object.entries(
+                catStats
+            )
+        ) {
+
+            const pct =
+                Math.round(
+                    (
+                        stats.correct /
+                        stats.total
+                    ) *
+                    100
+                );
+
+
+            const color =
+                pct >= 80
+                    ? 'emerald-500'
+                    : (
+                        pct >= 60
+                            ? 'amber-500'
+                            : 'rose-500'
+                    );
+
+
+            catsHtml += `
+                <div
+                    class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center"
+                >
+                    <span class="font-bold text-rose-800 capitalize">
+                        ${cat}
+                    </span>
+
+                    <span class="font-black text-${color}">
+                        ${pct}%
+                    </span>
+                </div>
+            `;
+
+        }
+
+
+        document
+            .getElementById(
+                'stats-categories'
+            )
+            .innerHTML =
+                catsHtml ||
+                "<p class='text-sm font-bold text-rose-300'>Play a round to see your strengths!</p>";
+
+    }
+
+
+    async function routeDashboard() {
+
+        if (
+            !currentUser
+        ) {
+
+            showView(
+                'view-auth'
+            );
+
+        }
+
+        else if (
+            currentUser.role ===
+            'teacher'
+        ) {
+
+            document
+                .getElementById(
+                    'teacher-dash-title'
+                )
+                .innerText =
+                    `${currentUser.username}'s Portal 🍎`;
+
+
+            showView(
+                'view-teacher'
+            );
+
+        }
+
+        else {
+
+            document
+                .getElementById(
+                    'student-dash-title'
+                )
+                .innerText =
+                    `${currentUser.username}'s Stats`;
+
+
+            await loadStudentStats();
+
+
+            showView(
+                'view-stats'
+            );
+
+        }
+
+    }
+
+
+    // =========================================================
+    // ENGINE STATE
+    // =========================================================
+
+    let currentGrade =
+        null;
+
+    let currentTopic =
+        null;
+
+    let currentVocabList =
+        [];
+
+    let quizPool =
+        [];
+
+    let currentQuestionIndex =
+        0;
+
+    let score =
+        0;
+
+    let roundHistory =
+        [];
+
+
+    let currentSessionId =
+        null;
+
+    let pendingSave =
+        Promise.resolve();
+
+
+    let selectedIntervalNumber =
+        null;
+
+
+    let selectedKeySignatureAnswers =
+        [];
+
+    let selectedKeyLetter =
+        '';
+
+    let selectedKeyAccidental =
+        '';
+
+    let selectedDegreePairs =
+        [];
+
+    let selectedTonePattern =
+        [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            ''
+        ];
+
+
+    let selectedNoteLetter =
+        '';
+
+    let selectedNoteAccidental =
+        '';
+
+
+    let selectedTriadNotes =
+        [];
+
+    let selectedTriadDegrees =
+        [];
+
+
+    const totalQuestions =
+        12;
+
+
+    function resetConstructedAnswerState() {
+
+        selectedIntervalNumber =
+            null;
+
+
+        selectedKeySignatureAnswers =
+            [];
+
+
+        selectedKeyLetter =
+            '';
+
+
+        selectedKeyAccidental =
+            '';
+
+
+        selectedDegreePairs =
+            [];
+
+
+        selectedTonePattern =
+            [
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ];
+
+
+        selectedNoteLetter =
+            '';
+
+
+        selectedNoteAccidental =
+            '';
+
+
+        selectedTriadNotes =
+            [];
+
+
+        selectedTriadDegrees =
+            [];
+
+    }
+
+
+    // =========================================================
+    // NAVIGATION
+    // =========================================================
+
+    function showView(
+        viewId
+    ) {
+
+        [
+            'view-home',
+            'view-chapters',
+            'view-practice',
+            'view-results',
+            'view-auth',
+            'view-stats',
+            'view-teacher'
+        ]
+        .forEach(
+            id => {
+
+                document
+                    .getElementById(
+                        id
+                    )
+                    .classList
+                    .add(
+                        'hidden-view'
+                    );
+
+            }
+        );
+
+
+        const activeView =
+            document.getElementById(
+                viewId
+            );
+
+
+        activeView
+            .classList
+            .remove(
+                'hidden-view'
+            );
+
+
+        activeView.style.animation =
+            'none';
+
+
+        activeView.offsetHeight;
+
+
+        activeView.style.animation =
+            null;
+
+
+        window.scrollTo(
+            0,
+            0
+        );
+
+    }
+
+
+    function selectGrade(
+        gradeNumber
+    ) {
+
+        currentGrade =
+            gradeNumber;
+
+
+        document
+            .getElementById(
+                'chapter-title'
+            )
+            .innerText =
+                `Grade ${gradeNumber}`;
+
+
+        const container =
+            document.getElementById(
+                'dynamic-chapters-list'
+            );
+
+
+        let html =
+            '';
+
+
+        syllabusChapters.forEach(
+            topic => {
+
+                const isReady =
+                    topic
+                        .readyGrades
+                        .includes(
+                            gradeNumber
+                        );
+
+
+                if (
+                    isReady
+                ) {
+
+                    const safeTitle =
+                        topic.title
+                            .replace(
+                                /'/g,
+                                "\\'"
+                            );
+
+
+                    html += `
+                        <button
+                            onclick="startPractice('${safeTitle}')"
+                            class="btn-3d btn-menu p-5 flex items-center justify-between group"
+                        >
+                            <span class="text-lg font-black uppercase tracking-tight">
+                                ${topic.title}
+                            </span>
+
+                            <span class="text-rose-300 font-black group-hover:translate-x-1 transition-transform text-xl">
+                                →
+                            </span>
+                        </button>
+                    `;
+
+                }
+
+                else {
+
+                    html += `
+                        <button
+                            disabled
+                            class="btn-3d btn-disabled p-5 flex items-center justify-between"
+                        >
+                            <span class="text-lg font-black uppercase tracking-tight">
+                                ${topic.title}
+                            </span>
+
+                            <span class="text-[10px] font-black uppercase tracking-widest bg-slate-200 text-slate-500 px-3 py-1.5 rounded-full">
+                                Coming Soon
+                            </span>
+                        </button>
+                    `;
+
+                }
+
+            }
+        );
+
+
+        container.innerHTML =
+            html;
+
+
+        showView(
+            'view-chapters'
+        );
+
+    }
+
+
+    // =========================================================
+    // DATABASE + ROUND SETUP
+    // =========================================================
+
+    async function startPractice(
+        topicName
+    ) {
+
+        currentTopic =
+            topicName;
+
+
+        document
+            .getElementById(
+                'quiz-progress'
+            )
+            .innerText =
+                'Loading...';
+
+
+        document
+            .getElementById(
+                'quiz-prompt'
+            )
+            .innerHTML =
+                '<span class="animate-pulse text-xl">Fetching questions...</span>';
+
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                '';
+
+
+        document
+            .getElementById(
+                'quiz-next-container'
+            )
+            .classList
+            .add(
+                'hidden-view'
+            );
+
+
+        document
+            .getElementById(
+                'quiz-means-text'
+            )
+            .classList
+            .add(
+                'hidden-view'
+            );
+
+
+        showView(
+            'view-practice'
+        );
+
+
+        try {
+
+            const {
+                data,
+                error
+            } =
+                await _supabase
+                    .from(
+                        'questions'
+                    )
+                    .select('*')
+                    .eq(
+                        'topic',
+                        topicName
+                    )
+                    .lte(
+                        'grade',
+                        currentGrade
+                    );
+
+
+            if (
+                error
+            ) {
+
+                throw error;
+
+            }
+
+
+            currentVocabList =
+                data || [];
+
+
+            if (
+                currentVocabList.length ===
+                0
+            ) {
+
+                alert(
+                    'No questions found! Did you run the SQL insert in Supabase?'
+                );
+
+
+                showView(
+                    'view-chapters'
+                );
+
+
                 return;
+
             }
 
-            // Calculate Overall Accuracy & Grade Breakdown
-            let totalScore = 0; let totalQs = 0;
-            let gradeStats = {};
-            
-            sessions.forEach(s => {
-                totalScore += s.score;
-                totalQs += s.total_questions;
-                if (!gradeStats[s.grade_tested]) gradeStats[s.grade_tested] = { correct: 0, total: 0 };
-                gradeStats[s.grade_tested].correct += s.score;
-                gradeStats[s.grade_tested].total += s.total_questions;
-            });
 
-            document.getElementById('stat-overall').innerText = Math.round((totalScore / totalQs) * 100) + "%";
+            quizPool =
+                [
+                    ...currentVocabList
+                ]
+                .sort(
+                    () =>
+                        0.5 -
+                        Math.random()
+                )
+                .slice(
+                    0,
+                    totalQuestions
+                );
 
-            let gradesHtml = '';
-            for (const [grade, stats] of Object.entries(gradeStats)) {
-                let pct = Math.round((stats.correct / stats.total) * 100);
-                let color = pct >= 80 ? 'emerald-500' : (pct >= 60 ? 'amber-500' : 'rose-500');
-                gradesHtml += `<div class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center"><span class="font-bold text-rose-800">Grade ${grade}</span><span class="font-black text-${color}">${pct}%</span></div>`;
-            }
-            document.getElementById('stats-grades').innerHTML = gradesHtml;
 
-            // Calculate Category Breakdown (Now grouping by 'topic' instead of 'category')
-            if (analytics) {
-                let catStats = {};
-                analytics.forEach(a => {
-                    let cat = a.questions.topic; // <-- THIS IS THE MAGIC CHANGE
-                    if (!catStats[cat]) catStats[cat] = { correct: 0, total: 0 };
-                    catStats[cat].total++;
-                    if (a.is_correct) catStats[cat].correct++;
-                });
-                
-                let catsHtml = '';
-                for (const [cat, stats] of Object.entries(catStats)) {
-                    let pct = Math.round((stats.correct / stats.total) * 100);
-                    let color = pct >= 80 ? 'emerald-500' : (pct >= 60 ? 'amber-500' : 'rose-500');
-                    catsHtml += `<div class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center"><span class="font-bold text-rose-800 capitalize">${cat}</span><span class="font-black text-${color}">${pct}%</span></div>`;
-                }
-                document.getElementById('stats-categories').innerHTML = catsHtml;
-            }
+            currentQuestionIndex =
+                0;
+
+
+            score =
+                0;
+
+
+            roundHistory =
+                [];
+
+
+            currentSessionId =
+                null;
+
+
+            pendingSave =
+                Promise.resolve();
+
+
+            resetConstructedAnswerState();
+
+
+            document
+                .getElementById(
+                    'quiz-means-text'
+                )
+                .classList
+                .remove(
+                    'hidden-view'
+                );
+
+
+            loadNextQuestion();
+
         }
 
-        async function routeDashboard() {
-            if (!currentUser) {
-                showView('view-auth');
-            } else if (currentUser.role === 'teacher') {
-                document.getElementById('teacher-dash-title').innerText = `${currentUser.username}'s Portal 🍎`;
-                showView('view-teacher');
-            } else {
-                document.getElementById('student-dash-title').innerText = `${currentUser.username}'s Stats`;
-                await loadStudentStats(); // <--- Add this line!
-                showView('view-stats');
-            }
-        }
-        // --- ENGINE STATE ---
-        let currentGrade = null;
-        let currentTopic = null;
-        let currentVocabList = [];
-        let quizPool = [];
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let roundHistory = [];
-        let selectedIntervalNumber = null;
+        catch (
+            err
+        ) {
 
-        let currentSessionId = null;
-        let pendingSave = Promise.resolve();
+            console.error(
+                'Supabase Error:',
+                err
+            );
 
-        const totalQuestions = 12;
 
-        function showView(viewId) {
-            ['view-home', 'view-chapters', 'view-practice', 'view-results', 'view-auth', 'view-stats', 'view-teacher'].forEach(id => {
-                document.getElementById(id).classList.add('hidden-view');
-            });
-            const activeView = document.getElementById(viewId);
-            activeView.classList.remove('hidden-view');
-            activeView.style.animation = 'none';
-            activeView.offsetHeight; 
-            activeView.style.animation = null; 
-            window.scrollTo(0, 0);
+            alert(
+                'Could not connect to the database.'
+            );
+
+
+            showView(
+                'view-chapters'
+            );
+
         }
 
-        function selectGrade(gradeNumber) {
-            currentGrade = gradeNumber;
-            document.getElementById('chapter-title').innerText = `Grade ${gradeNumber}`;
-            
-            const container = document.getElementById('dynamic-chapters-list');
-            let html = '';
-            
-            syllabusChapters.forEach(topic => {
-                if (topic.isReady) {
-                    const safeTitle = topic.title.replace(/'/g, "\\'");
-                    html += `
-                    <button onclick="startPractice('${safeTitle}')" class="btn-3d btn-menu p-5 flex items-center justify-between group">
-                        <span class="text-lg font-black uppercase tracking-tight">${topic.title}</span>
-                        <span class="text-rose-300 font-black group-hover:translate-x-1 transition-transform text-xl">→</span>
-                    </button>`;
-                } else {
-                    html += `
-                    <button disabled class="btn-3d btn-disabled p-5 flex items-center justify-between">
-                        <span class="text-lg font-black uppercase tracking-tight">${topic.title}</span>
-                        <span class="text-[10px] font-black uppercase tracking-widest bg-slate-200 text-slate-500 px-3 py-1.5 rounded-full">Coming Soon</span>
-                    </button>`;
-                }
-            });
+    }
 
-            container.innerHTML = html;
-            showView('view-chapters');
+
+    async function quitPractice() {
+
+        try {
+
+            await pendingSave;
+
         }
 
-        // ==========================================
-        // 4. THE ASYNC DATABASE FETCH
-        // ==========================================
-        async function startPractice(topicName) {
-            currentTopic = topicName;
-            
-            // Show loading UI
-            document.getElementById('quiz-progress').innerText = "Loading...";
-            document.getElementById('quiz-prompt').innerHTML = `<span class="animate-pulse text-xl">Fetching questions...</span>`;
-            document.getElementById('quiz-options').innerHTML = '';
-            document.getElementById('quiz-next-container').classList.add('hidden-view');
-            document.getElementById('quiz-means-text').classList.add('hidden-view');
-            showView('view-practice');
+        catch (
+            err
+        ) {
 
-            try {
-                // Fetch all questions for the current grade AND BELOW (Cumulative logic)
-                const { data, error } = await _supabase
-                    .from('questions')
-.select('*')
-.eq('topic', topicName)
-.lte('grade', currentGrade);
+            console.error(
+                'Pending save error:',
+                err
+            );
 
-                if (error) throw error;
-                
-                currentVocabList = data;
-
-                if (!currentVocabList || currentVocabList.length === 0) {
-                    alert("No questions found! Did you run the SQL insert in Supabase?");
-                    showView('view-chapters');
-                    return;
-                }
-
-                // Shuffle the returned data
-quizPool = [...currentVocabList]
-    .sort(() => 0.5 - Math.random())
-    .slice(0, totalQuestions);
-
-// Reset the new round
-currentQuestionIndex = 0;
-score = 0;
-roundHistory = [];
-selectedIntervalNumber = null;
-
-// IMPORTANT: make sure each new quiz gets its own session
-currentSessionId = null;
-pendingSave = Promise.resolve();
-
-document.getElementById('quiz-means-text').classList.remove('hidden-view');
-loadNextQuestion();
-
-            } catch (err) {
-                console.error("Supabase Error:", err);
-                alert("Could not connect to the database.");
-                showView('view-chapters');
-            }
         }
 
 
-        async function quitPractice() {
-            try {
-                await pendingSave;
-            } catch (err) {
-                console.error("Pending save error:", err);
-            }
-            showView('view-chapters');
+        showView(
+            'view-chapters'
+        );
+
+    }
+
+
+    async function saveAnswerProgress(
+        currentQ,
+        isCorrect
+    ) {
+
+        if (
+            !currentUser ||
+            currentUser.role !==
+            'student'
+        ) {
+
+            return;
+
         }
 
-        async function saveAnswerProgress(currentQ, isCorrect) {
-            if (!currentUser || currentUser.role !== 'student') return;
 
-            try {
-                if (!currentSessionId) {
-                    const { data: sessionData, error: sessionError } = await _supabase
-                        .from('quiz_sessions')
-                        .insert([{
-                            student_id: currentUser.id,
-                            grade_tested: currentGrade,
-                            score: 0,
-                            total_questions: 0
-                        }])
+        try {
+
+            if (
+                !currentSessionId
+            ) {
+
+                const {
+                    data: sessionData,
+                    error: sessionError
+                } =
+                    await _supabase
+                        .from(
+                            'quiz_sessions'
+                        )
+                        .insert([
+
+                            {
+                                student_id:
+                                    currentUser.id,
+
+                                grade_tested:
+                                    currentGrade,
+
+                                score:
+                                    0,
+
+                                total_questions:
+                                    0
+                            }
+
+                        ])
                         .select()
                         .single();
 
-                    if (sessionError) throw sessionError;
-                    currentSessionId = sessionData.id;
+
+                if (
+                    sessionError
+                ) {
+
+                    throw sessionError;
+
                 }
 
-                const { error: analyticsError } = await _supabase
-                    .from('answer_analytics')
-                    .insert([{
-                        session_id: currentSessionId,
-                        student_id: currentUser.id,
-                        question_id: currentQ.id,
-                        is_correct: isCorrect
-                    }]);
 
-                if (analyticsError) throw analyticsError;
+                currentSessionId =
+                    sessionData.id;
 
-                const { error: sessionUpdateError } = await _supabase
-                    .from('quiz_sessions')
-                    .update({
-                        score: score,
-                        total_questions: roundHistory.length
-                    })
-                    .eq('id', currentSessionId);
-
-                if (sessionUpdateError) throw sessionUpdateError;
-            } catch (err) {
-                console.error("Progress save error:", err);
             }
+
+
+            const {
+                error: analyticsError
+            } =
+                await _supabase
+                    .from(
+                        'answer_analytics'
+                    )
+                    .insert([
+
+                        {
+                            session_id:
+                                currentSessionId,
+
+                            student_id:
+                                currentUser.id,
+
+                            question_id:
+                                currentQ.id,
+
+                            is_correct:
+                                isCorrect
+                        }
+
+                    ]);
+
+
+            if (
+                analyticsError
+            ) {
+
+                throw analyticsError;
+
+            }
+
+
+            const {
+                error: sessionUpdateError
+            } =
+                await _supabase
+                    .from(
+                        'quiz_sessions'
+                    )
+                    .update({
+
+                        score:
+                            score,
+
+                        total_questions:
+                            roundHistory.length
+
+                    })
+                    .eq(
+                        'id',
+                        currentSessionId
+                    );
+
+
+            if (
+                sessionUpdateError
+            ) {
+
+                throw sessionUpdateError;
+
+            }
+
         }
 
-        function loadNextQuestion() {
-            if (currentQuestionIndex >= totalQuestions) {
-                showResults();
-                return;
+        catch (
+            err
+        ) {
+
+            console.error(
+                'Progress save error:',
+                err
+            );
+
+        }
+
+    }
+
+
+    // =========================================================
+    // QUESTION ROUTER
+    // =========================================================
+
+    function loadNextQuestion() {
+
+        if (
+            currentQuestionIndex >=
+            quizPool.length
+        ) {
+
+            showResults();
+
+            return;
+
+        }
+
+
+        resetConstructedAnswerState();
+
+
+        document
+            .getElementById(
+                'quiz-next-container'
+            )
+            .classList
+            .add(
+                'hidden-view'
+            );
+
+
+        const currentQ =
+            quizPool[
+                currentQuestionIndex
+            ];
+
+
+        document
+            .getElementById(
+                'quiz-progress'
+            )
+            .innerText =
+                `${currentQuestionIndex + 1} / ${quizPool.length}`;
+
+
+        document
+            .getElementById(
+                'quiz-prompt'
+            )
+            .innerHTML =
+                renderQuestionPrompt(
+                    currentQ
+                );
+
+
+        if (
+            currentTopic ===
+            'Intervals'
+        ) {
+
+            document
+                .getElementById(
+                    'quiz-means-text'
+                )
+                .innerText =
+                    'WHAT INTERVAL IS SHOWN?';
+
+
+            renderIntervalNumberButtons();
+
+            return;
+
+        }
+
+
+        if (
+            currentTopic ===
+            'Keys & scales'
+        ) {
+
+            renderKeysScalesQuestion(
+                currentQ
+            );
+
+            return;
+
+        }
+
+
+        if (
+            currentTopic ===
+            'Pitch & transposition'
+        ) {
+
+            renderPitchQuestion(
+                currentQ
+            );
+
+            return;
+
+        }
+
+
+        if (
+            currentTopic ===
+            'Tonic triads'
+        ) {
+
+            renderTonicTriadQuestion(
+                currentQ
+            );
+
+            return;
+
+        }
+
+
+        renderDefaultMultipleChoice(
+            currentQ
+        );
+
+    }
+
+
+    function renderQuestionPrompt(
+        currentQ
+    ) {
+
+        if (
+            currentTopic ===
+            'Pitch & transposition'
+        ) {
+
+            return renderPitchPrompt(
+                currentQ
+            );
+
+        }
+
+
+        return currentQ.term;
+
+    }
+
+
+    // =========================================================
+    // DEFAULT MULTIPLE CHOICE
+    // =========================================================
+
+    function renderDefaultMultipleChoice(
+        currentQ
+    ) {
+
+        document
+            .getElementById(
+                'quiz-means-text'
+            )
+            .innerText =
+                'MEANS:';
+
+
+        let incorrectAnswers =
+            currentVocabList
+                .filter(
+                    v =>
+                        v.answer !==
+                            currentQ.answer &&
+                        v.category ===
+                            currentQ.category
+                )
+                .map(
+                    v =>
+                        v.answer
+                )
+                .sort(
+                    () =>
+                        0.5 -
+                        Math.random()
+                );
+
+
+        if (
+            incorrectAnswers.length <
+            3
+        ) {
+
+            const extraAnswers =
+                currentVocabList
+                    .filter(
+                        v =>
+                            v.answer !==
+                                currentQ.answer &&
+                            v.category !==
+                                currentQ.category
+                    )
+                    .map(
+                        v =>
+                            v.answer
+                    )
+                    .sort(
+                        () =>
+                            0.5 -
+                            Math.random()
+                    );
+
+
+            incorrectAnswers =
+                [
+                    ...incorrectAnswers,
+                    ...extraAnswers
+                ];
+
+        }
+
+
+        incorrectAnswers =
+            [
+                ...new Set(
+                    incorrectAnswers
+                )
+            ]
+            .slice(
+                0,
+                3
+            );
+
+
+        const options =
+            [
+                ...incorrectAnswers,
+                currentQ.answer
+            ]
+            .sort(
+                () =>
+                    0.5 -
+                    Math.random()
+            );
+
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                options
+                    .map(
+                        opt => {
+
+                            const isCorrect =
+                                opt ===
+                                currentQ.answer;
+
+
+                            return `
+                                <button
+                                    onclick="checkAnswer(this, ${isCorrect})"
+                                    data-correct="${isCorrect}"
+                                    class="btn-3d btn-answer w-full p-4 text-left text-base font-bold"
+                                >
+                                    ${opt}
+                                </button>
+                            `;
+
+                        }
+                    )
+                    .join('');
+
+    }
+
+
+    async function checkAnswer(
+        btnElement,
+        isCorrect
+    ) {
+
+        const currentQ =
+            quizPool[
+                currentQuestionIndex
+            ];
+
+
+        const allBtns =
+            document
+                .getElementById(
+                    'quiz-options'
+                )
+                .querySelectorAll(
+                    'button'
+                );
+
+
+        recordRoundAnswer(
+            currentQ,
+            isCorrect,
+            currentQ.answer
+        );
+
+
+        allBtns.forEach(
+            b => {
+
+                b.disabled =
+                    true;
+
+
+                if (
+                    b.getAttribute(
+                        'data-correct'
+                    ) === 'true' &&
+                    !isCorrect
+                ) {
+
+                    b.classList.add(
+                        'btn-correct'
+                    );
+
+
+                    b.style.opacity =
+                        '0.5';
+
+                }
+
             }
+        );
 
-            selectedIntervalNumber = null;
-            document.getElementById('quiz-next-container').classList.add('hidden-view');
 
-            const currentQ = quizPool[currentQuestionIndex];
+        if (
+            isCorrect
+        ) {
 
-            document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1} / ${totalQuestions}`;
-            document.getElementById('quiz-prompt').innerHTML = currentQ.term;
+            btnElement
+                .classList
+                .add(
+                    'btn-correct'
+                );
 
-            // Intervals use a purpose-built answer UI instead of random multiple choice.
-            if (currentTopic === 'Intervals') {
-                document.getElementById('quiz-means-text').innerText = 'WHAT INTERVAL IS SHOWN?';
-                renderIntervalNumberButtons();
-                return;
-            }
 
-            // Default UI for Terms & signs and future standard multiple-choice topics.
-            document.getElementById('quiz-means-text').innerText = 'MEANS:';
+            score++;
 
-            let incorrectAnswers = currentVocabList
-                .filter(v => v.answer !== currentQ.answer && v.category === currentQ.category)
-                .map(v => v.answer)
-                .sort(() => 0.5 - Math.random());
+        }
 
-            if (incorrectAnswers.length < 3) {
-                let extraAnswers = currentVocabList
-                    .filter(v => v.answer !== currentQ.answer && v.category !== currentQ.category)
-                    .map(v => v.answer)
-                    .sort(() => 0.5 - Math.random());
-                incorrectAnswers = [...incorrectAnswers, ...extraAnswers];
-            }
+        else {
 
-            // Deduplicate before taking the first 3 distractors.
-            incorrectAnswers = [...new Set(incorrectAnswers)].slice(0, 3);
-            let options = [...incorrectAnswers, currentQ.answer].sort(() => 0.5 - Math.random());
+            btnElement
+                .classList
+                .add(
+                    'btn-wrong'
+                );
 
-            const optionsContainer = document.getElementById('quiz-options');
-            optionsContainer.innerHTML = options.map(opt => {
-                const isCorrect = opt === currentQ.answer;
-                return `
-                    <button onclick="checkAnswer(this, ${isCorrect})" data-correct="${isCorrect}" class="btn-3d btn-answer w-full p-4 text-left text-base font-bold">
-                        ${opt}
+        }
+
+
+        await saveAndContinue(
+            currentQ,
+            isCorrect
+        );
+
+    }
+
+
+    // =========================================================
+    // INTERVALS
+    // =========================================================
+
+    function renderIntervalNumberButtons() {
+
+        const firstRow = [
+
+            [
+                '2nd',
+                '2nd'
+            ],
+
+            [
+                '3rd',
+                '3rd'
+            ],
+
+            [
+                '4th',
+                '4th'
+            ],
+
+            [
+                '5th',
+                '5th'
+            ]
+
+        ];
+
+
+        const secondRow = [
+
+            [
+                '6th',
+                '6th'
+            ],
+
+            [
+                '7th',
+                '7th'
+            ],
+
+            [
+                'octave',
+                'Octave'
+            ]
+
+        ];
+
+
+        const buttonHtml =
+            (
+                [
+                    value,
+                    label
+                ]
+            ) =>
+                `
+                    <button
+                        onclick="selectIntervalNumber(this, '${value}')"
+                        class="btn-3d btn-answer p-3 text-center text-base font-black"
+                    >
+                        ${label}
                     </button>
                 `;
-            }).join('');
-        }
 
-        function renderIntervalNumberButtons() {
-            const optionsContainer = document.getElementById('quiz-options');
 
-            const firstRow = [
-                ['2nd', '2nd'],
-                ['3rd', '3rd'],
-                ['4th', '4th'],
-                ['5th', '5th']
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="w-full">
+
+                        <div class="grid grid-cols-4 gap-2">
+                            ${firstRow.map(buttonHtml).join('')}
+                        </div>
+
+                        <div class="w-3/4 mx-auto grid grid-cols-3 gap-2 mt-3">
+                            ${secondRow.map(buttonHtml).join('')}
+                        </div>
+
+                        <p
+                            id="interval-feedback"
+                            class="hidden mt-5 text-center text-sm font-black"
+                        ></p>
+
+                    </div>
+                `;
+
+    }
+
+
+    function selectIntervalNumber(
+        btnElement,
+        number
+    ) {
+
+        const currentQ =
+            quizPool[
+                currentQuestionIndex
             ];
 
-            const secondRow = [
-                ['6th', '6th'],
-                ['7th', '7th'],
-                ['octave', 'Octave']
+
+        if (
+            currentQ.grade <
+            3
+        ) {
+
+            submitIntervalAnswer(
+                number,
+                btnElement
+            );
+
+
+            return;
+
+        }
+
+
+        selectedIntervalNumber =
+            number;
+
+
+        document
+            .getElementById(
+                'quiz-means-text'
+            )
+            .innerText =
+                'WHAT TYPE IS IT?';
+
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="w-full">
+
+                        <div class="text-center mb-4">
+
+                            <span
+                                class="inline-flex items-center gap-2 bg-rose-100 text-rose-700 px-4 py-2 rounded-full font-black text-sm"
+                            >
+
+                                <span>
+                                    ${
+                                        number === 'octave'
+                                            ? 'Octave'
+                                            : number
+                                    }
+                                </span>
+
+                                selected
+
+                                <button
+                                    onclick="
+                                        renderIntervalNumberButtons();
+                                        document.getElementById('quiz-means-text').innerText='WHAT INTERVAL IS SHOWN?';
+                                        selectedIntervalNumber=null;
+                                    "
+                                    class="text-rose-400 hover:text-rose-600"
+                                    aria-label="Change interval number"
+                                >
+                                    ×
+                                </button>
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="grid grid-cols-3 gap-3">
+
+                            <button
+                                onclick="selectIntervalType(this, 'major')"
+                                class="btn-3d btn-answer p-3 text-center font-black"
+                            >
+                                Major
+                            </button>
+
+                            <button
+                                onclick="selectIntervalType(this, 'minor')"
+                                class="btn-3d btn-answer p-3 text-center font-black"
+                            >
+                                Minor
+                            </button>
+
+                            <button
+                                onclick="selectIntervalType(this, 'perfect')"
+                                class="btn-3d btn-answer p-3 text-center font-black"
+                            >
+                                Perfect
+                            </button>
+
+                        </div>
+
+
+                        <p
+                            id="interval-feedback"
+                            class="hidden mt-5 text-center text-sm font-black"
+                        ></p>
+
+                    </div>
+                `;
+
+    }
+
+
+    function selectIntervalType(
+        btnElement,
+        type
+    ) {
+
+        if (
+            !selectedIntervalNumber
+        ) {
+
+            return;
+
+        }
+
+
+        submitIntervalAnswer(
+
+            `${type} ${selectedIntervalNumber}`,
+
+            btnElement
+
+        );
+
+    }
+
+
+    async function submitIntervalAnswer(
+        answer,
+        btnElement
+    ) {
+
+        const currentQ =
+            quizPool[
+                currentQuestionIndex
             ];
 
-            const buttonHtml = ([value, label]) => `
-                <button
-                    onclick="selectIntervalNumber(this, '${value}')"
-                    data-answer="${value}"
-                    class="btn-3d btn-answer p-3 text-center text-base font-black">
-                    ${label}
-                </button>
-            `;
 
-            optionsContainer.innerHTML = `
+        const isCorrect =
+            answer
+                .trim()
+                .toLowerCase() ===
+            currentQ
+                .answer
+                .trim()
+                .toLowerCase();
+
+
+        recordRoundAnswer(
+            currentQ,
+            isCorrect,
+            currentQ.answer
+        );
+
+
+        disableAnswerButtons();
+
+
+        if (
+            isCorrect
+        ) {
+
+            btnElement
+                .classList
+                .add(
+                    'btn-correct'
+                );
+
+
+            score++;
+
+        }
+
+        else {
+
+            btnElement
+                .classList
+                .add(
+                    'btn-wrong'
+                );
+
+
+            showFeedback(
+                'interval-feedback',
+                currentQ.answer
+            );
+
+        }
+
+
+        await saveAndContinue(
+            currentQ,
+            isCorrect
+        );
+
+    }
+
+
+    // =========================================================
+    // KEYS & SCALES
+    // =========================================================
+
+    function renderKeysScalesQuestion(
+        currentQ
+    ) {
+
+        const optionsContainer =
+            document.getElementById(
+                'quiz-options'
+            );
+
+
+        switch (
+            currentQ.category
+        ) {
+
+            case 'key_signature':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'SELECT ALL THAT APPLY';
+
+
+                renderKeySignatureSelector();
+
+                break;
+
+
+            case 'key_name':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'BUILD THE KEY NAME';
+
+
+                renderKeyNameBuilder();
+
+                break;
+
+
+            case 'accidental_family':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'CHOOSE ONE';
+
+
+                optionsContainer.innerHTML =
+                    `
+                        <div class="grid grid-cols-3 gap-3">
+
+                            ${
+                                [
+                                    'Sharps',
+                                    'Flats',
+                                    'Neither'
+                                ]
+                                .map(
+                                    value =>
+                                        simpleSubmitButton(
+                                            value,
+                                            value
+                                        )
+                                )
+                                .join('')
+                            }
+
+                        </div>
+
+                        ${feedbackHtml()}
+                    `;
+
+                break;
+
+
+            case 'number':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'CHOOSE THE NUMBER';
+
+
+                optionsContainer.innerHTML =
+                    `
+                        <div class="grid grid-cols-4 gap-3">
+
+                            ${
+                                [
+                                    0,
+                                    1,
+                                    2,
+                                    3,
+                                    4,
+                                    5,
+                                    6,
+                                    7
+                                ]
+                                .map(
+                                    value =>
+                                        simpleSubmitButton(
+                                            String(value),
+                                            String(value),
+                                            'text-xl'
+                                        )
+                                )
+                                .join('')
+                            }
+
+                        </div>
+
+                        ${feedbackHtml()}
+                    `;
+
+                break;
+
+
+            case 'tone_pattern':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'BUILD THE PATTERN';
+
+
+                renderTonePatternBuilder();
+
+                break;
+
+
+            case 'degree_pair':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'SELECT ALL THAT APPLY';
+
+
+                renderDegreePairSelector();
+
+                break;
+
+
+            case 'tone_or_semitone':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'CHOOSE ONE';
+
+
+                optionsContainer.innerHTML =
+                    `
+                        <div class="grid grid-cols-2 gap-3">
+
+                            ${
+                                simpleSubmitButton(
+                                    'Tone',
+                                    'Tone'
+                                )
+                            }
+
+                            ${
+                                simpleSubmitButton(
+                                    'Semitone',
+                                    'Semitone'
+                                )
+                            }
+
+                        </div>
+
+                        ${feedbackHtml()}
+                    `;
+
+                break;
+
+
+            case 'missing_tone_semitone':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'WHAT GOES IN THE GAP?';
+
+
+                optionsContainer.innerHTML =
+                    `
+                        <div class="grid grid-cols-2 gap-3">
+
+                            ${
+                                simpleSubmitButton(
+                                    'T',
+                                    'T',
+                                    'text-xl'
+                                )
+                            }
+
+                            ${
+                                simpleSubmitButton(
+                                    'S',
+                                    'S',
+                                    'text-xl'
+                                )
+                            }
+
+                        </div>
+
+                        ${feedbackHtml()}
+                    `;
+
+                break;
+
+        }
+
+    }
+
+
+    function feedbackHtml() {
+
+        return `
+            <p
+                id="keys-feedback"
+                class="hidden mt-5 text-center text-sm font-black"
+            ></p>
+        `;
+
+    }
+
+
+    function simpleSubmitButton(
+        label,
+        answer,
+        extraClass = ''
+    ) {
+
+        const safe =
+            answer.replace(
+                /'/g,
+                "\\'"
+            );
+
+
+        return `
+            <button
+                onclick="submitConstructedAnswer('${safe}', this)"
+                class="btn-3d btn-answer p-4 text-center font-black ${extraClass}"
+            >
+                ${label}
+            </button>
+        `;
+
+    }
+
+
+    function renderKeySignatureSelector() {
+
+        const sharps = [
+
+            'A♯',
+            'B♯',
+            'C♯',
+            'D♯',
+            'E♯',
+            'F♯',
+            'G♯'
+
+        ];
+
+
+        const flats = [
+
+            'A♭',
+            'B♭',
+            'C♭',
+            'D♭',
+            'E♭',
+            'F♭',
+            'G♭'
+
+        ];
+
+
+        const row =
+            values =>
+                values
+                    .map(
+                        value =>
+                            `
+                                <button
+                                    onclick="toggleKeySignatureAnswer('${value}')"
+                                    class="btn-3d btn-answer p-2 text-center font-black ${
+                                        selectedKeySignatureAnswers.includes(
+                                            value
+                                        )
+                                            ? 'btn-selected'
+                                            : ''
+                                    }"
+                                >
+                                    ${value}
+                                </button>
+                            `
+                    )
+                    .join('');
+
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="w-full">
+
+                        <p class="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-2">
+                            Sharps
+                        </p>
+
+                        <div class="grid grid-cols-7 gap-1.5">
+                            ${row(sharps)}
+                        </div>
+
+
+                        <p class="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-2 mt-5">
+                            Flats
+                        </p>
+
+                        <div class="grid grid-cols-7 gap-1.5">
+                            ${row(flats)}
+                        </div>
+
+
+                        <p class="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-2 mt-5">
+                            No accidentals
+                        </p>
+
+
+                        <button
+                            onclick="toggleKeySignatureAnswer('None')"
+                            class="btn-3d btn-answer w-full p-3 text-center font-black ${
+                                selectedKeySignatureAnswers.includes(
+                                    'None'
+                                )
+                                    ? 'btn-selected'
+                                    : ''
+                            }"
+                        >
+                            None
+                        </button>
+
+
+                        <button
+                            onclick="submitKeySignatureAnswer(this)"
+                            class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black mt-6"
+                        >
+                            Check answer
+                        </button>
+
+
+                        ${feedbackHtml()}
+
+                    </div>
+                `;
+
+    }
+
+
+    function toggleKeySignatureAnswer(
+        value
+    ) {
+
+        if (
+            value === 'None'
+        ) {
+
+            selectedKeySignatureAnswers =
+                selectedKeySignatureAnswers
+                    .includes(
+                        'None'
+                    )
+                    ? []
+                    : [
+                        'None'
+                    ];
+
+        }
+
+        else {
+
+            selectedKeySignatureAnswers =
+                selectedKeySignatureAnswers
+                    .filter(
+                        x =>
+                            x !==
+                            'None'
+                    );
+
+
+            selectedKeySignatureAnswers =
+                selectedKeySignatureAnswers
+                    .includes(
+                        value
+                    )
+                    ? selectedKeySignatureAnswers
+                        .filter(
+                            x =>
+                                x !==
+                                value
+                        )
+                    : [
+                        ...selectedKeySignatureAnswers,
+                        value
+                    ];
+
+        }
+
+
+        renderKeySignatureSelector();
+
+    }
+
+
+    function submitKeySignatureAnswer(
+        btnElement
+    ) {
+
+        if (
+            selectedKeySignatureAnswers
+                .length ===
+            0
+        ) {
+
+            return;
+
+        }
+
+
+        submitConstructedAnswer(
+
+            selectedKeySignatureAnswers.join(
+                '|'
+            ),
+
+            btnElement,
+
+            true
+
+        );
+
+    }
+
+
+    function renderKeyNameBuilder() {
+
+        const letters = [
+
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G'
+
+        ];
+
+
+        const display =
+            selectedKeyLetter
+                ? `${selectedKeyLetter}${selectedKeyAccidental} major`
+                : '— major';
+
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="w-full">
+
+                        <div class="bg-white border-2 border-rose-200 rounded-2xl p-4 text-center text-2xl font-black text-rose-700 mb-4">
+                            ${display}
+                        </div>
+
+
+                        <div class="grid grid-cols-7 gap-1.5">
+
+                            ${
+                                letters
+                                    .map(
+                                        letter =>
+                                            `
+                                                <button
+                                                    onclick="selectKeyLetter('${letter}')"
+                                                    class="btn-3d btn-answer p-3 text-center font-black ${
+                                                        selectedKeyLetter ===
+                                                        letter
+                                                            ? 'btn-selected'
+                                                            : ''
+                                                    }"
+                                                >
+                                                    ${letter}
+                                                </button>
+                                            `
+                                    )
+                                    .join('')
+                            }
+
+                        </div>
+
+
+                        <div class="grid grid-cols-3 gap-3 mt-4">
+
+                            <button
+                                onclick="selectKeyAccidental('♭')"
+                                class="btn-3d btn-answer p-3 text-center text-xl font-black ${
+                                    selectedKeyAccidental ===
+                                    '♭'
+                                        ? 'btn-selected'
+                                        : ''
+                                }"
+                            >
+                                ♭
+                            </button>
+
+
+                            <button
+                                onclick="selectKeyAccidental('')"
+                                class="btn-3d btn-answer p-3 text-center font-black ${
+                                    selectedKeyLetter &&
+                                    selectedKeyAccidental ===
+                                    ''
+                                        ? 'btn-selected'
+                                        : ''
+                                }"
+                            >
+                                Natural
+                            </button>
+
+
+                            <button
+                                onclick="selectKeyAccidental('♯')"
+                                class="btn-3d btn-answer p-3 text-center text-xl font-black ${
+                                    selectedKeyAccidental ===
+                                    '♯'
+                                        ? 'btn-selected'
+                                        : ''
+                                }"
+                            >
+                                ♯
+                            </button>
+
+                        </div>
+
+
+                        <button
+                            onclick="submitBuiltKeyName(this)"
+                            class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black mt-6"
+                        >
+                            Check answer
+                        </button>
+
+
+                        ${feedbackHtml()}
+
+                    </div>
+                `;
+
+    }
+
+
+    function selectKeyLetter(
+        letter
+    ) {
+
+        selectedKeyLetter =
+            letter;
+
+
+        renderKeyNameBuilder();
+
+    }
+
+
+    function selectKeyAccidental(
+        accidental
+    ) {
+
+        selectedKeyAccidental =
+            accidental;
+
+
+        renderKeyNameBuilder();
+
+    }
+
+
+    function submitBuiltKeyName(
+        btnElement
+    ) {
+
+        if (
+            !selectedKeyLetter
+        ) {
+
+            return;
+
+        }
+
+
+        submitConstructedAnswer(
+
+            `${selectedKeyLetter}${selectedKeyAccidental} major`,
+
+            btnElement
+
+        );
+
+    }
+
+
+    function renderTonePatternBuilder() {
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="w-full">
+
+                        <div class="grid grid-cols-7 gap-1.5">
+
+                            ${
+                                selectedTonePattern
+                                    .map(
+                                        (
+                                            value,
+                                            index
+                                        ) =>
+                                            `
+                                                <button
+                                                    onclick="cycleTonePattern(${index})"
+                                                    class="btn-3d btn-answer p-3 text-center text-lg font-black"
+                                                >
+                                                    ${value || '—'}
+                                                </button>
+                                            `
+                                    )
+                                    .join('')
+                            }
+
+                        </div>
+
+
+                        <p class="text-center text-xs font-bold text-rose-300 mt-3">
+                            Tap each box: T → S → blank
+                        </p>
+
+
+                        <button
+                            onclick="submitTonePattern(this)"
+                            class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black mt-6"
+                        >
+                            Check answer
+                        </button>
+
+
+                        ${feedbackHtml()}
+
+                    </div>
+                `;
+
+    }
+
+
+    function cycleTonePattern(
+        index
+    ) {
+
+        const current =
+            selectedTonePattern[
+                index
+            ];
+
+
+        selectedTonePattern[
+            index
+        ] =
+            current === ''
+                ? 'T'
+                : (
+                    current === 'T'
+                        ? 'S'
+                        : ''
+                );
+
+
+        renderTonePatternBuilder();
+
+    }
+
+
+    function submitTonePattern(
+        btnElement
+    ) {
+
+        if (
+            selectedTonePattern.some(
+                x =>
+                    !x
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        submitConstructedAnswer(
+
+            selectedTonePattern.join(
+                '|'
+            ),
+
+            btnElement
+
+        );
+
+    }
+
+
+    function renderDegreePairSelector() {
+
+        const pairs = [
+
+            '1–2',
+            '2–3',
+            '3–4',
+            '4–5',
+            '5–6',
+            '6–7',
+            '7–8'
+
+        ];
+
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="w-full">
+
+                        <div class="grid grid-cols-4 gap-2">
+
+                            ${
+                                pairs
+                                    .map(
+                                        pair =>
+                                            `
+                                                <button
+                                                    onclick="toggleDegreePair('${pair}')"
+                                                    class="btn-3d btn-answer p-3 text-center font-black ${
+                                                        selectedDegreePairs
+                                                            .includes(
+                                                                pair
+                                                            )
+                                                            ? 'btn-selected'
+                                                            : ''
+                                                    }"
+                                                >
+                                                    ${pair}
+                                                </button>
+                                            `
+                                    )
+                                    .join('')
+                            }
+
+                        </div>
+
+
+                        <button
+                            onclick="submitDegreePairs(this)"
+                            class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black mt-6"
+                        >
+                            Check answer
+                        </button>
+
+
+                        ${feedbackHtml()}
+
+                    </div>
+                `;
+
+    }
+
+
+    function toggleDegreePair(
+        pair
+    ) {
+
+        selectedDegreePairs =
+            selectedDegreePairs
+                .includes(
+                    pair
+                )
+                ? selectedDegreePairs
+                    .filter(
+                        x =>
+                            x !==
+                            pair
+                    )
+                : [
+                    ...selectedDegreePairs,
+                    pair
+                ];
+
+
+        renderDegreePairSelector();
+
+    }
+
+
+    function submitDegreePairs(
+        btnElement
+    ) {
+
+        if (
+            selectedDegreePairs
+                .length ===
+            0
+        ) {
+
+            return;
+
+        }
+
+
+        submitConstructedAnswer(
+
+            selectedDegreePairs.join(
+                '|'
+            ),
+
+            btnElement,
+
+            true
+
+        );
+
+    }
+
+
+    // =========================================================
+    // PITCH & TRANSPOSITION
+    // =========================================================
+
+    function renderPitchPrompt(
+        currentQ
+    ) {
+
+        const parts =
+            currentQ.term
+                .split(
+                    '|'
+                );
+
+
+        const code =
+            parts[
+                0
+            ];
+
+
+        if (
+            code ===
+            'NOTE'
+        ) {
+
+            const [
+                ,
+                clef,
+                position,
+                accidental
+            ] =
+                parts;
+
+
+            return `
                 <div class="w-full">
-                    <div class="grid grid-cols-4 gap-2">
-                        ${firstRow.map(buttonHtml).join('')}
+
+                    <div class="text-base font-black mb-2">
+                        What note is shown?
                     </div>
 
-                    <div class="w-3/4 mx-auto grid grid-cols-3 gap-2 mt-3">
-                        ${secondRow.map(buttonHtml).join('')}
-                    </div>
+                    ${
+                        buildStaffSvg(
+                            clef,
+                            [
+                                {
+                                    position:
+                                        Number(
+                                            position
+                                        ),
 
-                    <p id="interval-feedback" class="hidden mt-5 text-center text-sm font-black"></p>
+                                    accidental:
+                                        accidental
+                                }
+                            ]
+                        )
+                    }
+
                 </div>
             `;
+
         }
 
-        function selectIntervalNumber(btnElement, number) {
-            const currentQ = quizPool[currentQuestionIndex];
 
-            // Grade 1 and Grade 2 questions only require the interval number.
-            // This checks the QUESTION grade rather than the selected grade because
-            // Grade 3 practice is cumulative and can still serve Grade 1/2 rows.
-            if (currentQ.grade < 3) {
-                submitIntervalAnswer(number, btnElement);
-                return;
-            }
+        if (
+            code ===
+            'CLEF'
+        ) {
 
-            // Grade 3: keep the chosen number, then ask for major/minor/perfect.
-            selectedIntervalNumber = number;
+            const clef =
+                parts[
+                    1
+                ];
 
-            document.getElementById('quiz-means-text').innerText = 'WHAT TYPE IS IT?';
 
-            const optionsContainer = document.getElementById('quiz-options');
-            optionsContainer.innerHTML = `
+            return `
                 <div class="w-full">
-                    <div class="text-center mb-4">
-                        <span id="interval-number-pill" class="inline-flex items-center gap-2 bg-rose-100 text-rose-700 px-4 py-2 rounded-full font-black text-sm">
-                            <span>${number === 'octave' ? 'Octave' : number}</span> selected
-                            <button onclick="renderIntervalNumberButtons(); document.getElementById('quiz-means-text').innerText='WHAT INTERVAL IS SHOWN?'; selectedIntervalNumber=null;" class="text-rose-400 hover:text-rose-600" aria-label="Change interval number">×</button>
-                        </span>
+
+                    <div class="text-base font-black mb-2">
+                        Which clef is shown?
                     </div>
 
-                    <div class="grid grid-cols-3 gap-3">
-                        <button onclick="selectIntervalType(this, 'major')" data-type="major" class="btn-3d btn-answer p-3 text-center font-black">Major</button>
-                        <button onclick="selectIntervalType(this, 'minor')" data-type="minor" class="btn-3d btn-answer p-3 text-center font-black">Minor</button>
-                        <button onclick="selectIntervalType(this, 'perfect')" data-type="perfect" class="btn-3d btn-answer p-3 text-center font-black">Perfect</button>
-                    </div>
+                    ${
+                        buildStaffSvg(
+                            clef,
+                            []
+                        )
+                    }
 
-                    <p id="interval-feedback" class="hidden mt-5 text-center text-sm font-black"></p>
                 </div>
             `;
+
         }
 
-        function selectIntervalType(btnElement, type) {
-            if (!selectedIntervalNumber) return;
-            submitIntervalAnswer(`${type} ${selectedIntervalNumber}`, btnElement);
+
+        if (
+            code ===
+            'ACCIDENTAL'
+        ) {
+
+            return `
+                <div>
+
+                    <div class="text-base font-black mb-4">
+                        Which sign is shown?
+                    </div>
+
+                    <div class="text-7xl leading-none">
+                        ${parts[1]}
+                    </div>
+
+                </div>
+            `;
+
         }
 
-        async function submitIntervalAnswer(answer, btnElement) {
-            const currentQ = quizPool[currentQuestionIndex];
-            const normalisedAnswer = answer.trim().toLowerCase();
-            const normalisedCorrect = currentQ.answer.trim().toLowerCase();
-            const isCorrect = normalisedAnswer === normalisedCorrect;
 
-            roundHistory.push({
-                id: currentQ.id,
-                category: currentQ.category,
-                term: currentQ.term,
-                answer: currentQ.answer,
-                isCorrect: isCorrect
-            });
+        if (
+            code ===
+            'PAIR'
+        ) {
 
-            const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
-            allBtns.forEach(b => b.disabled = true);
+            const [
+                ,
+                clef,
+                firstPos,
+                secondPos
+            ] =
+                parts;
 
-            if (isCorrect) {
-                btnElement.classList.add('btn-correct');
-                score++;
-            } else {
-                btnElement.classList.add('btn-wrong');
 
-                const feedback = document.getElementById('interval-feedback');
-                if (feedback) {
-                    feedback.innerText = `Correct answer: ${currentQ.answer}`;
-                    feedback.className = 'mt-5 text-center text-sm font-black text-emerald-600';
-                }
+            return `
+                <div class="w-full">
+
+                    <div class="text-base font-black mb-2">
+                        Does the second note sound higher or lower than the first?
+                    </div>
+
+                    ${
+                        buildStaffSvg(
+
+                            clef,
+
+                            [
+                                {
+                                    position:
+                                        Number(
+                                            firstPos
+                                        ),
+
+                                    accidental:
+                                        'natural',
+
+                                    x:
+                                        135
+                                },
+
+                                {
+                                    position:
+                                        Number(
+                                            secondPos
+                                        ),
+
+                                    accidental:
+                                        'natural',
+
+                                    x:
+                                        215
+                                }
+                            ]
+
+                        )
+                    }
+
+                </div>
+            `;
+
+        }
+
+
+        if (
+            code ===
+            'CANCEL'
+        ) {
+
+            const [
+                ,
+                clef,
+                firstNote,
+                secondNote
+            ] =
+                parts;
+
+
+            return `
+                <div class="w-full">
+
+                    <div class="text-base font-black mb-2">
+                        What is the second note?
+                    </div>
+
+                    ${
+                        buildCancellationStaff(
+                            clef,
+                            firstNote,
+                            secondNote
+                        )
+                    }
+
+                </div>
+            `;
+
+        }
+
+
+        return currentQ.term;
+
+    }
+
+
+    function buildStaffSvg(
+        clef,
+        notes = []
+    ) {
+
+        const staffYs = [
+
+            110,
+            94,
+            78,
+            62,
+            46
+
+        ];
+
+
+        const clefSymbol =
+            clef ===
+            'bass'
+                ? '𝄢'
+                : '𝄞';
+
+
+        const clefY =
+            clef ===
+            'bass'
+                ? 91
+                : 103;
+
+
+        const clefSize =
+            clef ===
+            'bass'
+                ? 54
+                : 68;
+
+
+        const lines =
+            staffYs
+                .map(
+                    y =>
+                        `
+                            <line
+                                x1="65"
+                                y1="${y}"
+                                x2="285"
+                                y2="${y}"
+                                stroke="#881337"
+                                stroke-width="2"
+                            />
+                        `
+                )
+                .join('');
+
+
+        const noteHtml =
+            notes
+                .map(
+                    (
+                        note,
+                        index
+                    ) => {
+
+                        const x =
+                            note.x ||
+                            (
+                                155 +
+                                index *
+                                70
+                            );
+
+
+                        const y =
+                            110 -
+                            (
+                                Number(
+                                    note.position
+                                ) *
+                                8
+                            );
+
+
+                        const accidental =
+                            note.accidental &&
+                            note.accidental !==
+                            'natural'
+                                ? note.accidental
+                                : '';
+
+
+                        let ledger =
+                            '';
+
+
+                        if (
+                            Number(
+                                note.position
+                            ) <=
+                            -2
+                        ) {
+
+                            for (
+                                let p = -2;
+                                p >= Number(note.position);
+                                p -= 2
+                            ) {
+
+                                const ly =
+                                    110 -
+                                    p *
+                                    8;
+
+
+                                ledger += `
+                                    <line
+                                        x1="${x - 18}"
+                                        y1="${ly}"
+                                        x2="${x + 18}"
+                                        y2="${ly}"
+                                        stroke="#881337"
+                                        stroke-width="2"
+                                    />
+                                `;
+
+                            }
+
+                        }
+
+
+                        if (
+                            Number(
+                                note.position
+                            ) >=
+                            10
+                        ) {
+
+                            for (
+                                let p = 10;
+                                p <= Number(note.position);
+                                p += 2
+                            ) {
+
+                                const ly =
+                                    110 -
+                                    p *
+                                    8;
+
+
+                                ledger += `
+                                    <line
+                                        x1="${x - 18}"
+                                        y1="${ly}"
+                                        x2="${x + 18}"
+                                        y2="${ly}"
+                                        stroke="#881337"
+                                        stroke-width="2"
+                                    />
+                                `;
+
+                            }
+
+                        }
+
+
+                        return `
+                            ${ledger}
+
+                            ${
+                                accidental
+                                    ? `
+                                        <text
+                                            x="${x - 31}"
+                                            y="${y + 8}"
+                                            font-size="28"
+                                            font-family="serif"
+                                            fill="#881337"
+                                        >
+                                            ${accidental}
+                                        </text>
+                                    `
+                                    : ''
+                            }
+
+                            <ellipse
+                                cx="${x}"
+                                cy="${y}"
+                                rx="10"
+                                ry="7"
+                                transform="rotate(-18 ${x} ${y})"
+                                fill="#BE123C"
+                            />
+
+                            <line
+                                x1="${x + 9}"
+                                y1="${y}"
+                                x2="${x + 9}"
+                                y2="${y - 42}"
+                                stroke="#BE123C"
+                                stroke-width="3"
+                            />
+                        `;
+
+                    }
+                )
+                .join('');
+
+
+        return `
+            <div class="staff-wrap">
+
+                <svg
+                    viewBox="0 0 320 155"
+                    role="img"
+                    aria-label="Music stave"
+                >
+
+                    ${lines}
+
+                    <text
+                        x="20"
+                        y="${clefY}"
+                        font-size="${clefSize}"
+                        font-family="serif"
+                        fill="#9F1239"
+                    >
+                        ${clefSymbol}
+                    </text>
+
+                    ${noteHtml}
+
+                </svg>
+
+            </div>
+        `;
+
+    }
+
+
+    function pitchNameToParts(
+        noteName
+    ) {
+
+        const letter =
+            noteName.charAt(
+                0
+            );
+
+
+        const accidental =
+            noteName.includes(
+                '♯'
+            )
+                ? '♯'
+                : (
+                    noteName.includes(
+                        '♭'
+                    )
+                        ? '♭'
+                        : (
+                            noteName.includes(
+                                '♮'
+                            )
+                                ? '♮'
+                                : ''
+                        )
+                );
+
+
+        return {
+
+            letter,
+            accidental
+
+        };
+
+    }
+
+
+    function staffPositionForNamedNote(
+        clef,
+        noteName
+    ) {
+
+        const natural =
+            noteName.charAt(
+                0
+            );
+
+
+        const maps = {
+
+            treble: {
+
+                C: 5,
+                D: 6,
+                E: 7,
+                F: 8,
+                G: 2,
+                A: 3,
+                B: 4
+
+            },
+
+            bass: {
+
+                C: 3,
+                D: 4,
+                E: 5,
+                F: 6,
+                G: 7,
+                A: 8,
+                B: 2
+
             }
 
-            pendingSave = saveAnswerProgress(currentQ, isCorrect);
-            await pendingSave;
+        };
 
-            document.getElementById('quiz-next-container').classList.remove('hidden-view');
-        }
 
-        async function checkAnswer(btnElement, isCorrect) {
-            const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
-            const currentQ = quizPool[currentQuestionIndex];
+        return maps[
+            clef
+        ][
+            natural
+        ];
 
-            roundHistory.push({
-                id: currentQ.id,                 
-                category: currentQ.category,     
-                term: currentQ.term,
-                answer: currentQ.answer,
-                isCorrect: isCorrect
-            });
-            
-            allBtns.forEach(b => {
-                b.disabled = true;
-                
-                // FIX 2: We now check the data-correct attribute instead of innerText! Works perfectly on SVGs.
-                if (b.getAttribute('data-correct') === 'true' && !isCorrect) {
-                    b.classList.add('btn-correct');
-                    b.style.opacity = '0.5';
+    }
+
+
+    function buildCancellationStaff(
+        clef,
+        firstNote,
+        secondNote
+    ) {
+
+        const first =
+            pitchNameToParts(
+                firstNote
+            );
+
+
+        const second =
+            pitchNameToParts(
+                secondNote
+            );
+
+
+        const position =
+            staffPositionForNamedNote(
+                clef,
+                firstNote
+            );
+
+
+        return buildStaffSvg(
+
+            clef,
+
+            [
+                {
+                    position:
+                        position,
+
+                    accidental:
+                        first.accidental ||
+                        'natural',
+
+                    x:
+                        135
+                },
+
+                {
+                    position:
+                        position,
+
+                    accidental:
+                        second.accidental ||
+                        'natural',
+
+                    x:
+                        215
                 }
-            });
+            ]
 
-            if (isCorrect) {
-                btnElement.classList.add('btn-correct');
-                score++;
-            } else {
-                btnElement.classList.add('btn-wrong');
-            }
+        );
 
-            pendingSave = saveAnswerProgress(currentQ, isCorrect);
-            await pendingSave;
+    }
 
-            document.getElementById('quiz-next-container').classList.remove('hidden-view');
+
+    function renderPitchQuestion(
+        currentQ
+    ) {
+
+        switch (
+            currentQ.category
+        ) {
+
+            case 'note_name':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'NAME THE NOTE';
+
+
+                renderLetterButtons();
+
+                break;
+
+
+            case 'accidental_note_name':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'BUILD THE NOTE NAME';
+
+
+                renderNoteNameBuilder();
+
+                break;
+
+
+            case 'clef':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'CHOOSE ONE';
+
+
+                renderTwoChoice(
+                    'Treble',
+                    'Bass'
+                );
+
+                break;
+
+
+            case 'accidental_symbol':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'CHOOSE ONE';
+
+
+                renderThreeChoice(
+
+                    'Sharp',
+                    'Flat',
+                    'Natural'
+
+                );
+
+                break;
+
+
+            case 'accidental_effect':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'CHOOSE ONE';
+
+
+                renderThreeChoice(
+
+                    'Raises it by one semitone',
+
+                    'Lowers it by one semitone',
+
+                    'Cancels a sharp or flat'
+
+                );
+
+                break;
+
+
+            case 'cancellation':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'CHOOSE THE ANSWER';
+
+
+                if (
+                    currentQ.answer ===
+                    'Natural'
+                ) {
+
+                    renderThreeChoice(
+
+                        'Sharp',
+                        'Flat',
+                        'Natural'
+
+                    );
+
+                }
+
+                else {
+
+                    renderNaturalNoteAnswerButtons();
+
+                }
+
+                break;
+
+
+            case 'cancellation_note':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'NAME THE NOTE';
+
+
+                renderLetterButtons();
+
+                break;
+
+
+            case 'pitch_direction':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'CHOOSE ONE';
+
+
+                renderTwoChoice(
+
+                    'Higher',
+                    'Lower'
+
+                );
+
+                break;
+
         }
 
-        function handleNextClick() {
-            currentQuestionIndex++;
-            loadNextQuestion();
+    }
+
+
+    function renderLetterButtons() {
+
+        const letters = [
+
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G'
+
+        ];
+
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="grid grid-cols-7 gap-1.5">
+
+                        ${
+                            letters
+                                .map(
+                                    letter =>
+                                        simpleSubmitButton(
+                                            letter,
+                                            letter,
+                                            'px-1'
+                                        )
+                                )
+                                .join('')
+                        }
+
+                    </div>
+
+                    ${feedbackHtml()}
+                `;
+
+    }
+
+
+    function renderTwoChoice(
+        a,
+        b
+    ) {
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="grid grid-cols-2 gap-3">
+
+                        ${
+                            simpleSubmitButton(
+                                a,
+                                a
+                            )
+                        }
+
+                        ${
+                            simpleSubmitButton(
+                                b,
+                                b
+                            )
+                        }
+
+                    </div>
+
+                    ${feedbackHtml()}
+                `;
+
+    }
+
+
+    function renderThreeChoice(
+        a,
+        b,
+        c
+    ) {
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="grid grid-cols-1 gap-3">
+
+                        ${
+                            simpleSubmitButton(
+                                a,
+                                a
+                            )
+                        }
+
+                        ${
+                            simpleSubmitButton(
+                                b,
+                                b
+                            )
+                        }
+
+                        ${
+                            simpleSubmitButton(
+                                c,
+                                c
+                            )
+                        }
+
+                    </div>
+
+                    ${feedbackHtml()}
+                `;
+
+    }
+
+
+    function renderNaturalNoteAnswerButtons() {
+
+        const letters = [
+
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G'
+
+        ];
+
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="grid grid-cols-7 gap-1.5">
+
+                        ${
+                            letters
+                                .map(
+                                    letter =>
+                                        simpleSubmitButton(
+
+                                            `${letter}♮`,
+
+                                            `${letter} natural`,
+
+                                            'px-1'
+
+                                        )
+                                )
+                                .join('')
+                        }
+
+                    </div>
+
+                    ${feedbackHtml()}
+                `;
+
+    }
+
+
+    function renderNoteNameBuilder() {
+
+        const letters = [
+
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G'
+
+        ];
+
+
+        const display =
+            selectedNoteLetter
+                ? `${selectedNoteLetter}${selectedNoteAccidental}`
+                : '—';
+
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="w-full">
+
+                        <div class="bg-white border-2 border-rose-200 rounded-2xl p-4 text-center text-3xl font-black text-rose-700 mb-4">
+                            ${display}
+                        </div>
+
+
+                        <div class="grid grid-cols-7 gap-1.5">
+
+                            ${
+                                letters
+                                    .map(
+                                        letter =>
+                                            `
+                                                <button
+                                                    onclick="selectNoteLetter('${letter}')"
+                                                    class="btn-3d btn-answer p-3 text-center font-black ${
+                                                        selectedNoteLetter ===
+                                                        letter
+                                                            ? 'btn-selected'
+                                                            : ''
+                                                    }"
+                                                >
+                                                    ${letter}
+                                                </button>
+                                            `
+                                    )
+                                    .join('')
+                            }
+
+                        </div>
+
+
+                        <div class="grid grid-cols-3 gap-3 mt-4">
+
+                            <button
+                                onclick="selectNoteAccidental('♭')"
+                                class="btn-3d btn-answer p-3 text-center text-xl font-black ${
+                                    selectedNoteAccidental ===
+                                    '♭'
+                                        ? 'btn-selected'
+                                        : ''
+                                }"
+                            >
+                                ♭
+                            </button>
+
+
+                            <button
+                                onclick="selectNoteAccidental('')"
+                                class="btn-3d btn-answer p-3 text-center font-black ${
+                                    selectedNoteLetter &&
+                                    selectedNoteAccidental ===
+                                    ''
+                                        ? 'btn-selected'
+                                        : ''
+                                }"
+                            >
+                                Natural
+                            </button>
+
+
+                            <button
+                                onclick="selectNoteAccidental('♯')"
+                                class="btn-3d btn-answer p-3 text-center text-xl font-black ${
+                                    selectedNoteAccidental ===
+                                    '♯'
+                                        ? 'btn-selected'
+                                        : ''
+                                }"
+                            >
+                                ♯
+                            </button>
+
+                        </div>
+
+
+                        <button
+                            onclick="submitBuiltNoteName(this)"
+                            class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black mt-6"
+                        >
+                            Check answer
+                        </button>
+
+
+                        ${feedbackHtml()}
+
+                    </div>
+                `;
+
+    }
+
+
+    function selectNoteLetter(
+        letter
+    ) {
+
+        selectedNoteLetter =
+            letter;
+
+
+        renderNoteNameBuilder();
+
+    }
+
+
+    function selectNoteAccidental(
+        accidental
+    ) {
+
+        selectedNoteAccidental =
+            accidental;
+
+
+        renderNoteNameBuilder();
+
+    }
+
+
+    function submitBuiltNoteName(
+        btnElement
+    ) {
+
+        if (
+            !selectedNoteLetter
+        ) {
+
+            return;
+
         }
 
-        async function showResults() {
-            // Progress was already saved answer-by-answer.
 
-            document.getElementById('result-score').innerText = `${score} / ${totalQuestions}`;
-            const accuracy = Math.round((score / totalQuestions) * 100);
-            document.getElementById('result-percent').innerText = `${accuracy}% Accuracy`;
-            
-            const recapContainer = document.getElementById('results-recap');
-            let recapHtml = '';
-            
-            roundHistory.forEach(item => {
-                const icon = item.isCorrect 
-                    ? '<span class="text-emerald-500 font-bold text-lg">✓</span>' 
-                    : '<span class="text-rose-500 font-bold text-lg">✗</span>';
-                
-                const answerColorClass = item.isCorrect ? 'text-slate-600' : 'text-rose-600';
-                
+        submitConstructedAnswer(
+
+            `${selectedNoteLetter}${selectedNoteAccidental}`,
+
+            btnElement
+
+        );
+
+    }
+
+
+    // =========================================================
+    // TONIC TRIADS
+    // =========================================================
+
+    function renderTonicTriadQuestion(
+        currentQ
+    ) {
+
+        switch (
+            currentQ.category
+        ) {
+
+            case 'triad_notes':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'SELECT ALL 3 NOTES';
+
+
+                renderTriadNoteSelector();
+
+                break;
+
+
+            case 'triad_key':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'BUILD THE KEY NAME';
+
+
+                renderKeyNameBuilder();
+
+                break;
+
+
+            case 'triad_root':
+
+            case 'triad_middle_note':
+
+            case 'triad_top_note':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'BUILD THE NOTE NAME';
+
+
+                renderNoteNameBuilder();
+
+                break;
+
+
+            case 'triad_degrees':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'SELECT ALL THAT APPLY';
+
+
+                renderTriadDegreeSelector();
+
+                break;
+
+
+            case 'triad_degree':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'CHOOSE THE SCALE DEGREE';
+
+
+                renderDegreeNumberButtons();
+
+                break;
+
+        }
+
+    }
+
+
+    function renderTriadNoteSelector() {
+
+        const naturals = [
+
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G'
+
+        ];
+
+
+        const sharps = [
+
+            'A♯',
+            'B♯',
+            'C♯',
+            'D♯',
+            'E♯',
+            'F♯',
+            'G♯'
+
+        ];
+
+
+        const flats = [
+
+            'A♭',
+            'B♭',
+            'C♭',
+            'D♭',
+            'E♭',
+            'F♭',
+            'G♭'
+
+        ];
+
+
+        const row =
+            values =>
+                values
+                    .map(
+                        value =>
+                            `
+                                <button
+                                    onclick="toggleTriadNote('${value}')"
+                                    class="btn-3d btn-answer p-2 text-center font-black ${
+                                        selectedTriadNotes
+                                            .includes(
+                                                value
+                                            )
+                                            ? 'btn-selected'
+                                            : ''
+                                    }"
+                                >
+                                    ${value}
+                                </button>
+                            `
+                    )
+                    .join('');
+
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="w-full">
+
+                        <p class="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-2">
+                            Natural notes
+                        </p>
+
+                        <div class="grid grid-cols-7 gap-1.5">
+                            ${row(naturals)}
+                        </div>
+
+
+                        <p class="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-2 mt-5">
+                            Sharps
+                        </p>
+
+                        <div class="grid grid-cols-7 gap-1.5">
+                            ${row(sharps)}
+                        </div>
+
+
+                        <p class="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-2 mt-5">
+                            Flats
+                        </p>
+
+                        <div class="grid grid-cols-7 gap-1.5">
+                            ${row(flats)}
+                        </div>
+
+
+                        <button
+                            onclick="submitTriadNotes(this)"
+                            class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black mt-6"
+                        >
+                            Check answer
+                        </button>
+
+
+                        ${feedbackHtml()}
+
+                    </div>
+                `;
+
+    }
+
+
+    function toggleTriadNote(
+        note
+    ) {
+
+        if (
+            selectedTriadNotes
+                .includes(
+                    note
+                )
+        ) {
+
+            selectedTriadNotes =
+                selectedTriadNotes
+                    .filter(
+                        x =>
+                            x !==
+                            note
+                    );
+
+        }
+
+        else if (
+            selectedTriadNotes.length <
+            3
+        ) {
+
+            selectedTriadNotes.push(
+                note
+            );
+
+        }
+
+
+        renderTriadNoteSelector();
+
+    }
+
+
+    function submitTriadNotes(
+        btnElement
+    ) {
+
+        if (
+            selectedTriadNotes.length !==
+            3
+        ) {
+
+            return;
+
+        }
+
+
+        submitConstructedAnswer(
+
+            selectedTriadNotes.join(
+                '|'
+            ),
+
+            btnElement,
+
+            true
+
+        );
+
+    }
+
+
+    function renderTriadDegreeSelector() {
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="w-full">
+
+                        <div class="grid grid-cols-7 gap-1.5">
+
+                            ${
+                                [
+                                    1,
+                                    2,
+                                    3,
+                                    4,
+                                    5,
+                                    6,
+                                    7
+                                ]
+                                .map(
+                                    n =>
+                                        `
+                                            <button
+                                                onclick="toggleTriadDegree('${n}')"
+                                                class="btn-3d btn-answer p-3 text-center font-black ${
+                                                    selectedTriadDegrees
+                                                        .includes(
+                                                            String(
+                                                                n
+                                                            )
+                                                        )
+                                                        ? 'btn-selected'
+                                                        : ''
+                                                }"
+                                            >
+                                                ${n}
+                                            </button>
+                                        `
+                                )
+                                .join('')
+                            }
+
+                        </div>
+
+
+                        <button
+                            onclick="submitTriadDegrees(this)"
+                            class="btn-3d btn-menu w-full p-4 text-center uppercase tracking-widest font-black mt-6"
+                        >
+                            Check answer
+                        </button>
+
+
+                        ${feedbackHtml()}
+
+                    </div>
+                `;
+
+    }
+
+
+    function toggleTriadDegree(
+        degree
+    ) {
+
+        selectedTriadDegrees =
+            selectedTriadDegrees
+                .includes(
+                    degree
+                )
+                ? selectedTriadDegrees
+                    .filter(
+                        x =>
+                            x !==
+                            degree
+                    )
+                : [
+                    ...selectedTriadDegrees,
+                    degree
+                ];
+
+
+        renderTriadDegreeSelector();
+
+    }
+
+
+    function submitTriadDegrees(
+        btnElement
+    ) {
+
+        if (
+            selectedTriadDegrees.length ===
+            0
+        ) {
+
+            return;
+
+        }
+
+
+        submitConstructedAnswer(
+
+            selectedTriadDegrees.join(
+                '|'
+            ),
+
+            btnElement,
+
+            true
+
+        );
+
+    }
+
+
+    function renderDegreeNumberButtons() {
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .innerHTML =
+                `
+                    <div class="grid grid-cols-7 gap-1.5">
+
+                        ${
+                            [
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                7
+                            ]
+                            .map(
+                                n =>
+                                    simpleSubmitButton(
+                                        String(n),
+                                        String(n),
+                                        'px-1'
+                                    )
+                            )
+                            .join('')
+                        }
+
+                    </div>
+
+                    ${feedbackHtml()}
+                `;
+
+    }
+
+
+    // =========================================================
+    // SHARED CONSTRUCTED ANSWER LOGIC
+    // =========================================================
+
+    function normaliseMultiAnswer(
+        answer
+    ) {
+
+        return String(
+            answer
+        )
+        .split(
+            '|'
+        )
+        .map(
+            x =>
+                x
+                    .trim()
+                    .toLowerCase()
+        )
+        .filter(
+            Boolean
+        )
+        .sort()
+        .join(
+            '|'
+        );
+
+    }
+
+
+    function normaliseAnswer(
+        answer
+    ) {
+
+        return String(
+            answer
+        )
+        .trim()
+        .toLowerCase();
+
+    }
+
+
+    async function submitConstructedAnswer(
+        answer,
+        btnElement,
+        unordered = false
+    ) {
+
+        const currentQ =
+            quizPool[
+                currentQuestionIndex
+            ];
+
+
+        const submitted =
+            unordered
+                ? normaliseMultiAnswer(
+                    answer
+                )
+                : normaliseAnswer(
+                    answer
+                );
+
+
+        const correct =
+            unordered
+                ? normaliseMultiAnswer(
+                    currentQ.answer
+                )
+                : normaliseAnswer(
+                    currentQ.answer
+                );
+
+
+        const isCorrect =
+            submitted ===
+            correct;
+
+
+        recordRoundAnswer(
+
+            currentQ,
+
+            isCorrect,
+
+            prettyAnswer(
+                currentQ.answer
+            )
+
+        );
+
+
+        disableAnswerButtons();
+
+
+        if (
+            isCorrect
+        ) {
+
+            btnElement
+                .classList
+                .add(
+                    'btn-correct'
+                );
+
+
+            score++;
+
+        }
+
+        else {
+
+            btnElement
+                .classList
+                .add(
+                    'btn-wrong'
+                );
+
+
+            showFeedback(
+
+                'keys-feedback',
+
+                prettyAnswer(
+                    currentQ.answer
+                )
+
+            );
+
+        }
+
+
+        await saveAndContinue(
+
+            currentQ,
+
+            isCorrect
+
+        );
+
+    }
+
+
+    function recordRoundAnswer(
+        currentQ,
+        isCorrect,
+        displayAnswer
+    ) {
+
+        roundHistory.push({
+
+            id:
+                currentQ.id,
+
+            category:
+                currentQ.category,
+
+            term:
+                recapTerm(
+                    currentQ
+                ),
+
+            answer:
+                displayAnswer,
+
+            isCorrect:
+                isCorrect
+
+        });
+
+    }
+
+
+    function prettyAnswer(
+        answer
+    ) {
+
+        return String(
+            answer
+        )
+        .replaceAll(
+            '|',
+            ', '
+        );
+
+    }
+
+
+    function recapTerm(
+        currentQ
+    ) {
+
+        if (
+            currentTopic !==
+            'Pitch & transposition'
+        ) {
+
+            return currentQ.term;
+
+        }
+
+
+        if (
+            currentQ.term
+                .startsWith(
+                    'NOTE|'
+                )
+        ) {
+
+            return 'Name the note shown';
+
+        }
+
+
+        if (
+            currentQ.term
+                .startsWith(
+                    'CLEF|'
+                )
+        ) {
+
+            return 'Name the clef shown';
+
+        }
+
+
+        if (
+            currentQ.term
+                .startsWith(
+                    'ACCIDENTAL|'
+                )
+        ) {
+
+            return 'Name the sign shown';
+
+        }
+
+
+        if (
+            currentQ.term
+                .startsWith(
+                    'PAIR|'
+                )
+        ) {
+
+            return 'Higher or lower?';
+
+        }
+
+
+        if (
+            currentQ.term
+                .startsWith(
+                    'CANCEL|'
+                )
+        ) {
+
+            return 'Name the second note';
+
+        }
+
+
+        return currentQ.term;
+
+    }
+
+
+    function disableAnswerButtons() {
+
+        document
+            .getElementById(
+                'quiz-options'
+            )
+            .querySelectorAll(
+                'button'
+            )
+            .forEach(
+                b => {
+
+                    b.disabled =
+                        true;
+
+                }
+            );
+
+    }
+
+
+    function showFeedback(
+        elementId,
+        correctAnswer
+    ) {
+
+        const feedback =
+            document.getElementById(
+                elementId
+            ) ||
+            document.getElementById(
+                'keys-feedback'
+            );
+
+
+        if (
+            !feedback
+        ) {
+
+            return;
+
+        }
+
+
+        feedback.innerText =
+            `Correct answer: ${correctAnswer}`;
+
+
+        feedback.className =
+            'mt-5 text-center text-sm font-black text-emerald-600';
+
+    }
+
+
+    async function saveAndContinue(
+        currentQ,
+        isCorrect
+    ) {
+
+        pendingSave =
+            saveAnswerProgress(
+                currentQ,
+                isCorrect
+            );
+
+
+        await pendingSave;
+
+
+        document
+            .getElementById(
+                'quiz-next-container'
+            )
+            .classList
+            .remove(
+                'hidden-view'
+            );
+
+    }
+
+
+    // =========================================================
+    // NEXT + RESULTS
+    // =========================================================
+
+    function handleNextClick() {
+
+        currentQuestionIndex++;
+
+
+        loadNextQuestion();
+
+    }
+
+
+    async function showResults() {
+
+        const roundTotal =
+            quizPool.length;
+
+
+        document
+            .getElementById(
+                'result-score'
+            )
+            .innerText =
+                `${score} / ${roundTotal}`;
+
+
+        const accuracy =
+            roundTotal > 0
+                ? Math.round(
+                    (
+                        score /
+                        roundTotal
+                    ) *
+                    100
+                )
+                : 0;
+
+
+        document
+            .getElementById(
+                'result-percent'
+            )
+            .innerText =
+                `${accuracy}% Accuracy`;
+
+
+        let recapHtml =
+            '';
+
+
+        roundHistory.forEach(
+            item => {
+
+                const icon =
+                    item.isCorrect
+                        ? '<span class="text-emerald-500 font-bold text-lg">✓</span>'
+                        : '<span class="text-rose-500 font-bold text-lg">✗</span>';
+
+
+                const answerColorClass =
+                    item.isCorrect
+                        ? 'text-slate-600'
+                        : 'text-rose-600';
+
+
                 recapHtml += `
-                    <div class="flex items-center justify-between bg-rose-50/50 p-3 rounded-xl border border-rose-100">
+                    <div
+                        class="flex items-center justify-between bg-rose-50/50 p-3 rounded-xl border border-rose-100 gap-3"
+                    >
+
                         <div class="flex items-center gap-3 w-1/2">
+
                             ${icon}
-                            <div class="font-bold text-rose-900 text-sm flex items-center [&>svg]:max-h-6 [&>svg]:w-auto [&>div]:max-h-6 overflow-hidden">
+
+                            <div class="font-bold text-rose-900 text-sm overflow-hidden">
                                 ${item.term}
                             </div>
+
                         </div>
+
+
                         <div class="text-xs font-bold ${answerColorClass} text-right w-1/2">
                             ${item.answer}
                         </div>
+
                     </div>
                 `;
-            });
-            
-            recapContainer.innerHTML = recapHtml;
-            showView('view-results');
-        }
-    </script>
+
+            }
+        );
+
+
+        document
+            .getElementById(
+                'results-recap'
+            )
+            .innerHTML =
+                recapHtml;
+
+
+        showView(
+            'view-results'
+        );
+
+    }
+
+</script>
+
 </body>
 </html>
