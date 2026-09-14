@@ -368,7 +368,7 @@
 
             <p class="text-sm font-bold text-rose-400 mt-2 tracking-widest uppercase">
 
-                Overall Accuracy:
+                Overall Mastery:
 
                 <span
                     id="stat-overall"
@@ -379,13 +379,17 @@
 
             </p>
 
+            <p class="text-xs font-bold text-rose-300 mt-2">
+                Based on your latest answer to each question in topics you have started.
+            </p>
+
         </div>
 
 
         <div class="text-left mb-6">
 
             <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">
-                Strength by Grade
+                Practice Accuracy by Grade
             </h3>
 
             <div
@@ -403,7 +407,7 @@
         <div class="text-left mb-8">
 
             <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">
-                Strength by Category
+                Mastery by Topic
             </h3>
 
             <div
@@ -665,6 +669,26 @@
                 class="flex flex-col gap-2 text-left max-h-[340px] overflow-y-auto pr-1"
             ></div>
 
+            <div
+    id="guest-save-prompt"
+    class="hidden-view mt-6 bg-rose-50 border-2 border-rose-200 rounded-2xl p-4 text-center"
+>
+    <p class="text-base font-black text-rose-700">
+        Want to keep this progress?
+    </p>
+
+    <p class="text-xs font-bold text-rose-400 mt-1">
+        Create a free account and your guest answers will be added to your stats.
+    </p>
+
+    <button
+        onclick="openGuestSignUp()"
+        class="btn-3d btn-menu w-full p-3 text-center uppercase tracking-widest font-black mt-4"
+    >
+        Save my progress
+    </button>
+</div>
+
         </div>
 
 
@@ -706,6 +730,407 @@
             supabaseUrl,
             supabaseKey
         );
+
+    // =========================================================
+// GUEST PROGRESS
+// =========================================================
+
+const GUEST_PROGRESS_KEY =
+    'musictheoryqs_guest_progress_v1';
+
+let currentGuestRoundId =
+    null;
+
+
+function makeGuestRoundId() {
+
+    if (
+        window.crypto &&
+        typeof window.crypto.randomUUID === 'function'
+    ) {
+        return window.crypto.randomUUID();
+    }
+
+    return (
+        'guest-' +
+        Date.now() +
+        '-' +
+        Math.random().toString(36).slice(2)
+    );
+}
+
+
+function readGuestProgress() {
+
+    try {
+
+        const raw =
+            localStorage.getItem(
+                GUEST_PROGRESS_KEY
+            );
+
+        if (!raw) {
+            return {
+                version: 1,
+                rounds: []
+            };
+        }
+
+        const parsed =
+            JSON.parse(raw);
+
+        if (
+            !parsed ||
+            !Array.isArray(parsed.rounds)
+        ) {
+            return {
+                version: 1,
+                rounds: []
+            };
+        }
+
+        return parsed;
+
+    }
+
+    catch (err) {
+
+        console.error(
+            'Could not read guest progress:',
+            err
+        );
+
+        return {
+            version: 1,
+            rounds: []
+        };
+    }
+}
+
+
+function writeGuestProgress(progress) {
+
+    try {
+
+        if (
+            !progress.rounds ||
+            progress.rounds.length === 0
+        ) {
+            localStorage.removeItem(
+                GUEST_PROGRESS_KEY
+            );
+
+            return;
+        }
+
+        localStorage.setItem(
+            GUEST_PROGRESS_KEY,
+            JSON.stringify(progress)
+        );
+
+    }
+
+    catch (err) {
+
+        console.error(
+            'Could not save guest progress:',
+            err
+        );
+    }
+}
+
+
+function saveGuestAnswer(
+    currentQ,
+    isCorrect
+) {
+
+    const progress =
+        readGuestProgress();
+
+    if (!currentGuestRoundId) {
+        currentGuestRoundId =
+            makeGuestRoundId();
+    }
+
+    let round =
+        progress.rounds.find(
+            r =>
+                r.id ===
+                currentGuestRoundId
+        );
+
+    if (!round) {
+
+        round = {
+            id:
+                currentGuestRoundId,
+
+            grade_tested:
+                currentGrade,
+
+            topic:
+                currentTopic,
+
+            created_at:
+                new Date().toISOString(),
+
+            answers:
+                [],
+
+            migrated_answer_count:
+                0,
+
+            server_session_id:
+                null
+        };
+
+        progress.rounds.push(
+            round
+        );
+    }
+
+    round.answers.push({
+        question_id:
+            currentQ.id,
+
+        is_correct:
+            Boolean(isCorrect),
+
+        answered_at:
+            new Date().toISOString()
+    });
+
+    writeGuestProgress(
+        progress
+    );
+}
+
+
+async function migrateGuestProgressToAccount() {
+
+    if (
+        !currentUser ||
+        currentUser.role !== 'student'
+    ) {
+        return 0;
+    }
+
+    const progress =
+        readGuestProgress();
+
+    if (!progress.rounds.length) {
+        return 0;
+    }
+
+    let migratedAnswers =
+        0;
+
+    for (const round of progress.rounds) {
+
+        if (
+            !round.answers ||
+            round.answers.length === 0
+        ) {
+            round.migrated = true;
+            continue;
+        }
+
+        try {
+
+            let sessionId =
+                round.server_session_id;
+
+            // Create the matching Supabase round once.
+            if (!sessionId) {
+
+                const {
+                    data: sessionData,
+                    error: sessionError
+                } =
+                    await _supabase
+                        .from('quiz_sessions')
+                        .insert([
+                            {
+                                student_id:
+                                    currentUser.id,
+
+                                grade_tested:
+                                    round.grade_tested,
+
+                                score:
+                                    0,
+
+                                total_questions:
+                                    0
+                            }
+                        ])
+                        .select()
+                        .single();
+
+                if (sessionError) {
+                    throw sessionError;
+                }
+
+                sessionId =
+                    sessionData.id;
+
+                // Save the server ID locally immediately.
+                // This prevents a failed migration from
+                // creating duplicate sessions on retry.
+                round.server_session_id =
+                    sessionId;
+
+                writeGuestProgress(
+                    progress
+                );
+            }
+
+            const alreadyMigrated =
+                Number(
+                    round.migrated_answer_count ||
+                    0
+                );
+
+            const pendingAnswers =
+                round.answers.slice(
+                    alreadyMigrated
+                );
+
+            if (pendingAnswers.length > 0) {
+
+                const analyticsRows =
+                    pendingAnswers.map(
+                        answer => ({
+                            session_id:
+                                sessionId,
+
+                            student_id:
+                                currentUser.id,
+
+                            question_id:
+                                answer.question_id,
+
+                            is_correct:
+                                answer.is_correct
+                        })
+                    );
+
+                const {
+                    error: analyticsError
+                } =
+                    await _supabase
+                        .from('answer_analytics')
+                        .insert(
+                            analyticsRows
+                        );
+
+                if (analyticsError) {
+                    throw analyticsError;
+                }
+
+                round.migrated_answer_count =
+                    alreadyMigrated +
+                    pendingAnswers.length;
+
+                migratedAnswers +=
+                    pendingAnswers.length;
+
+                writeGuestProgress(
+                    progress
+                );
+            }
+
+            const migratedCount =
+                Number(
+                    round.migrated_answer_count ||
+                    0
+                );
+
+            const migratedAnswersForRound =
+                round.answers.slice(
+                    0,
+                    migratedCount
+                );
+
+            const migratedScore =
+                migratedAnswersForRound.filter(
+                    answer =>
+                        answer.is_correct
+                ).length;
+
+            const {
+                error: sessionUpdateError
+            } =
+                await _supabase
+                    .from('quiz_sessions')
+                    .update({
+                        score:
+                            migratedScore,
+
+                        total_questions:
+                            migratedCount
+                    })
+                    .eq(
+                        'id',
+                        sessionId
+                    );
+
+            if (sessionUpdateError) {
+                throw sessionUpdateError;
+            }
+
+            if (
+                migratedCount >=
+                round.answers.length
+            ) {
+                round.migrated = true;
+            }
+
+            writeGuestProgress(
+                progress
+            );
+
+        }
+
+        catch (err) {
+
+            console.error(
+                'Guest progress migration error:',
+                err
+            );
+
+            // Keep all unsaved local data.
+            // It will retry next login.
+            break;
+        }
+    }
+
+    // Remove only rounds successfully copied to Supabase.
+    progress.rounds =
+        progress.rounds.filter(
+            round =>
+                !round.migrated
+        );
+
+    writeGuestProgress(
+        progress
+    );
+
+    return migratedAnswers;
+}
+
+
+function openGuestSignUp() {
+
+    if (!isSignUpMode) {
+        toggleAuthMode();
+    }
+
+    showView(
+        'view-auth'
+    );
+}
 
 
     // =========================================================
@@ -821,13 +1246,26 @@
         if (data) {
 
             currentUser =
-                data;
+    data;
 
 
-            document
-                .getElementById(
-                    'nav-login-btn'
-                )
+const migratedGuestAnswers =
+    await migrateGuestProgressToAccount();
+
+
+if (
+    migratedGuestAnswers > 0
+) {
+    console.log(
+        `Migrated ${migratedGuestAnswers} guest answers to this account.`
+    );
+}
+
+
+document
+    .getElementById(
+        'nav-login-btn'
+    )
                 .classList
                 .add(
                     'hidden-view'
@@ -1270,28 +1708,18 @@
 
     async function loadStudentStats() {
 
-        if (
-            !currentUser
-        ) {
-
+        if (!currentUser) {
             return;
-
         }
-
 
         const {
             data: sessions,
             error: sessionsError
         } =
             await _supabase
-                .from(
-                    'quiz_sessions'
-                )
+                .from('quiz_sessions')
                 .select('*')
-                .eq(
-                    'student_id',
-                    currentUser.id
-                );
+                .eq('student_id', currentUser.id);
 
 
         const {
@@ -1299,349 +1727,396 @@
             error: analyticsError
         } =
             await _supabase
-                .from(
-                    'answer_analytics'
-                )
-                .select(
-                    'is_correct, questions(topic)'
-                )
-                .eq(
-                    'student_id',
-                    currentUser.id
-                );
+                .from('answer_analytics')
+                .select('session_id, question_id, is_correct, created_at, questions(topic, grade)')
+                .eq('student_id', currentUser.id)
+                .order('created_at', { ascending: true });
+
+
+        const {
+            data: allQuestions,
+            error: questionsError
+        } =
+            await _supabase
+                .from('questions')
+                .select('id, topic, grade');
 
 
         if (
             sessionsError ||
-            analyticsError
+            analyticsError ||
+            questionsError
         ) {
 
             console.error(
                 'Stats load error:',
                 sessionsError ||
-                analyticsError
+                analyticsError ||
+                questionsError
             );
 
+            document
+                .getElementById('stat-overall')
+                .innerText = '--';
 
             document
-                .getElementById(
-                    'stat-overall'
-                )
-                .innerText =
-                    '--';
-
-
-            document
-                .getElementById(
-                    'stats-grades'
-                )
+                .getElementById('stats-grades')
                 .innerHTML =
                     "<p class='text-sm font-bold text-rose-400'>Could not load stats.</p>";
 
-
             document
-                .getElementById(
-                    'stats-categories'
-                )
+                .getElementById('stats-categories')
                 .innerHTML =
                     "<p class='text-sm font-bold text-rose-400'>Could not load stats.</p>";
-
 
             return;
-
         }
+
+
+        const safeSessions =
+            sessions || [];
+
+        const safeAnalytics =
+            analytics || [];
+
+        const safeQuestions =
+            allQuestions || [];
 
 
         if (
-            !sessions ||
-            sessions.length === 0
+            safeSessions.length === 0 &&
+            safeAnalytics.length === 0
         ) {
 
             document
-                .getElementById(
-                    'stat-overall'
-                )
-                .innerText =
-                    '0%';
-
+                .getElementById('stat-overall')
+                .innerText = '0%';
 
             document
-                .getElementById(
-                    'stats-grades'
-                )
+                .getElementById('stats-grades')
                 .innerHTML =
                     "<p class='text-sm font-bold text-rose-300'>No rounds played yet.</p>";
 
-
             document
-                .getElementById(
-                    'stats-categories'
-                )
+                .getElementById('stats-categories')
                 .innerHTML =
-                    "<p class='text-sm font-bold text-rose-300'>Play a round to see your strengths!</p>";
-
+                    "<p class='text-sm font-bold text-rose-300'>Play a round to start building mastery!</p>";
 
             return;
-
         }
 
 
-        let totalScore =
-            0;
+        // -----------------------------------------------------
+        // 1. PRACTICE ACCURACY BY GRADE
+        // -----------------------------------------------------
 
+        const gradeStats = {};
 
-        let totalQs =
-            0;
+        safeSessions.forEach(session => {
 
+            const grade =
+                Number(session.grade_tested);
 
-        const gradeStats =
-            {};
-
-
-        sessions.forEach(
-            s => {
-
-                totalScore +=
-                    Number(
-                        s.score || 0
-                    );
-
-
-                totalQs +=
-                    Number(
-                        s.total_questions || 0
-                    );
-
-
-                if (
-                    !gradeStats[
-                        s.grade_tested
-                    ]
-                ) {
-
-                    gradeStats[
-                        s.grade_tested
-                    ] =
-                        {
-                            correct: 0,
-                            total: 0
-                        };
-
-                }
-
-
-                gradeStats[
-                    s.grade_tested
-                ].correct +=
-                    Number(
-                        s.score || 0
-                    );
-
-
-                gradeStats[
-                    s.grade_tested
-                ].total +=
-                    Number(
-                        s.total_questions || 0
-                    );
-
+            if (!gradeStats[grade]) {
+                gradeStats[grade] = {
+                    correct: 0,
+                    total: 0
+                };
             }
-        );
+
+            gradeStats[grade].correct +=
+                Number(session.score || 0);
+
+            gradeStats[grade].total +=
+                Number(session.total_questions || 0);
+        });
 
 
-        const overallPct =
-            totalQs > 0
+        let gradesHtml = '';
+
+        Object
+            .entries(gradeStats)
+            .sort(
+                (a, b) =>
+                    Number(a[0]) -
+                    Number(b[0])
+            )
+            .forEach(
+                ([grade, stats]) => {
+
+                    const pct =
+                        stats.total > 0
+                            ? Math.round(
+                                (stats.correct / stats.total) * 100
+                            )
+                            : 0;
+
+                    const colorClass =
+                        pct >= 80
+                            ? 'text-emerald-500'
+                            : (
+                                pct >= 60
+                                    ? 'text-amber-500'
+                                    : 'text-rose-500'
+                            );
+
+                    gradesHtml += `
+                        <div class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center">
+                            <div>
+                                <div class="font-bold text-rose-800">
+                                    Grade ${grade}
+                                </div>
+                                <div class="text-[11px] font-bold text-rose-300 mt-1">
+                                    ${stats.correct}/${stats.total} answers correct
+                                </div>
+                            </div>
+
+                            <span class="font-black ${colorClass}">
+                                ${pct}%
+                            </span>
+                        </div>
+                    `;
+                }
+            );
+
+        document
+            .getElementById('stats-grades')
+            .innerHTML =
+                gradesHtml ||
+                "<p class='text-sm font-bold text-rose-300'>No completed answers yet.</p>";
+
+
+        // -----------------------------------------------------
+        // 2. MASTERY BY TOPIC
+        //
+        // Mastered = the student's MOST RECENT answer to that
+        // exact question is correct.
+        //
+        // Coverage = unique questions seen / eligible questions.
+        //
+        // Accuracy = all correct attempts / all attempts.
+        //
+        // If a student has practised a topic at Grade 2, its
+        // denominator includes Grade 1 + Grade 2 questions,
+        // matching the app's cumulative question selection.
+        // -----------------------------------------------------
+
+        const sessionById = {};
+
+        safeSessions.forEach(session => {
+            sessionById[session.id] = session;
+        });
+
+
+        const topicStats = {};
+
+        safeAnalytics.forEach(attempt => {
+
+            const topic =
+                attempt.questions?.topic;
+
+            if (!topic) {
+                return;
+            }
+
+            if (!topicStats[topic]) {
+                topicStats[topic] = {
+                    attempts: 0,
+                    correctAttempts: 0,
+                    maxGradeTested: 1,
+                    seenQuestionIds: new Set(),
+                    latestByQuestion: {}
+                };
+            }
+
+            const stats =
+                topicStats[topic];
+
+            stats.attempts++;
+
+            if (attempt.is_correct) {
+                stats.correctAttempts++;
+            }
+
+            stats.seenQuestionIds.add(
+                String(attempt.question_id)
+            );
+
+            const session =
+                sessionById[
+                    attempt.session_id
+                ];
+
+            const gradeTested =
+                Number(
+                    session?.grade_tested ||
+                    attempt.questions?.grade ||
+                    1
+                );
+
+            stats.maxGradeTested =
+                Math.max(
+                    stats.maxGradeTested,
+                    gradeTested
+                );
+
+            // The query is ordered oldest -> newest, so assigning
+            // each time leaves the latest result for this question.
+            stats.latestByQuestion[
+                String(attempt.question_id)
+            ] =
+                Boolean(attempt.is_correct);
+        });
+
+
+        let overallMastered = 0;
+        let overallEligible = 0;
+        let topicsHtml = '';
+
+
+        Object
+            .entries(topicStats)
+            .sort(
+                ([topicA], [topicB]) =>
+                    topicA.localeCompare(topicB)
+            )
+            .forEach(
+                ([topic, stats]) => {
+
+                    const eligibleQuestions =
+                        safeQuestions.filter(
+                            question =>
+                                question.topic === topic &&
+                                Number(question.grade) <=
+                                    stats.maxGradeTested
+                        );
+
+                    const eligibleIds =
+                        new Set(
+                            eligibleQuestions.map(
+                                question =>
+                                    String(question.id)
+                            )
+                        );
+
+                    const totalEligible =
+                        eligibleQuestions.length;
+
+                    let masteredCount = 0;
+                    let seenCount = 0;
+
+                    eligibleIds.forEach(questionId => {
+
+                        if (
+                            stats.seenQuestionIds.has(
+                                questionId
+                            )
+                        ) {
+                            seenCount++;
+                        }
+
+                        if (
+                            stats.latestByQuestion[
+                                questionId
+                            ] === true
+                        ) {
+                            masteredCount++;
+                        }
+                    });
+
+                    const masteryPct =
+                        totalEligible > 0
+                            ? Math.round(
+                                (masteredCount / totalEligible) * 100
+                            )
+                            : 0;
+
+                    const coveragePct =
+                        totalEligible > 0
+                            ? Math.round(
+                                (seenCount / totalEligible) * 100
+                            )
+                            : 0;
+
+                    const accuracyPct =
+                        stats.attempts > 0
+                            ? Math.round(
+                                (stats.correctAttempts / stats.attempts) * 100
+                            )
+                            : 0;
+
+                    overallMastered +=
+                        masteredCount;
+
+                    overallEligible +=
+                        totalEligible;
+
+                    const masteryColor =
+                        masteryPct >= 80
+                            ? 'text-emerald-500'
+                            : (
+                                masteryPct >= 50
+                                    ? 'text-amber-500'
+                                    : 'text-rose-500'
+                            );
+
+                    topicsHtml += `
+                        <div class="bg-white p-4 rounded-xl border-2 border-rose-100">
+
+                            <div class="flex justify-between items-start gap-4">
+
+                                <div class="font-bold text-rose-800 capitalize leading-tight">
+                                    ${topic}
+                                </div>
+
+                                <div class="font-black ${masteryColor} whitespace-nowrap">
+                                    ${masteryPct}% mastery
+                                </div>
+
+                            </div>
+
+                            <div class="mt-3 h-2.5 bg-rose-100 rounded-full overflow-hidden">
+                                <div
+                                    class="h-full bg-rose-400 rounded-full"
+                                    style="width: ${masteryPct}%"
+                                ></div>
+                            </div>
+
+                            <div class="text-[11px] font-bold text-rose-400 mt-3 leading-relaxed">
+                                ${masteredCount}/${totalEligible} mastered
+                                • ${seenCount}/${totalEligible} seen (${coveragePct}% coverage)
+                                • ${accuracyPct}% accuracy
+                            </div>
+
+                            <div class="text-[10px] font-bold text-rose-300 mt-1 uppercase tracking-wider">
+                                Grade ${stats.maxGradeTested} question set
+                            </div>
+
+                        </div>
+                    `;
+                }
+            );
+
+
+        const overallMasteryPct =
+            overallEligible > 0
                 ? Math.round(
-                    (
-                        totalScore /
-                        totalQs
-                    ) *
-                    100
+                    (overallMastered / overallEligible) * 100
                 )
                 : 0;
 
 
         document
-            .getElementById(
-                'stat-overall'
-            )
+            .getElementById('stat-overall')
             .innerText =
-                `${overallPct}%`;
-
-
-        let gradesHtml =
-            '';
-
-
-        for (
-            const [
-                grade,
-                stats
-            ]
-            of
-            Object.entries(
-                gradeStats
-            )
-        ) {
-
-            const pct =
-                stats.total > 0
-                    ? Math.round(
-                        (
-                            stats.correct /
-                            stats.total
-                        ) *
-                        100
-                    )
-                    : 0;
-
-
-            const color =
-                pct >= 80
-                    ? 'emerald-500'
-                    : (
-                        pct >= 60
-                            ? 'amber-500'
-                            : 'rose-500'
-                    );
-
-
-            gradesHtml += `
-                <div
-                    class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center"
-                >
-                    <span class="font-bold text-rose-800">
-                        Grade ${grade}
-                    </span>
-
-                    <span class="font-black text-${color}">
-                        ${pct}%
-                    </span>
-                </div>
-            `;
-
-        }
+                `${overallMasteryPct}%`;
 
 
         document
-            .getElementById(
-                'stats-grades'
-            )
+            .getElementById('stats-categories')
             .innerHTML =
-                gradesHtml;
-
-
-        const catStats =
-            {};
-
-
-        (
-            analytics || []
-        )
-        .forEach(
-            a => {
-
-                const cat =
-                    a.questions?.topic ||
-                    'Unknown';
-
-
-                if (
-                    !catStats[
-                        cat
-                    ]
-                ) {
-
-                    catStats[
-                        cat
-                    ] =
-                        {
-                            correct: 0,
-                            total: 0
-                        };
-
-                }
-
-
-                catStats[
-                    cat
-                ].total++;
-
-
-                if (
-                    a.is_correct
-                ) {
-
-                    catStats[
-                        cat
-                    ].correct++;
-
-                }
-
-            }
-        );
-
-
-        let catsHtml =
-            '';
-
-
-        for (
-            const [
-                cat,
-                stats
-            ]
-            of
-            Object.entries(
-                catStats
-            )
-        ) {
-
-            const pct =
-                Math.round(
-                    (
-                        stats.correct /
-                        stats.total
-                    ) *
-                    100
-                );
-
-
-            const color =
-                pct >= 80
-                    ? 'emerald-500'
-                    : (
-                        pct >= 60
-                            ? 'amber-500'
-                            : 'rose-500'
-                    );
-
-
-            catsHtml += `
-                <div
-                    class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center"
-                >
-                    <span class="font-bold text-rose-800 capitalize">
-                        ${cat}
-                    </span>
-
-                    <span class="font-black text-${color}">
-                        ${pct}%
-                    </span>
-                </div>
-            `;
-
-        }
-
-
-        document
-            .getElementById(
-                'stats-categories'
-            )
-            .innerHTML =
-                catsHtml ||
-                "<p class='text-sm font-bold text-rose-300'>Play a round to see your strengths!</p>";
-
+                topicsHtml ||
+                "<p class='text-sm font-bold text-rose-300'>Play a round to start building mastery!</p>";
     }
 
 
@@ -2137,11 +2612,15 @@
 
 
             currentSessionId =
-                null;
+    null;
 
 
-            pendingSave =
-                Promise.resolve();
+currentGuestRoundId =
+    null;
+
+
+pendingSave =
+    Promise.resolve();
 
 
             resetConstructedAnswerState();
@@ -2218,14 +2697,26 @@
     ) {
 
         if (
-            !currentUser ||
-            currentUser.role !==
-            'student'
-        ) {
+    !currentUser
+) {
 
-            return;
+    saveGuestAnswer(
+        currentQ,
+        isCorrect
+    );
 
-        }
+    return;
+}
+
+
+if (
+    currentUser.role !==
+    'student'
+) {
+
+    return;
+
+}
 
 
         try {
@@ -5947,6 +6438,26 @@ function renderKeysScalesPrompt(currentQ) {
             )
             .innerHTML =
                 recapHtml;
+
+        const guestSavePrompt =
+    document.getElementById(
+        'guest-save-prompt'
+    );
+
+
+if (
+    guestSavePrompt
+) {
+
+    guestSavePrompt
+        .classList
+        .toggle(
+            'hidden-view',
+            Boolean(
+                currentUser
+            )
+        );
+}
 
 
         showView(
