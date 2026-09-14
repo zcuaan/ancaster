@@ -2308,65 +2308,72 @@ document
     // NAVIGATION
     // =========================================================
 
-    function showView(
-        viewId
+    function showView(viewId) {
+
+    [
+        'view-home',
+        'view-chapters',
+        'view-practice',
+        'view-results',
+        'view-auth',
+        'view-stats',
+        'view-teacher'
+    ]
+    .forEach(id => {
+
+        document
+            .getElementById(id)
+            .classList
+            .add('hidden-view');
+
+    });
+
+
+    const activeView =
+        document.getElementById(viewId);
+
+
+    activeView
+        .classList
+        .remove('hidden-view');
+
+
+    // Short screens can stay vertically centred.
+    // Long pages such as the dashboard must start at the top.
+    if (
+        viewId === 'view-home' ||
+        viewId === 'view-auth'
     ) {
 
-        [
-            'view-home',
-            'view-chapters',
-            'view-practice',
-            'view-results',
-            'view-auth',
-            'view-stats',
-            'view-teacher'
-        ]
-        .forEach(
-            id => {
-
-                document
-                    .getElementById(
-                        id
-                    )
-                    .classList
-                    .add(
-                        'hidden-view'
-                    );
-
-            }
-        );
-
-
-        const activeView =
-            document.getElementById(
-                viewId
-            );
-
-
-        activeView
-            .classList
-            .remove(
-                'hidden-view'
-            );
-
-
-        activeView.style.animation =
-            'none';
-
-
-        activeView.offsetHeight;
-
-
-        activeView.style.animation =
-            null;
-
-
-        window.scrollTo(
-            0,
-            0
-        );
+        document.body.style.justifyContent =
+            'center';
 
     }
+
+    else {
+
+        document.body.style.justifyContent =
+            'flex-start';
+
+    }
+
+
+    activeView.style.animation =
+        'none';
+
+    activeView.offsetHeight;
+
+    activeView.style.animation =
+        null;
+
+
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'instant'
+    });
+
+}
 
 
     function selectGrade(
