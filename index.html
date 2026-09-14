@@ -4307,23 +4307,32 @@
                                     : ''
                             }
 
-                            <ellipse
-                                cx="${x}"
-                                cy="${y}"
-                                rx="10"
-                                ry="7"
-                                transform="rotate(-18 ${x} ${y})"
-                                fill="#BE123C"
-                            />
+                            ${(() => {
+    const stemDown = Number(note.position) >= 4; // middle line or above
 
-                            <line
-                                x1="${x + 9}"
-                                y1="${y}"
-                                x2="${x + 9}"
-                                y2="${y - 42}"
-                                stroke="#BE123C"
-                                stroke-width="3"
-                            />
+    const stemX = stemDown ? x - 9 : x + 9;
+    const stemY2 = stemDown ? y + 42 : y - 42;
+
+    return `
+        <ellipse
+            cx="${x}"
+            cy="${y}"
+            rx="10"
+            ry="7"
+            transform="rotate(-18 ${x} ${y})"
+            fill="#BE123C"
+        />
+
+        <line
+            x1="${stemX}"
+            y1="${y}"
+            x2="${stemX}"
+            y2="${stemY2}"
+            stroke="#BE123C"
+            stroke-width="3"
+        />
+    `;
+})()}
                         `;
 
                     }
