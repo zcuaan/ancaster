@@ -349,11 +349,12 @@
     >
 
         <button
-            onclick="showView('view-home')"
+            id="stats-back-btn"
+            onclick="handleStatsBack()"
             class="mb-6 flex items-center text-rose-400 hover:text-rose-600 font-bold text-sm transition"
         >
             <span class="mr-2 text-lg">←</span>
-            Back to Home
+            <span id="stats-back-text">Back to Home</span>
         </button>
 
 
@@ -379,7 +380,10 @@
 
             </p>
 
-            <p class="text-xs font-bold text-rose-300 mt-2">
+            <p
+                id="stats-context-note"
+                class="text-xs font-bold text-rose-300 mt-2"
+            >
                 Based on your latest answer to each question in topics you have started.
             </p>
 
@@ -463,59 +467,70 @@
         </div>
 
 
-        <div class="card-fun p-6 mb-6">
+        <div class="card-fun p-6 mb-7">
 
-            <p class="text-sm font-bold text-rose-600 uppercase tracking-widest mb-3">
+            <p class="text-sm font-black text-rose-600 uppercase tracking-widest mb-3">
                 Add Student
+            </p>
+
+            <p class="text-xs font-bold text-rose-300 mb-4">
+                Enter their exact MusicTheoryQs username.
             </p>
 
             <div class="flex gap-2">
 
                 <input
                     type="text"
-                    placeholder="Student Username"
-                    class="input-fun flex-1 text-sm"
+                    id="teacher-add-username"
+                    placeholder="Student username"
+                    autocomplete="off"
+                    autocapitalize="none"
+                    spellcheck="false"
+                    onkeydown="if(event.key === 'Enter') addTeacherStudent()"
+                    class="input-fun flex-1 text-sm min-w-0"
                 >
 
-                <button class="bg-rose-500 text-white font-bold px-4 rounded-xl shadow-[0_4px_0_0_#BE123C] hover:bg-rose-600 active:translate-y-1 active:shadow-none transition-all">
+                <button
+                    id="teacher-add-btn"
+                    onclick="addTeacherStudent()"
+                    class="bg-rose-500 text-white font-black px-5 rounded-xl shadow-[0_4px_0_0_#BE123C] hover:bg-rose-600 active:translate-y-1 active:shadow-none transition-all"
+                >
                     Add
                 </button>
 
             </div>
 
+            <p
+                id="teacher-add-feedback"
+                class="hidden-view text-xs font-bold mt-4"
+            ></p>
+
         </div>
 
 
-        <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b-2 border-rose-100 pb-2">
-            My Class
-        </h3>
+        <div class="mb-8">
 
+            <div class="flex justify-between items-end mb-3 border-b-2 border-rose-100 pb-2">
 
-        <div class="flex flex-col gap-3 mb-8">
+                <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest">
+                    My Students
+                </h3>
 
-            <div class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center">
-
-                <span class="font-bold text-rose-800">
-                    Timmy M.
-                </span>
-
-                <span class="text-emerald-500 font-black text-sm">
-                    82% Avg
-                </span>
+                <span
+                    id="teacher-student-count"
+                    class="text-xs font-black text-rose-300"
+                ></span>
 
             </div>
 
 
-            <div class="bg-white p-4 rounded-xl border-2 border-rose-100 flex justify-between items-center">
-
-                <span class="font-bold text-rose-800">
-                    Sarah J.
-                </span>
-
-                <span class="text-emerald-500 font-black text-sm">
-                    95% Avg
-                </span>
-
+            <div
+                id="teacher-student-list"
+                class="flex flex-col gap-3"
+            >
+                <p class="text-sm font-bold text-rose-300">
+                    Loading...
+                </p>
             </div>
 
         </div>
@@ -1706,9 +1721,11 @@ document
     // STUDENT STATS
     // =========================================================
 
-    async function loadStudentStats() {
+    async function loadStudentStats(
+        studentId = currentUser?.id
+    ) {
 
-        if (!currentUser) {
+        if (!studentId) {
             return;
         }
 
@@ -1719,7 +1736,7 @@ document
             await _supabase
                 .from('quiz_sessions')
                 .select('*')
-                .eq('student_id', currentUser.id);
+                .eq('student_id', studentId);
 
 
         const {
@@ -1729,7 +1746,7 @@ document
             await _supabase
                 .from('answer_analytics')
                 .select('session_id, question_id, is_correct, created_at, questions(topic, grade)')
-                .eq('student_id', currentUser.id)
+                .eq('student_id', studentId)
                 .order('created_at', { ascending: true });
 
 
@@ -2120,6 +2137,770 @@ document
     }
 
 
+
+    // =========================================================
+    // TEACHER DASHBOARD
+    // =========================================================
+
+    let teacherStudentsById =
+        {};
+
+    let statsViewingAsTeacher =
+        false;
+
+
+    function escapeHtml(value) {
+
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+
+    }
+
+
+    function formatLastPractised(value) {
+
+        if (!value) {
+            return 'No practice yet';
+        }
+
+
+        const date =
+            new Date(value);
+
+        const now =
+            new Date();
+
+
+        const today =
+            new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate()
+            );
+
+
+        const practiceDay =
+            new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate()
+            );
+
+
+        const diffDays =
+            Math.round(
+                (
+                    today -
+                    practiceDay
+                ) /
+                86400000
+            );
+
+
+        if (diffDays === 0) {
+            return 'Practised today';
+        }
+
+
+        if (diffDays === 1) {
+            return 'Practised yesterday';
+        }
+
+
+        return (
+            'Last practised ' +
+            new Intl.DateTimeFormat(
+                'en-GB',
+                {
+                    day: 'numeric',
+                    month: 'short'
+                }
+            ).format(date)
+        );
+
+    }
+
+
+    async function loadTeacherStudents() {
+
+        if (
+            !currentUser ||
+            currentUser.role !== 'teacher'
+        ) {
+            return;
+        }
+
+
+        const list =
+            document.getElementById(
+                'teacher-student-list'
+            );
+
+
+        const count =
+            document.getElementById(
+                'teacher-student-count'
+            );
+
+
+        list.innerHTML =
+            `
+                <p class="text-sm font-bold text-rose-300">
+                    Loading...
+                </p>
+            `;
+
+
+        teacherStudentsById =
+            {};
+
+
+        const {
+            data: links,
+            error: linksError
+        } =
+            await _supabase
+                .from('teacher_students')
+                .select(
+                    'student_id, created_at'
+                )
+                .eq(
+                    'teacher_id',
+                    currentUser.id
+                )
+                .order(
+                    'created_at',
+                    {
+                        ascending: true
+                    }
+                );
+
+
+        if (linksError) {
+
+            console.error(
+                'Teacher student links error:',
+                linksError
+            );
+
+
+            count.innerText =
+                '';
+
+
+            list.innerHTML =
+                `
+                    <p class="text-sm font-bold text-rose-500">
+                        Could not load your students.
+                    </p>
+                `;
+
+            return;
+        }
+
+
+        const safeLinks =
+            links || [];
+
+
+        count.innerText =
+            safeLinks.length === 1
+                ? '1 student'
+                : `${safeLinks.length} students`;
+
+
+        if (
+            safeLinks.length === 0
+        ) {
+
+            list.innerHTML =
+                `
+                    <div class="bg-white p-5 rounded-xl border-2 border-rose-100 text-center">
+
+                        <p class="font-black text-rose-700">
+                            No students yet
+                        </p>
+
+                        <p class="text-xs font-bold text-rose-300 mt-1">
+                            Add a student using their username above.
+                        </p>
+
+                    </div>
+                `;
+
+            return;
+        }
+
+
+        const studentIds =
+            safeLinks.map(
+                link =>
+                    link.student_id
+            );
+
+
+        const {
+            data: profiles,
+            error: profilesError
+        } =
+            await _supabase
+                .from('profiles')
+                .select(
+                    'id, username'
+                )
+                .in(
+                    'id',
+                    studentIds
+                );
+
+
+        if (profilesError) {
+
+            console.error(
+                'Teacher student profiles error:',
+                profilesError
+            );
+
+
+            list.innerHTML =
+                `
+                    <p class="text-sm font-bold text-rose-500">
+                        Could not load student profiles.
+                    </p>
+                `;
+
+            return;
+        }
+
+
+        const {
+            data: sessions,
+            error: sessionsError
+        } =
+            await _supabase
+                .from('quiz_sessions')
+                .select(
+                    'student_id, created_at'
+                )
+                .in(
+                    'student_id',
+                    studentIds
+                )
+                .order(
+                    'created_at',
+                    {
+                        ascending: false
+                    }
+                );
+
+
+        if (sessionsError) {
+
+            console.error(
+                'Teacher student sessions error:',
+                sessionsError
+            );
+
+        }
+
+
+        const lastPracticeByStudent =
+            {};
+
+
+        (
+            sessions ||
+            []
+        )
+        .forEach(
+            session => {
+
+                if (
+                    !lastPracticeByStudent[
+                        session.student_id
+                    ]
+                ) {
+
+                    lastPracticeByStudent[
+                        session.student_id
+                    ] =
+                        session.created_at;
+
+                }
+
+            }
+        );
+
+
+        (
+            profiles ||
+            []
+        )
+        .forEach(
+            profile => {
+
+                teacherStudentsById[
+                    profile.id
+                ] =
+                    profile;
+
+            }
+        );
+
+
+        const orderedProfiles =
+            studentIds
+                .map(
+                    id =>
+                        teacherStudentsById[
+                            id
+                        ]
+                )
+                .filter(
+                    Boolean
+                );
+
+
+        list.innerHTML =
+            orderedProfiles
+                .map(
+                    student => {
+
+                        const safeUsername =
+                            escapeHtml(
+                                student.username
+                            );
+
+
+                        const lastPractice =
+                            formatLastPractised(
+                                lastPracticeByStudent[
+                                    student.id
+                                ]
+                            );
+
+
+                        return `
+                            <div
+                                class="bg-white p-4 rounded-xl border-2 border-rose-100"
+                            >
+
+                                <div
+                                    class="flex justify-between items-start gap-3"
+                                >
+
+                                    <div class="min-w-0">
+
+                                        <p
+                                            class="font-black text-rose-800 text-lg truncate"
+                                        >
+                                            ${safeUsername}
+                                        </p>
+
+                                        <p
+                                            class="text-xs font-bold text-rose-300 mt-1"
+                                        >
+                                            ${lastPractice}
+                                        </p>
+
+                                    </div>
+
+
+                                    <button
+                                        onclick="openTeacherStudentStats('${student.id}')"
+                                        class="shrink-0 bg-rose-500 text-white text-xs font-black px-3 py-2 rounded-xl hover:bg-rose-600 transition"
+                                    >
+                                        View progress →
+                                    </button>
+
+                                </div>
+
+
+                                <button
+                                    onclick="removeTeacherStudent('${student.id}')"
+                                    class="text-[11px] font-bold text-rose-300 hover:text-rose-600 mt-4 transition"
+                                >
+                                    Remove student
+                                </button>
+
+                            </div>
+                        `;
+
+                    }
+                )
+                .join('');
+
+
+        if (!orderedProfiles.length) {
+
+            list.innerHTML =
+                `
+                    <p class="text-sm font-bold text-rose-500">
+                        Student links were found, but their profiles could not be loaded.
+                    </p>
+                `;
+
+        }
+
+    }
+
+
+    async function addTeacherStudent() {
+
+        if (
+            !currentUser ||
+            currentUser.role !== 'teacher'
+        ) {
+            return;
+        }
+
+
+        const input =
+            document.getElementById(
+                'teacher-add-username'
+            );
+
+
+        const button =
+            document.getElementById(
+                'teacher-add-btn'
+            );
+
+
+        const feedback =
+            document.getElementById(
+                'teacher-add-feedback'
+            );
+
+
+        const username =
+            input
+                .value
+                .trim()
+                .toLowerCase();
+
+
+        if (!username) {
+
+            feedback.innerText =
+                'Enter a student username first.';
+
+            feedback.className =
+                'text-xs font-bold mt-4 text-rose-500';
+
+            return;
+        }
+
+
+        button.disabled =
+            true;
+
+        button.innerText =
+            'Adding...';
+
+
+        feedback.classList.add(
+            'hidden-view'
+        );
+
+
+        const {
+            data,
+            error
+        } =
+            await _supabase
+                .rpc(
+                    'add_student_by_username',
+                    {
+                        p_username:
+                            username
+                    }
+                );
+
+
+        button.disabled =
+            false;
+
+        button.innerText =
+            'Add';
+
+
+        if (error) {
+
+            console.error(
+                'Add student error:',
+                error
+            );
+
+
+            const message =
+                String(
+                    error.message ||
+                    ''
+                );
+
+
+            if (
+                message.includes(
+                    'No student account found'
+                )
+            ) {
+
+                feedback.innerText =
+                    'No student found with that username.';
+
+            }
+
+            else if (
+                message.includes(
+                    'Only teacher accounts'
+                )
+            ) {
+
+                feedback.innerText =
+                    'Only teacher accounts can add students.';
+
+            }
+
+            else {
+
+                feedback.innerText =
+                    'Could not add that student. Please try again.';
+
+            }
+
+
+            feedback.className =
+                'text-xs font-bold mt-4 text-rose-500';
+
+            return;
+        }
+
+
+        const result =
+            Array.isArray(data)
+                ? data[0]
+                : data;
+
+
+        if (
+            result?.already_linked
+        ) {
+
+            feedback.innerText =
+                `${result.username} is already in your students.`;
+
+        }
+
+        else {
+
+            feedback.innerText =
+                `${result?.username || username} added ✓`;
+
+        }
+
+
+        feedback.className =
+            'text-xs font-bold mt-4 text-emerald-500';
+
+
+        input.value =
+            '';
+
+
+        await loadTeacherStudents();
+
+    }
+
+
+    async function removeTeacherStudent(
+        studentId
+    ) {
+
+        if (
+            !currentUser ||
+            currentUser.role !== 'teacher'
+        ) {
+            return;
+        }
+
+
+        const student =
+            teacherStudentsById[
+                studentId
+            ];
+
+
+        const username =
+            student?.username ||
+            'this student';
+
+
+        const confirmed =
+            window.confirm(
+                `Remove ${username} from your students?\n\nTheir account and progress will not be deleted.`
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        const {
+            error
+        } =
+            await _supabase
+                .from(
+                    'teacher_students'
+                )
+                .delete()
+                .eq(
+                    'teacher_id',
+                    currentUser.id
+                )
+                .eq(
+                    'student_id',
+                    studentId
+                );
+
+
+        if (error) {
+
+            console.error(
+                'Remove student error:',
+                error
+            );
+
+
+            alert(
+                'Could not remove this student.'
+            );
+
+            return;
+        }
+
+
+        await loadTeacherStudents();
+
+    }
+
+
+    async function openTeacherStudentStats(
+        studentId
+    ) {
+
+        const student =
+            teacherStudentsById[
+                studentId
+            ];
+
+
+        if (!student) {
+            return;
+        }
+
+
+        statsViewingAsTeacher =
+            true;
+
+
+        document
+            .getElementById(
+                'student-dash-title'
+            )
+            .innerText =
+                `${student.username}'s Stats`;
+
+
+        document
+            .getElementById(
+                'stats-back-text'
+            )
+            .innerText =
+                'Back to Students';
+
+
+        document
+            .getElementById(
+                'stats-context-note'
+            )
+            .innerText =
+                `Based on ${student.username}'s latest answer to each question in topics they have started.`;
+
+
+        showView(
+            'view-stats'
+        );
+
+
+        document
+            .getElementById(
+                'stat-overall'
+            )
+            .innerText =
+                '--';
+
+
+        document
+            .getElementById(
+                'stats-grades'
+            )
+            .innerHTML =
+                `
+                    <p class="text-sm font-bold text-rose-300">
+                        Loading...
+                    </p>
+                `;
+
+
+        document
+            .getElementById(
+                'stats-categories'
+            )
+            .innerHTML =
+                `
+                    <p class="text-sm font-bold text-rose-300">
+                        Loading...
+                    </p>
+                `;
+
+
+        await loadStudentStats(
+            studentId
+        );
+
+    }
+
+
+    function handleStatsBack() {
+
+        if (
+            statsViewingAsTeacher &&
+            currentUser?.role === 'teacher'
+        ) {
+
+            statsViewingAsTeacher =
+                false;
+
+
+            routeDashboard();
+
+            return;
+        }
+
+
+        showView(
+            'view-home'
+        );
+
+    }
+
+
     async function routeDashboard() {
 
         if (
@@ -2137,6 +2918,10 @@ document
             'teacher'
         ) {
 
+            statsViewingAsTeacher =
+                false;
+
+
             document
                 .getElementById(
                     'teacher-dash-title'
@@ -2149,9 +2934,32 @@ document
                 'view-teacher'
             );
 
+
+            await loadTeacherStudents();
+
         }
 
         else {
+
+            statsViewingAsTeacher =
+                false;
+
+
+            document
+                .getElementById(
+                    'stats-back-text'
+                )
+                .innerText =
+                    'Back to Home';
+
+
+            document
+                .getElementById(
+                    'stats-context-note'
+                )
+                .innerText =
+                    'Based on your latest answer to each question in topics you have started.';
+
 
             document
                 .getElementById(
