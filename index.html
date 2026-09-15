@@ -134,25 +134,25 @@
 <body class="min-h-screen flex flex-col items-center justify-center p-6 overflow-x-hidden">
 
     <!-- TOP NAV -->
-    <div class="fixed top-0 left-0 w-full p-4 flex justify-end z-50">
+<div class="fixed top-0 left-0 w-full p-4 flex justify-end z-50 pointer-events-none">
 
-        <button
-            id="nav-login-btn"
-            onclick="showView('view-auth')"
-            class="text-sm font-bold text-rose-500 hover:text-rose-700 bg-rose-100 px-4 py-2 rounded-full transition"
-        >
-            Sign In
-        </button>
+    <button
+        id="nav-login-btn"
+        onclick="showView('view-auth')"
+        class="pointer-events-auto text-sm font-bold text-rose-500 hover:text-rose-700 bg-rose-100 px-4 py-2 rounded-full transition"
+    >
+        Sign In
+    </button>
 
-        <button
-            id="nav-dash-btn"
-            onclick="routeDashboard()"
-            class="hidden-view text-sm font-bold text-white bg-rose-500 hover:bg-rose-600 px-4 py-2 rounded-full transition shadow-md"
-        >
-            My Dashboard
-        </button>
+    <button
+        id="nav-dash-btn"
+        onclick="routeDashboard()"
+        class="pointer-events-auto hidden-view text-sm font-bold text-white bg-rose-500 hover:bg-rose-600 px-4 py-2 rounded-full transition shadow-md"
+    >
+        My Dashboard
+    </button>
 
-    </div>
+</div>
 
 
     <!-- HOME -->
