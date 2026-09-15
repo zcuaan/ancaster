@@ -2879,26 +2879,44 @@ document
 
     function handleStatsBack() {
 
-        if (
-            statsViewingAsTeacher &&
-            currentUser?.role === 'teacher'
-        ) {
+    if (
+        statsViewingAsTeacher &&
+        currentUser?.role === 'teacher'
+    ) {
 
-            statsViewingAsTeacher =
-                false;
+        statsViewingAsTeacher =
+            false;
 
 
-            routeDashboard();
+        document
+            .getElementById(
+                'stats-back-text'
+            )
+            .innerText =
+                'Back to Home';
 
-            return;
-        }
+
+        document
+            .getElementById(
+                'stats-context-note'
+            )
+            .innerText =
+                'Based on your latest answer to each question in topics you have started.';
 
 
         showView(
-            'view-home'
+            'view-teacher'
         );
 
+        return;
     }
+
+
+    showView(
+        'view-home'
+    );
+
+}
 
 
     async function routeDashboard() {
