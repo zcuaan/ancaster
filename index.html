@@ -4612,6 +4612,58 @@ function renderKeysScalesPrompt(currentQ) {
 
                 break;
 
+
+            case 'relative_key':
+
+                renderDefaultMultipleChoice(
+                    currentQ
+                );
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'CHOOSE THE RELATIVE KEY';
+
+                break;
+
+
+            case 'harmonic_minor_step':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'CHOOSE THE STEP';
+
+                renderThreeChoice(
+                    'Tone',
+                    'Semitone',
+                    '3 semitones'
+                );
+
+                break;
+
+
+            case 'minor_key_name':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'CHOOSE THE MINOR KEY';
+
+                renderThreeChoice(
+                    'A minor',
+                    'E minor',
+                    'D minor'
+                );
+
+                break;
+
         }
 
     }
@@ -6423,6 +6475,25 @@ function renderKeysScalesPrompt(currentQ) {
 
 
                 renderKeyNameBuilder();
+
+                break;
+
+
+            case 'triad_minor_key':
+
+                document
+                    .getElementById(
+                        'quiz-means-text'
+                    )
+                    .innerText =
+                        'CHOOSE THE MINOR KEY';
+
+
+                renderThreeChoice(
+                    'A minor',
+                    'E minor',
+                    'D minor'
+                );
 
                 break;
 
